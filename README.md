@@ -67,7 +67,7 @@ Restante: 120€
 
 * Angular
 * HTML5
-* CSS3
+* Bootstrap
 * TypeScript
 
 ### Backend
@@ -90,8 +90,6 @@ Restante: 120€
 economic-balance/
 │── frontend/        # Aplicación Angular
 │── backend/         # Servidor Node.js + Express
-│── database/        # Configuración MongoDB
-│── docs/            # Documentación
 │── README.md
 ```
 
