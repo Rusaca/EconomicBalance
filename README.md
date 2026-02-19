@@ -6,7 +6,6 @@
 * Iván Pérez
 * José Antonio
 
-![Logo](./logo.png)
 
 ## 🧾 Descripción del Proyecto
 
