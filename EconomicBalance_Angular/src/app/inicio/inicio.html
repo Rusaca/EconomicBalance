@@ -1,0 +1,138 @@
+
+<!-- HEADER -->
+<header class="border-bottom bg-white">
+  <nav class="navbar navbar-expand-lg container py-3">
+    <a class="navbar-brand fw-bold" href="#">EconomicBalance</a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNav"
+      aria-controls="mainNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto gap-2">
+        <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Plantillas</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+      </ul>
+
+      <div class="d-flex ms-lg-3 gap-2">
+        <button class="btn btn-outline-dark">Login</button>
+        <button class="btn btn-dark">Crear plantilla</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- MAIN -->
+<main class="container my-4">
+  <section class="text-center mb-4">
+    <h1 class="fw-bold">Controla tus finanzas como en Notion</h1>
+    <p class="text-muted mb-0">
+      Plantillas, bloques y métricas para organizar ingresos, gastos y presupuestos.
+    </p>
+  </section>
+
+  <!-- CARRUSEL -->
+  <div id="inicioCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#inicioCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#inicioCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#inicioCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img
+          src="https://picsum.photos/seed/economicbalance-1/1200/500"
+          class="d-block w-100"
+          alt="Imagen de prueba 1"
+        />
+        <div class="carousel-caption d-none d-md-block">
+          <h5 class="fw-bold">Plantillas listas para usar</h5>
+          <p>Empieza rápido y personaliza a tu estilo.</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img
+          src="https://picsum.photos/seed/economicbalance-2/1200/500"
+          class="d-block w-100"
+          alt="Imagen de prueba 2"
+        />
+        <div class="carousel-caption d-none d-md-block">
+          <h5 class="fw-bold">Bloques y categorías</h5>
+          <p>Gastos fijos, variables, presupuestos y más.</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img
+          src="https://picsum.photos/seed/economicbalance-3/1200/500"
+          class="d-block w-100"
+          alt="Imagen de prueba 3"
+        />
+        <div class="carousel-caption d-none d-md-block">
+          <h5 class="fw-bold">Visualiza tu progreso</h5>
+          <p>En el futuro: gráficas y resúmenes automáticos.</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#inicioCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#inicioCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
+  </div>
+
+  <!-- BLOQUE EXTRA (opcional, para que se vea más “home”) -->
+  <section class="row g-3 mt-4">
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">Ingresos</h5>
+          <p class="card-text text-muted">Nómina, inversiones, extras…</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">Gastos</h5>
+          <p class="card-text text-muted">Fijos y variables con historial por mes.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100 border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">Presupuestos</h5>
+          <p class="card-text text-muted">Define límites y controla desviaciones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="border-top bg-white">
+  <div class="container py-4 d-flex flex-column flex-md-row gap-2 justify-content-between align-items-center">
+    <div class="d-flex gap-3">
+      <a class="text-muted text-decoration-none" href="#">Privacidad</a>
+      <a class="text-muted text-decoration-none" href="#">Términos</a>
+      <a class="text-muted text-decoration-none" href="#">Contacto</a>
+    </div>
+  </div>
+</footer>
