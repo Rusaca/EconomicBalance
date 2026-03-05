@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { TemplatesService } from '../../../services/templates-service'; // <-- nombre real
+import { Router, RouterLink } from '@angular/router';
+import { TemplatesService } from '../../../../services/templates-service'; // <-- nombre real
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
