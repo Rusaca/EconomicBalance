@@ -1,0 +1,10 @@
+/* Ajuste simple para que las imágenes del carrusel se vean “tipo hero” */
+.carousel-item img {
+  height: 420px;
+  object-fit: cover;
+}
+
+/* Mejor legibilidad del texto encima de la imagen */
+.carousel-caption {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+}
