@@ -1,14 +1,20 @@
 import { Routes } from '@angular/router';
-import { Inicio } from './componentes/Cliente/inicio/inicio';
+import { Inicio } from './componentes/Cliente/DashBoard/inicio/inicio';
 import { TemplatePage } from './componentes/Cliente/template-page/template-page';
+import { Login } from './componentes/Cliente/Login/Login';
+import { Registro } from './componentes/Cliente/Registro/Registro'; 
 
 export const routes: Routes = [
-  { 
-    path: '', 
+  {
+    path: '',
     component: Inicio
   },
+  { path: 'login',
+     component: Login },
+  { path: 'registro', 
+    component: Registro },
   {
     path: 'templates/:id',
-    component:TemplatePage
+    component: TemplatePage
   }
 ];
