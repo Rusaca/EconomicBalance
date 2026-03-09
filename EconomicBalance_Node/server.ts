@@ -1,0 +1,30 @@
+import express, { Application } from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+import configPipeline from './config_server_express/config_pipeline';
+import rutasCliente from './config_server_express/config_enrutamiento/endPointsCliente';
+
+dotenv.config();
+
+const app: Application = express();
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI || '';
+
+configPipeline(app);
+
+app.use('/api/cliente', rutasCliente);
+
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    console.log('MongoDB conectada correctamente');
+    console.log('Base conectada:', mongoose.connection.name);
+
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error conectando con MongoDB:', error);
+  });
