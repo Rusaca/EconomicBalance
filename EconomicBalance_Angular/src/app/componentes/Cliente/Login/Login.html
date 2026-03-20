@@ -11,8 +11,8 @@
         <input
           type="email"
           class="form-control"
-          [(ngModel)]="email"
-          name="email"
+          [(ngModel)]="correo"
+          name="correo"
           required>
       </div>
 
@@ -72,6 +72,11 @@
       Continuar con Apple
 
     </button>
+
+    <div class="text-center mt-3">
+      ¿No tienes cuenta?
+      <a routerLink="/registro">Registrate</a>
+    </div>
 
   </div>
 

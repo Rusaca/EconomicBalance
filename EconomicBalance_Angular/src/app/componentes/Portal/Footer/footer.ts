@@ -4,9 +4,9 @@ import { Component } from '@angular/core';
   selector: 'app-inicio',
   imports: [],
   standalone: true,
-  templateUrl: './inicio.html',
-  styleUrl: './inicio.css',
+  templateUrl: './footer.html',
+  styleUrl: './footer.css',
 })
-export class Inicio {
+export class footer {
 
 }
