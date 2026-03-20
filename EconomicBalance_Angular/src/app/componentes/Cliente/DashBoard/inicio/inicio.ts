@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TemplatesService } from '../../../../services/templates-service'; // <-- nombre real
+import { TemplatesService } from '../../../../services/templates-service';
 
 @Component({
   selector: 'app-inicio',
@@ -10,15 +10,33 @@ import { TemplatesService } from '../../../../services/templates-service'; // <-
   styleUrl: './inicio.css',
 })
 export class Inicio {
-
   constructor(
     private router: Router,
-    private templateService: TemplatesService // <-- inyecta la clase real
+    private templateService: TemplatesService
   ) {}
 
   crearPlantilla() {
-    console.log('Fufas????')
-    const plantilla = this.templateService.createBlank(); // <-- función del servicio
-    this.router.navigate(['/templates', plantilla.id]);
+    const usuario = localStorage.getItem('usuario');
+
+    if (!usuario) {
+      alert('Debes iniciar sesión para crear una plantilla');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.templateService.createBlank().subscribe({
+      next: (respuesta) => {
+        if (!respuesta.ok) {
+          alert(respuesta.mensaje);
+          return;
+        }
+
+        this.router.navigate(['/templates', respuesta.data.id]);
+      },
+      error: (error) => {
+        console.error('Error creando plantilla:', error);
+        alert('No se pudo crear la plantilla');
+      }
+    });
   }
 }
