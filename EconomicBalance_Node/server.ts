@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 
 import configPipeline from './config_server_express/config_pipeline';
 import rutasCliente from './config_server_express/config_enrutamiento/endPointsCliente';
+import rutasPlantilla from './config_server_express/config_enrutamiento/endPointsPlantilla';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ const MONGO_URI = process.env.MONGO_URI || '';
 configPipeline(app);
 
 app.use('/api/cliente', rutasCliente);
-
+app.use('/api/plantillas', rutasPlantilla);
 mongoose
   .connect(MONGO_URI)
   .then(() => {
