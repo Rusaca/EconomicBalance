@@ -15,8 +15,10 @@
         <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
       </ul>
 
-      <div class="d-flex ms-lg-3 gap-2">
-        <button class="btn btn-outline-dark" routerLink="/login">Iniciar Sesion</button>
+      <div class="d-flex ms-lg-3 gap-2 align-items-center">
+        <span class="texto-bienvenida" *ngIf="sesionIniciada">Hola, {{ nombreUsuario }}</span>
+        <button class="btn btn-outline-dark" *ngIf="!sesionIniciada" routerLink="/login">Iniciar Sesion</button>
+        <button class="btn btn-outline-dark" *ngIf="sesionIniciada" type="button" (click)="cerrarSesion()">Cerrar sesion</button>
         <button class="btn btn-dark" (click)="crearPlantilla()">
           Crear plantilla
         </button>
