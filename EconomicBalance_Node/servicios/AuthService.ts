@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import UserModel from '../modelos/modelos/UsuarioModel';
 
 export default class AuthService {
@@ -39,7 +40,7 @@ export default class AuthService {
         id: nuevoUsuario._id,
         nombre: nuevoUsuario.nombre,
         apellidos: nuevoUsuario.apellidos,
-        email: nuevoUsuario.correo
+        correo: nuevoUsuario.correo
       }
     };
   }
@@ -67,14 +68,37 @@ export default class AuthService {
       };
     }
 
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      return {
+        ok: false,
+        mensaje: 'JWT_SECRET no configurado'
+      };
+    }
+
+    const token = jwt.sign(
+      {
+        id: usuario._id.toString(),
+        correo: usuario.correo
+      },
+      secret,
+      {
+        expiresIn: '7d'
+      }
+    );
+
     return {
       ok: true,
       mensaje: 'Login correcto',
       data: {
-        id: usuario._id,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        correo: usuario.correo
+        token,
+        usuario: {
+          id: usuario._id,
+          nombre: usuario.nombre,
+          apellidos: usuario.apellidos,
+          correo: usuario.correo
+        }
       }
     };
   }
