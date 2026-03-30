@@ -16,13 +16,13 @@ export class Login {
   password: string = '';
   remember: boolean = false;
 
-   constructor(
+  constructor(
     private authFormService: AuthFormService,
     private authApiService: AuthApiService,
     private router: Router
   ) {}
 
- async login() {
+  async login() {
     const payload = this.authFormService.collectLoginData({
       correo: this.correo,
       password: this.password,
@@ -39,9 +39,10 @@ export class Login {
         return;
       }
 
-      localStorage.setItem('usuario', JSON.stringify(respuesta.data));
-      alert('Login correcto');
+      localStorage.setItem('token', respuesta.data.token);
+      localStorage.setItem('usuario', JSON.stringify(respuesta.data.usuario));
 
+      alert('Login correcto');
       this.router.navigate(['/']);
     } catch (error) {
       console.error('Error en login:', error);
@@ -57,4 +58,3 @@ export class Login {
     console.log('login apple');
   }
 }
-

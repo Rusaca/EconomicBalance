@@ -19,7 +19,7 @@
   <!-- 🔲 BLOQUES -->
   <div
     class="bloque"
-    *ngFor="let bloque of template?.blocks"
+    *ngFor="let bloque of template.blocks"
     [style.left.px]="bloque.x"
     [style.top.px]="bloque.y"
     (mousedown)="startDrag($event, bloque)"

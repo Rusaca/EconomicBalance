@@ -22,30 +22,23 @@ export class TemplatesService {
   }
 
   createBlank(name = 'Nueva plantilla'): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
-    const usuario = this.getUsuarioLogueado();
-
     return this.http.post<{ ok: boolean; mensaje: string; data: Plantilla }>(this.apiUrl, {
-      nombre: name,
-      userId: usuario?.id
+      nombre: name
     });
   }
 
   getById(id: string): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
-    const usuario = this.getUsuarioLogueado();
-
     return this.http.get<{ ok: boolean; mensaje: string; data: Plantilla }>(
-      `${this.apiUrl}/${id}?userId=${usuario?.id || ''}`
+      `${this.apiUrl}/${id}`
     );
   }
 
   updateTemplate(id: string, plantilla: Plantilla): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
-    const usuario = this.getUsuarioLogueado();
-
     return this.http.put<{ ok: boolean; mensaje: string; data: Plantilla }>(
       `${this.apiUrl}/${id}`,
       {
-        ...plantilla,
-        userId: usuario?.id
+        nombre: plantilla.nombre,
+        blocks: plantilla.blocks
       }
     );
   }

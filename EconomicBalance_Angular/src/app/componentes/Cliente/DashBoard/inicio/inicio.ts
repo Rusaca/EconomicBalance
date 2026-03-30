@@ -28,14 +28,16 @@ export class Inicio implements OnInit {
 
   cerrarSesion(): void {
     localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
     this.nombreUsuario = '';
     this.router.navigate(['/']);
   }
 
   crearPlantilla() {
     const usuario = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
 
-    if (!usuario) {
+    if (!usuario || !token) {
       alert('Debes iniciar sesión para crear una plantilla');
       this.router.navigate(['/login']);
       return;
