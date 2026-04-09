@@ -113,4 +113,20 @@ export default class PlantillaService {
       updatedAt: plantilla.updatedAt
     };
   }
+  public async obtenerPlantillasPorUsuario(userId: string) {
+  try {
+    const plantillas = await PlantillaModel.find({ userId }).sort({ updatedAt: -1 });
+
+    return {
+      ok: true,
+      mensaje: 'Plantillas obtenidas correctamente',
+      data: plantillas
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      mensaje: 'Error obteniendo las plantillas del usuario'
+    };
+  }
+}
 }

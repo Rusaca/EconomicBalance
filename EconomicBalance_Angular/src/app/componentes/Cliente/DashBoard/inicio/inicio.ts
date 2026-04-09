@@ -12,6 +12,9 @@ import { TemplatesService } from '../../../../services/templates-service';
 })
 export class Inicio implements OnInit {
   nombreUsuario: string = '';
+  plantillas: any[] = [];
+  cargandoPlantillas: boolean = false;
+  menuAbierto: boolean = true;
 
   constructor(
     private router: Router,
@@ -20,16 +23,28 @@ export class Inicio implements OnInit {
 
   ngOnInit(): void {
     this.cargarNombreUsuario();
+
+    if (this.sesionIniciada) {
+      this.cargarPlantillas();
+    }
   }
 
   get sesionIniciada(): boolean {
-    return this.nombreUsuario.trim().length > 0;
+    const usuario = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
+
+    return !!usuario && !!token;
+  }
+
+  toggleMenu(): void {
+    this.menuAbierto = !this.menuAbierto;
   }
 
   cerrarSesion(): void {
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
     this.nombreUsuario = '';
+    this.plantillas = [];
     this.router.navigate(['/']);
   }
 
@@ -50,7 +65,8 @@ export class Inicio implements OnInit {
           return;
         }
 
-        this.router.navigate(['/templates', respuesta.data.id]);
+        const plantillaId = (respuesta.data as any)._id || (respuesta.data as any).id;
+        this.router.navigate(['/templates', plantillaId]);
       },
       error: (error) => {
         console.error('Error creando plantilla:', error);
@@ -59,10 +75,38 @@ export class Inicio implements OnInit {
     });
   }
 
+  abrirPlantilla(id: string): void {
+    this.router.navigate(['/templates', id]);
+  }
+
+  private cargarPlantillas(): void {
+    this.cargandoPlantillas = true;
+
+    this.templateService.getMisPlantillas().subscribe({
+      next: (respuesta) => {
+        if (respuesta.ok) {
+          this.plantillas = respuesta.data || [];
+        } else {
+          this.plantillas = [];
+        }
+
+        this.cargandoPlantillas = false;
+      },
+      error: (error) => {
+        console.error('Error cargando plantillas:', error);
+        this.plantillas = [];
+        this.cargandoPlantillas = false;
+      }
+    });
+  }
+
   private cargarNombreUsuario(): void {
     const usuarioRaw = localStorage.getItem('usuario');
+    const token = localStorage.getItem('token');
 
-    if (!usuarioRaw) {
+    if (!usuarioRaw || !token || usuarioRaw === 'undefined' || token === 'undefined') {
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('token');
       this.nombreUsuario = '';
       return;
     }
@@ -71,6 +115,8 @@ export class Inicio implements OnInit {
       const usuario = JSON.parse(usuarioRaw);
       this.nombreUsuario = usuario?.nombre ?? '';
     } catch {
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('token');
       this.nombreUsuario = '';
     }
   }

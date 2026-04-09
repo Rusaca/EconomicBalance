@@ -12,3 +12,31 @@
 .texto-bienvenida {
   font-weight: 600;
 }
+.layout-con-sidebar {
+  display: flex;
+  min-height: calc(100vh - 80px);
+}
+
+.sidebar-plantillas {
+  width: 280px;
+  background-color: #212529;
+  color: white;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  min-height: 100%;
+}
+
+.sidebar-cerrado {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sidebar-contenido {
+  display: flex;
+  flex-direction: column;
+}
+
+.contenido-principal {
+  flex: 1;
+}

@@ -42,4 +42,9 @@ export class TemplatesService {
       }
     );
   }
+  getMisPlantillas(): Observable<{ ok: boolean; mensaje: string; data: any[] }> {
+  return this.http.get<{ ok: boolean; mensaje: string; data: any[] }>(
+    `${this.apiUrl}/mis-plantillas`
+  );
+}
 }

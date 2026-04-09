@@ -39,6 +39,34 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   }
 });
 
+
+router.get('/mis-plantillas', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.usuario?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        ok: false,
+        mensaje: 'Usuario no autenticado'
+      });
+    }
+
+    const respuesta = await plantillaService.obtenerPlantillasPorUsuario(userId);
+
+    if (!respuesta.ok) {
+      return res.status(400).json(respuesta);
+    }
+
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    console.error('Error en GET /api/plantillas/mis-plantillas:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error obteniendo las plantillas del usuario'
+    });
+  }
+});
+
 router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
@@ -119,6 +147,8 @@ router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
       mensaje: 'Error actualizando la plantilla'
     });
   }
-});
+}
+
+);
 
 export default router;
