@@ -1,6 +1,16 @@
+.barra-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+}
+
 .lienzo {
   position: relative;
-  height: 90vh;
+  height: calc(100vh - 78px);
   background: #f5f5f5;
 }
 
@@ -36,23 +46,39 @@
 
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.3);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
 }
 
 .popup {
   background: white;
   padding: 20px;
-  width: 300px;
-  margin: 100px auto;
+  width: min(92vw, 340px);
   border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.popup input,
+.popup select {
+  width: 100%;
+  margin-top: 0.35rem;
+  margin-bottom: 0.9rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
 }
 
 .acciones {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+  gap: 0.75rem;
+}
+
+.mensaje {
+  font-size: 0.95rem;
 }

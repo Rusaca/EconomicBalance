@@ -1,22 +1,31 @@
-<!-- 🔝 BARRA SUPERIOR -->
 <div class="barra-superior">
+  <div class="d-flex gap-2 align-items-center">
+    <button class="btn btn-outline-secondary" type="button" (click)="volverAlDashboard()">
+      Volver
+    </button>
 
-  <button class="btn btn-primary"
-          (click)="guardarPlantilla()"
-          [disabled]="guardando">
-    {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
-  </button>
+    <span class="fw-semibold" *ngIf="template.nombre; else sinNombre">
+      {{ template.nombre }}
+    </span>
+    <ng-template #sinNombre>
+      <span class="fw-semibold text-muted">Plantilla sin guardar</span>
+    </ng-template>
+  </div>
 
-  <span class="mensaje" *ngIf="mensajeGuardado">
-    {{ mensajeGuardado }}
-  </span>
+  <div class="d-flex gap-2 align-items-center">
+    <button class="btn btn-primary"
+            (click)="guardarPlantilla()"
+            [disabled]="guardando">
+      {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
+    </button>
 
+    <span class="mensaje" *ngIf="mensajeGuardado">
+      {{ mensajeGuardado }}
+    </span>
+  </div>
 </div>
 
-<!-- 🟦 LIENZO -->
 <div class="lienzo" (contextmenu)="abrirMenuLienzo($event)">
-
-  <!-- 🔲 BLOQUES -->
   <div
     class="bloque"
     *ngFor="let bloque of template.blocks"
@@ -25,20 +34,16 @@
     (mousedown)="startDrag($event, bloque)"
     (contextmenu)="abrirMenuBloque($event, bloque)"
   >
-
     <div class="titulo">
       {{ bloque.titulo }}
     </div>
 
-    <!-- CAMPOS -->
     <div *ngFor="let campo of bloque.campos" class="campo">
       <strong>{{ campo.nombre }}</strong>
       <span> - {{ campo.tipo }} - {{ campo.cantidad }}€</span>
     </div>
-
   </div>
 
-  <!-- 📌 MENÚ CONTEXTUAL LIENZO -->
   <div
     class="menu"
     *ngIf="menuLienzo.visible"
@@ -51,7 +56,6 @@
     </div>
   </div>
 
-  <!-- 📌 MENÚ CONTEXTUAL BLOQUE -->
   <div
     class="menu menu-fixed"
     *ngIf="menuBloque.visible"
@@ -63,36 +67,27 @@
       ➕ Crear campo
     </div>
   </div>
-
 </div>
 
-<!-- 🪟 POPUP CREAR CAMPO -->
 <div class="overlay" *ngIf="popupCampoVisible">
-
   <div class="popup" (click)="$event.stopPropagation()">
-
     <h3>Nuevo campo</h3>
 
-    <!-- TIPO -->
     <label>Tipo</label>
     <select [(ngModel)]="nuevoCampo.tipo">
       <option value="ingreso">Ingreso</option>
       <option value="gasto">Gasto</option>
     </select>
 
-    <!-- CATEGORÍA -->
     <label>Categoría</label>
     <input type="text" [(ngModel)]="nuevoCampo.categoria" />
 
-    <!-- NOMBRE -->
     <label>Nombre</label>
     <input type="text" [(ngModel)]="nuevoCampo.nombre" />
 
-    <!-- CANTIDAD -->
     <label>Cantidad</label>
     <input type="number" [(ngModel)]="nuevoCampo.cantidad" />
 
-    <!-- BOTONES -->
     <div class="acciones">
       <button class="btn btn-success" (click)="guardarCampo()">
         Guardar
@@ -102,7 +97,24 @@
         Cancelar
       </button>
     </div>
-
   </div>
+</div>
 
+<div class="overlay" *ngIf="popupNombrePlantillaVisible">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <h3>Guardar plantilla</h3>
+
+    <label>Nombre de la plantilla</label>
+    <input type="text" [(ngModel)]="nombrePlantillaTemporal" placeholder="Ej. Presupuesto familiar" />
+
+    <div class="acciones">
+      <button class="btn btn-success" type="button" (click)="confirmarPrimerGuardado()" [disabled]="guardando">
+        Confirmar
+      </button>
+
+      <button class="btn btn-secondary" type="button" (click)="cancelarPrimerGuardado()" [disabled]="guardando">
+        Cancelar
+      </button>
+    </div>
+  </div>
 </div>

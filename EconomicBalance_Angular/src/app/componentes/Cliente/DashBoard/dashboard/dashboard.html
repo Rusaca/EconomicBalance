@@ -1,0 +1,112 @@
+<header class="border-bottom bg-white shadow-sm">
+  <nav class="navbar navbar-expand-lg container py-3">
+    <a class="navbar-brand fw-bold brand-logo" routerLink="/">EconomicBalance</a>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <div class="usuario-badge" *ngIf="nombreUsuario">
+        Hola, {{ nombreUsuario }}
+      </div>
+
+      <button class="btn btn-primary btn-accion px-4" type="button" (click)="nuevaPlantilla()">
+        Nueva plantilla
+      </button>
+
+      <button class="btn btn-outline-dark px-4" type="button" (click)="cerrarSesion()">
+        Cerrar sesión
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main class="dashboard-page">
+  <div class="container py-5">
+    <section class="hero-dashboard mb-5">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <span class="dashboard-chip">Área personal</span>
+          <h1 class="display-5 fw-bold titulo-dashboard mt-3 mb-3">Tus plantillas</h1>
+          <p class="lead text-muted mb-0 subtitulo-dashboard">
+            Gestiona tus plantillas guardadas, continúa editando las que ya tienes y crea nuevas
+            estructuras para organizar tus finanzas.
+          </p>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="resumen-card shadow-sm">
+            <div class="resumen-label">Plantillas guardadas</div>
+            <div class="resumen-valor">{{ plantillas.length }}</div>
+            <div class="resumen-texto">
+              {{ plantillas.length === 1 ? 'plantilla disponible' : 'plantillas disponibles' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div *ngIf="cargandoPlantillas" class="estado-carga shadow-sm">
+      <div class="spinner-border spinner-border-sm text-primary me-3" role="status" aria-hidden="true"></div>
+      <span>Cargando plantillas...</span>
+    </div>
+
+    <section
+      *ngIf="!cargandoPlantillas && plantillas.length === 0"
+      class="empty-state-dashboard shadow-sm"
+    >
+      <div class="empty-icon">📂</div>
+      <h3 class="fw-bold mb-2">Todavía no tienes plantillas</h3>
+      <p class="text-muted mb-4">
+        Crea tu primera plantilla y empieza a construir tu espacio de trabajo financiero.
+      </p>
+      <button class="btn btn-primary btn-lg px-4" type="button" (click)="nuevaPlantilla()">
+        Crear primera plantilla
+      </button>
+    </section>
+
+    <section class="row g-4" *ngIf="!cargandoPlantillas && plantillas.length > 0">
+      <div class="col-12 col-md-6 col-xl-4" *ngFor="let plantilla of plantillas">
+        <article class="card plantilla-card border-0 shadow-sm h-100">
+          <div class="card-body d-flex flex-column p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+              <div>
+                <span class="plantilla-tag">Plantilla</span>
+                <h5 class="card-title fw-bold mt-2 mb-1">{{ plantilla.nombre }}</h5>
+                <p class="text-muted small mb-0">
+                  Última actualización:
+                  {{ plantilla.updatedAt || plantilla.createdAt }}
+                </p>
+              </div>
+
+              <div class="icono-plantilla">
+                <span>🧩</span>
+              </div>
+            </div>
+
+            <div class="plantilla-stats mb-4">
+              <div class="stat-item">
+                <span class="stat-label">Bloques</span>
+                <span class="stat-value">{{ plantilla.blocks?.length || 0 }}</span>
+              </div>
+
+              <div class="stat-item">
+                <span class="stat-label">Estado</span>
+                <span class="stat-value">
+                  {{ (plantilla.blocks?.length || 0) > 0 ? 'Activa' : 'Vacía' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-auto d-grid">
+              <button
+                class="btn btn-outline-primary btn-abrir"
+                type="button"
+                (click)="abrirPlantilla(plantilla.id)"
+              >
+                Abrir plantilla
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</main>
