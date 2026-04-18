@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TemplatesService } from '../../../services/templates-service';
-import { Plantilla, Bloque } from '../../../modelos/template.intetrfaces';
+import { Plantilla, Bloque, Campo } from '../../../modelos/template.intetrfaces';
 
 @Component({
   selector: 'app-template-page',
@@ -14,8 +14,6 @@ import { Plantilla, Bloque } from '../../../modelos/template.intetrfaces';
   styleUrl: './template-page.css',
 })
 export class TemplatePage implements OnInit {
-
-  // ✅ Inicializada desde el inicio (IMPORTANTE)
   template: Plantilla = {
     id: '',
     nombre: '',
@@ -23,7 +21,7 @@ export class TemplatePage implements OnInit {
     blocks: []
   };
 
-  esNuevaPlantilla = false;
+  esNuevaPlantilla = true;
 
   menuLienzo = { visible: false, x: 0, y: 0 };
   menuBloque = { visible: false, x: 0, y: 0, bloque: null as Bloque | null };
@@ -35,6 +33,8 @@ export class TemplatePage implements OnInit {
 
   popupCampoVisible = false;
   bloqueSeleccionado: Bloque | null = null;
+  campoEditandoId: string | null = null;
+
   popupNombrePlantillaVisible = false;
   nombrePlantillaTemporal = '';
 
@@ -67,6 +67,8 @@ export class TemplatePage implements OnInit {
       return;
     }
 
+    this.esNuevaPlantilla = false;
+
     this.templateService.getById(id).subscribe({
       next: (respuesta) => {
         if (!respuesta.ok) {
@@ -74,11 +76,10 @@ export class TemplatePage implements OnInit {
           return;
         }
 
-        this.template = respuesta.data;
-
-        if (!this.template.blocks) {
-          this.template.blocks = [];
-        }
+        this.template = {
+          ...respuesta.data,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        };
       },
       error: (err) => {
         console.error('Error al cargar plantilla', err);
@@ -108,7 +109,7 @@ export class TemplatePage implements OnInit {
       visible: true,
       x: event.clientX,
       y: event.clientY,
-      bloque: bloque,
+      bloque,
     };
   }
 
@@ -126,10 +127,21 @@ export class TemplatePage implements OnInit {
     this.cerrarMenus();
   }
 
-  abrirPopupCampo(): void {
-    if (!this.menuBloque.bloque) return;
+  eliminarBloque(bloqueId: string): void {
+    this.template.blocks = this.template.blocks.filter(b => b.id !== bloqueId);
+    this.cerrarMenus();
+  }
 
-    this.bloqueSeleccionado = this.menuBloque.bloque;
+  toggleFijado(bloque: Bloque): void {
+    bloque.fijado = !bloque.fijado;
+  }
+
+  abrirPopupCampo(bloque?: Bloque): void {
+    const bloqueObjetivo = bloque || this.menuBloque.bloque;
+    if (!bloqueObjetivo) return;
+
+    this.bloqueSeleccionado = bloqueObjetivo;
+    this.campoEditandoId = null;
 
     this.nuevoCampo = {
       tipo: 'gasto',
@@ -142,28 +154,78 @@ export class TemplatePage implements OnInit {
     this.cerrarMenus();
   }
 
+  editarCampo(bloque: Bloque, campo: Campo): void {
+    this.bloqueSeleccionado = bloque;
+    this.campoEditandoId = campo.id;
+
+    this.nuevoCampo = {
+      tipo: campo.tipo,
+      categoria: campo.categoria,
+      nombre: campo.nombre,
+      cantidad: campo.cantidad,
+    };
+
+    this.popupCampoVisible = true;
+  }
+
   guardarCampo(): void {
     if (!this.bloqueSeleccionado) return;
 
-    this.bloqueSeleccionado.campos.push({
-      id: Date.now().toString(),
-      tipo: this.nuevoCampo.tipo,
-      categoria: this.nuevoCampo.categoria,
-      nombre: this.nuevoCampo.nombre,
-      cantidad: Number(this.nuevoCampo.cantidad),
-    });
+    const nombre = this.nuevoCampo.nombre.trim();
+    const categoria = this.nuevoCampo.categoria.trim();
+
+    if (!nombre) {
+      this.mensajeGuardado = 'El campo debe tener un nombre';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    if (this.campoEditandoId) {
+      const campo = this.bloqueSeleccionado.campos.find(c => c.id === this.campoEditandoId);
+
+      if (campo) {
+        campo.tipo = this.nuevoCampo.tipo;
+        campo.categoria = categoria;
+        campo.nombre = nombre;
+        campo.cantidad = Number(this.nuevoCampo.cantidad);
+      }
+    } else {
+      this.bloqueSeleccionado.campos.push({
+        id: Date.now().toString(),
+        tipo: this.nuevoCampo.tipo,
+        categoria,
+        nombre,
+        cantidad: Number(this.nuevoCampo.cantidad),
+      });
+    }
 
     this.popupCampoVisible = false;
     this.bloqueSeleccionado = null;
+    this.campoEditandoId = null;
+  }
+
+  eliminarCampo(bloque: Bloque, campoId: string): void {
+    bloque.campos = bloque.campos.filter(campo => campo.id !== campoId);
   }
 
   cerrarPopupCampo(): void {
     this.popupCampoVisible = false;
     this.bloqueSeleccionado = null;
+    this.campoEditandoId = null;
   }
 
   startDrag(event: MouseEvent, bloque: Bloque): void {
-    if (bloque.fijado) return;
+    const target = event.target as HTMLElement;
+
+    if (
+      bloque.fijado ||
+      target.closest('input') ||
+      target.closest('select') ||
+      target.closest('button') ||
+      target.closest('textarea')
+    ) {
+      return;
+    }
 
     event.stopPropagation();
 
@@ -198,27 +260,39 @@ export class TemplatePage implements OnInit {
   }
 
   guardarPlantilla(): void {
-    if (this.esNuevaPlantilla) {
-      this.nombrePlantillaTemporal = this.template.nombre || '';
+    const nombreActual = this.template.nombre?.trim();
+
+    if (!this.template.id) {
+      this.nombrePlantillaTemporal = nombreActual || '';
       this.popupNombrePlantillaVisible = true;
       return;
     }
 
-    if (!this.template.id) return;
+    if (!nombreActual) {
+      this.mensajeGuardado = 'La plantilla debe tener un nombre';
+      this.limpiarMensajeGuardado();
+      return;
+    }
 
     this.guardando = true;
     this.mensajeGuardado = '';
 
     this.templateService.updateTemplate(this.template.id, this.template).subscribe({
       next: (respuesta) => {
+        this.guardando = false;
+
         if (!respuesta.ok) {
-          this.guardando = false;
           this.mensajeGuardado = respuesta.mensaje || 'Error al guardar la plantilla';
+          this.limpiarMensajeGuardado();
           return;
         }
 
-        this.template = respuesta.data;
-        this.guardando = false;
+        this.template = {
+          ...respuesta.data,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        };
+
+        this.esNuevaPlantilla = false;
         this.mensajeGuardado = 'Plantilla guardada correctamente';
         this.limpiarMensajeGuardado();
       },
@@ -226,6 +300,7 @@ export class TemplatePage implements OnInit {
         console.error('Error al guardar plantilla', err);
         this.guardando = false;
         this.mensajeGuardado = 'Error al guardar la plantilla';
+        this.limpiarMensajeGuardado();
       }
     });
   }
@@ -235,55 +310,41 @@ export class TemplatePage implements OnInit {
 
     if (!nombre) {
       this.mensajeGuardado = 'Debes indicar un nombre para guardar la plantilla';
+      this.limpiarMensajeGuardado();
       return;
     }
 
     this.guardando = true;
     this.mensajeGuardado = '';
 
-    this.templateService.createBlank(nombre).subscribe({
+    this.templateService.createTemplate(nombre, this.template.blocks || []).subscribe({
       next: (respuesta) => {
+        this.guardando = false;
+
         if (!respuesta.ok) {
-          this.guardando = false;
           this.mensajeGuardado = respuesta.mensaje || 'Error creando la plantilla';
+          this.limpiarMensajeGuardado();
           return;
         }
 
-        const plantillaCreada = respuesta.data;
-
         this.template = {
-          ...plantillaCreada,
-          blocks: this.template.blocks || []
+          ...respuesta.data,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
         };
 
-        this.templateService.updateTemplate(this.template.id, this.template).subscribe({
-          next: (actualizacion) => {
-            this.guardando = false;
+        this.esNuevaPlantilla = false;
+        this.popupNombrePlantillaVisible = false;
+        this.nombrePlantillaTemporal = '';
+        this.mensajeGuardado = 'Plantilla guardada correctamente';
+        this.limpiarMensajeGuardado();
 
-            if (!actualizacion.ok) {
-              this.mensajeGuardado = actualizacion.mensaje || 'Error al guardar la plantilla';
-              return;
-            }
-
-            this.template = actualizacion.data;
-            this.esNuevaPlantilla = false;
-            this.popupNombrePlantillaVisible = false;
-            this.nombrePlantillaTemporal = '';
-            this.mensajeGuardado = 'Plantilla guardada correctamente';
-            this.limpiarMensajeGuardado();
-            this.router.navigate(['/templates', this.template.id]);
-          },
-          error: (error) => {
-            console.error('Error en el primer guardado de la plantilla', error);
-            this.guardando = false;
-            this.mensajeGuardado = 'La plantilla se creó pero no se pudo guardar su contenido';
-          }
-        });
+        this.router.navigate(['/templates', this.template.id]);
       },
       error: (error) => {
         console.error('Error creando plantilla', error);
         this.guardando = false;
         this.mensajeGuardado = 'Error creando la plantilla';
+        this.limpiarMensajeGuardado();
       }
     });
   }

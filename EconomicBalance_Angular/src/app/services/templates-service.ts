@@ -10,20 +10,13 @@ export class TemplatesService {
 
   constructor(private http: HttpClient) {}
 
-  private getUsuarioLogueado(): any | null {
-    const raw = localStorage.getItem('usuario');
-    if (!raw) return null;
-
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
-  }
-
-  createBlank(name = 'Nueva plantilla'): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
+  createTemplate(
+    nombre: string,
+    blocks: Plantilla['blocks'] = []
+  ): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
     return this.http.post<{ ok: boolean; mensaje: string; data: Plantilla }>(this.apiUrl, {
-      nombre: name
+      nombre,
+      blocks
     });
   }
 
@@ -33,7 +26,10 @@ export class TemplatesService {
     );
   }
 
-  updateTemplate(id: string, plantilla: Plantilla): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
+  updateTemplate(
+    id: string,
+    plantilla: Plantilla
+  ): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
     return this.http.put<{ ok: boolean; mensaje: string; data: Plantilla }>(
       `${this.apiUrl}/${id}`,
       {
@@ -43,9 +39,9 @@ export class TemplatesService {
     );
   }
 
-  getMisPlantillas(): Observable<{ ok: boolean; mensaje: string; data: any[] }> {
-    return this.http.get<{ ok: boolean; mensaje: string; data: any[] }>(
+  getMisPlantillas(): Observable<{ ok: boolean; mensaje: string; data: Plantilla[] }> {
+    return this.http.get<{ ok: boolean; mensaje: string; data: Plantilla[] }>(
       `${this.apiUrl}/mis-plantillas`
     );
-}
+  }
 }

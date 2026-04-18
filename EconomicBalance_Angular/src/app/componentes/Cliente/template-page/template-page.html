@@ -1,18 +1,19 @@
 <div class="barra-superior">
-  <div class="d-flex gap-2 align-items-center">
+  <div class="d-flex gap-2 align-items-center flex-wrap">
     <button class="btn btn-outline-secondary" type="button" (click)="volverAlDashboard()">
       Volver
     </button>
 
-    <span class="fw-semibold" *ngIf="template.nombre; else sinNombre">
-      {{ template.nombre }}
-    </span>
-    <ng-template #sinNombre>
-      <span class="fw-semibold text-muted">Plantilla sin guardar</span>
-    </ng-template>
+    <input
+      class="form-control"
+      style="min-width: 260px; max-width: 360px;"
+      type="text"
+      [(ngModel)]="template.nombre"
+      placeholder="Nombre de la plantilla"
+    />
   </div>
 
-  <div class="d-flex gap-2 align-items-center">
+  <div class="d-flex gap-2 align-items-center flex-wrap">
     <button class="btn btn-primary"
             (click)="guardarPlantilla()"
             [disabled]="guardando">
@@ -34,13 +35,72 @@
     (mousedown)="startDrag($event, bloque)"
     (contextmenu)="abrirMenuBloque($event, bloque)"
   >
-    <div class="titulo">
-      {{ bloque.titulo }}
+    <div class="titulo d-flex justify-content-between align-items-center gap-2">
+      <input
+        class="form-control form-control-sm"
+        type="text"
+        [(ngModel)]="bloque.titulo"
+        placeholder="Título del bloque"
+      />
+
+      <div class="d-flex gap-1">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          (click)="toggleFijado(bloque)"
+        >
+          {{ bloque.fijado ? 'Desfijar' : 'Fijar' }}
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          (click)="abrirPopupCampo(bloque)"
+        >
+          + Campo
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          (click)="eliminarBloque(bloque.id)"
+        >
+          ✕
+        </button>
+      </div>
     </div>
 
-    <div *ngFor="let campo of bloque.campos" class="campo">
-      <strong>{{ campo.nombre }}</strong>
-      <span> - {{ campo.tipo }} - {{ campo.cantidad }}€</span>
+    <div *ngIf="bloque.campos.length === 0" class="text-muted small mt-2">
+      Este bloque todavía no tiene campos.
+    </div>
+
+    <div *ngFor="let campo of bloque.campos" class="campo d-flex flex-column gap-2 mt-2">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <div>
+          <strong>{{ campo.nombre }}</strong>
+          <div class="small text-muted">
+            {{ campo.categoria || 'Sin categoría' }} · {{ campo.tipo }} · {{ campo.cantidad }} €
+          </div>
+        </div>
+
+        <div class="d-flex gap-1">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            (click)="editarCampo(bloque, campo)"
+          >
+            Editar
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            (click)="eliminarCampo(bloque, campo.id)"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -66,12 +126,20 @@
     <div class="opcion-menu" (click)="abrirPopupCampo()">
       ➕ Crear campo
     </div>
+
+    <div
+      class="opcion-menu text-danger"
+      *ngIf="menuBloque.bloque"
+      (click)="eliminarBloque(menuBloque.bloque!.id)"
+    >
+      🗑️ Eliminar bloque
+    </div>
   </div>
 </div>
 
 <div class="overlay" *ngIf="popupCampoVisible">
   <div class="popup" (click)="$event.stopPropagation()">
-    <h3>Nuevo campo</h3>
+    <h3>{{ campoEditandoId ? 'Editar campo' : 'Nuevo campo' }}</h3>
 
     <label>Tipo</label>
     <select [(ngModel)]="nuevoCampo.tipo">
@@ -105,7 +173,11 @@
     <h3>Guardar plantilla</h3>
 
     <label>Nombre de la plantilla</label>
-    <input type="text" [(ngModel)]="nombrePlantillaTemporal" placeholder="Ej. Presupuesto familiar" />
+    <input
+      type="text"
+      [(ngModel)]="nombrePlantillaTemporal"
+      placeholder="Ej. Presupuesto familiar"
+    />
 
     <div class="acciones">
       <button class="btn btn-success" type="button" (click)="confirmarPrimerGuardado()" [disabled]="guardando">
