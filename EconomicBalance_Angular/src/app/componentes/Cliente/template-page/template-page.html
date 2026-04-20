@@ -139,6 +139,14 @@
     </div>
 
     <div
+      class="opcion-menu"
+      *ngIf="menuBloque.bloque"
+      (click)="calcularTotalBloque(menuBloque.bloque!)"
+    >
+      🧮 Calcular total
+    </div>
+
+    <div
       class="opcion-menu text-danger"
       *ngIf="menuBloque.bloque"
       (click)="eliminarBloque(menuBloque.bloque!.id)"
@@ -165,7 +173,7 @@
     <input type="text" [(ngModel)]="nuevoCampo.nombre" />
 
     <label>Cantidad</label>
-    <input type="number" [(ngModel)]="nuevoCampo.cantidad" />
+    <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.cantidad" />
 
     <div class="acciones">
       <button class="btn btn-success" (click)="guardarCampo()">

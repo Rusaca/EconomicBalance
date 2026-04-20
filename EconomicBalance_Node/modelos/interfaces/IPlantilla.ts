@@ -2,7 +2,7 @@ import { Document, Types } from 'mongoose';
 
 export interface ICampo {
   id: string;
-  tipo: 'ingreso' | 'gasto';
+  tipo: 'ingreso' | 'gasto' | 'total';
   categoria: string;
   nombre: string;
   cantidad: number;

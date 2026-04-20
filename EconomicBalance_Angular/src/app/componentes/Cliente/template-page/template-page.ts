@@ -141,14 +141,56 @@ export class TemplatePage implements OnInit {
       x: bloque.x + desplazamiento,
       y: bloque.y + desplazamiento,
       fijado: false,
-      campos: bloque.campos.map((campo) => ({
-        ...campo,
-        id: this.generarId()
-      }))
+      campos: bloque.campos
+        .filter((campo) => campo.tipo !== 'total')
+        .map((campo) => ({
+          ...campo,
+          id: this.generarId()
+        }))
     };
 
     this.template.blocks.push(bloqueClonado);
     this.mensajeGuardado = 'Bloque clonado correctamente';
+    this.cerrarMenus();
+    this.limpiarMensajeGuardado();
+  }
+
+  calcularTotalBloque(bloque: Bloque): void {
+    const total = bloque.campos.reduce((acumulado, campo) => {
+      if (campo.tipo === 'total') {
+        return acumulado;
+      }
+
+      const cantidad = Math.abs(Number(campo.cantidad) || 0);
+
+      if (campo.tipo === 'gasto') {
+        return acumulado - cantidad;
+      }
+
+      if (campo.tipo === 'ingreso') {
+        return acumulado + cantidad;
+      }
+
+      return acumulado;
+    }, 0);
+
+    const campoTotalExistente = bloque.campos.find(campo => campo.tipo === 'total');
+
+    if (campoTotalExistente) {
+      campoTotalExistente.nombre = 'Total';
+      campoTotalExistente.categoria = 'Resumen';
+      campoTotalExistente.cantidad = total;
+    } else {
+      bloque.campos.push({
+        id: this.generarId(),
+        tipo: 'total',
+        categoria: 'Resumen',
+        nombre: 'Total',
+        cantidad: total,
+      });
+    }
+
+    this.mensajeGuardado = 'Total calculado correctamente';
     this.cerrarMenus();
     this.limpiarMensajeGuardado();
   }
@@ -181,6 +223,12 @@ export class TemplatePage implements OnInit {
   }
 
   editarCampo(bloque: Bloque, campo: Campo): void {
+    if (campo.tipo === 'total') {
+      this.mensajeGuardado = 'El campo Total se calcula automáticamente';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
     this.bloqueSeleccionado = bloque;
     this.campoEditandoId = campo.id;
 
@@ -199,9 +247,16 @@ export class TemplatePage implements OnInit {
 
     const nombre = this.nuevoCampo.nombre.trim();
     const categoria = this.nuevoCampo.categoria.trim();
+    const cantidad = Number(this.nuevoCampo.cantidad);
 
     if (!nombre) {
       this.mensajeGuardado = 'El campo debe tener un nombre';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    if (isNaN(cantidad) || cantidad < 0) {
+      this.mensajeGuardado = 'La cantidad debe ser positiva o 0';
       this.limpiarMensajeGuardado();
       return;
     }
@@ -213,7 +268,7 @@ export class TemplatePage implements OnInit {
         campo.tipo = this.nuevoCampo.tipo;
         campo.categoria = categoria;
         campo.nombre = nombre;
-        campo.cantidad = Number(this.nuevoCampo.cantidad);
+        campo.cantidad = cantidad;
       }
     } else {
       this.bloqueSeleccionado.campos.push({
@@ -221,7 +276,7 @@ export class TemplatePage implements OnInit {
         tipo: this.nuevoCampo.tipo,
         categoria,
         nombre,
-        cantidad: Number(this.nuevoCampo.cantidad),
+        cantidad,
       });
     }
 
