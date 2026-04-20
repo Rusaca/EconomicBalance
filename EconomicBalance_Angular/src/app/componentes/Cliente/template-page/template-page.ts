@@ -14,7 +14,7 @@ import { Plantilla, Bloque } from '../../../modelos/template.intetrfaces';
   styleUrl: './template-page.css',
 })
 export class TemplatePage implements OnInit {
-  template!: Plantilla;
+  template: Plantilla | null = null;
 
   menuLienzo = { visible: false, x: 0, y: 0 };
   menuBloque = { visible: false, x: 0, y: 0, bloque: null as Bloque | null };
@@ -106,7 +106,7 @@ export class TemplatePage implements OnInit {
       campos: [],
     };
 
-    this.template.blocks.push(nuevoBloque);
+    this.template?.blocks?.push(nuevoBloque);
     this.cerrarMenus();
   }
 
