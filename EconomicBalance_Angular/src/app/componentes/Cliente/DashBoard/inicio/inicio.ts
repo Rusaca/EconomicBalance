@@ -1,75 +1,43 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { TemplatesService } from '../../../../services/templates-service';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { FooterComponent } from '../../../Portal/Footer/footer';
+import { HeaderComponent } from '../../../Portal/Header/header';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
-export class Inicio implements OnInit {
-  nombreUsuario: string = '';
+export class Inicio implements OnInit, OnDestroy {
+  carouselImages: string[] = ['/imagenGestionaTusGastos.png', '/libretaPresupuesto.png'];
+  currentImageIndex = 0;
+  private carouselTimer: ReturnType<typeof setInterval> | null = null;
 
-  constructor(
-    private router: Router,
-    private templateService: TemplatesService
-  ) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.cargarNombreUsuario();
+    this.startCarousel();
   }
 
-  get sesionIniciada(): boolean {
-    return this.nombreUsuario.trim().length > 0;
-  }
-
-  cerrarSesion(): void {
-    localStorage.removeItem('usuario');
-    this.nombreUsuario = '';
-    this.router.navigate(['/']);
-  }
-
-  crearPlantilla() {
-    const usuario = localStorage.getItem('usuario');
-
-    if (!usuario) {
-      alert('Debes iniciar sesión para crear una plantilla');
-      this.router.navigate(['/login']);
-      return;
+  ngOnDestroy(): void {
+    if (this.carouselTimer) {
+      clearInterval(this.carouselTimer);
+      this.carouselTimer = null;
     }
-
-    this.templateService.createBlank().subscribe({
-      next: (respuesta) => {
-        if (!respuesta.ok) {
-          alert(respuesta.mensaje);
-          return;
-        }
-
-        this.router.navigate(['/templates', respuesta.data.id]);
-      },
-      error: (error) => {
-        console.error('Error creando plantilla:', error);
-        alert('No se pudo crear la plantilla');
-      }
-    });
   }
 
-  private cargarNombreUsuario(): void {
-    const usuarioRaw = localStorage.getItem('usuario');
+  goToSlide(index: number): void {
+    this.currentImageIndex = index;
+    this.cdr.detectChanges();
+  }
 
-    if (!usuarioRaw) {
-      this.nombreUsuario = '';
-      return;
-    }
-
-    try {
-      const usuario = JSON.parse(usuarioRaw);
-      this.nombreUsuario = usuario?.nombre ?? '';
-    } catch {
-      this.nombreUsuario = '';
-    }
+  private startCarousel(): void {
+    this.carouselTimer = setInterval(() => {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.carouselImages.length;
+      this.cdr.detectChanges();
+    }, 3000);
   }
 }

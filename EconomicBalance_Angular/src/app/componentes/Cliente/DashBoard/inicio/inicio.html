@@ -1,126 +1,100 @@
-<!-- HEADER -->
-<header class="border-bottom bg-white">
-  <nav class="navbar navbar-expand-lg container py-3">
-    <a class="navbar-brand fw-bold" href="#">EconomicBalance</a>
+<app-header></app-header>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-      aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav ms-auto gap-2">
-        <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Plantillas</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
-      </ul>
-
-      <div class="d-flex ms-lg-3 gap-2 align-items-center">
-        <span class="texto-bienvenida" *ngIf="sesionIniciada">Hola, {{ nombreUsuario }}</span>
-        <button class="btn btn-outline-dark" *ngIf="!sesionIniciada" routerLink="/login">Iniciar Sesion</button>
-        <button class="btn btn-outline-dark" *ngIf="sesionIniciada" type="button" (click)="cerrarSesion()">Cerrar sesion</button>
-        <button class="btn btn-dark" (click)="crearPlantilla()">
-          Crear plantilla
-        </button>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<!-- MAIN -->
-<main class="container my-4">
-  <section class="text-center mb-4">
-    <h1 class="fw-bold">Controla tus finanzas como en Notion</h1>
-    <p class="text-muted mb-0">
-      Plantillas, bloques y métricas para organizar ingresos, gastos y presupuestos.
+<!-- HERO SECTION -->
+<section class="hero container py-5">
+  <div class="hero-left">
+    <h1 class="fw-bold display-5">Controla tus gastos sin complicaciones</h1>
+    <p class="text-muted mt-3">
+      Organiza ingresos, gastos y presupuestos con una interfaz clara, moderna y pensada para ti.
     </p>
-  </section>
 
-  <!-- CARRUSEL -->
-  <div id="inicioCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-      <button type="button" data-bs-target="#inicioCarousel" data-bs-slide-to="0" class="active" aria-current="true"
-        aria-label="Slide 1"></button>
-      <button type="button" data-bs-target="#inicioCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#inicioCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
-
-    <div class="carousel-inner">
-      <div class="carousel-item active">
-        <img src="https://picsum.photos/seed/economicbalance-1/1200/500" class="d-block w-100"
-          alt="Imagen de prueba 1" />
-        <div class="carousel-caption d-none d-md-block">
-          <h5 class="fw-bold">Plantillas listas para usar</h5>
-          <p>Empieza rápido y personaliza a tu estilo.</p>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <img src="https://picsum.photos/seed/economicbalance-2/1200/500" class="d-block w-100"
-          alt="Imagen de prueba 2" />
-        <div class="carousel-caption d-none d-md-block">
-          <h5 class="fw-bold">Bloques y categorías</h5>
-          <p>Gastos fijos, variables, presupuestos y más.</p>
-        </div>
-      </div>
-
-      <div class="carousel-item">
-        <img src="https://picsum.photos/seed/economicbalance-3/1200/500" class="d-block w-100"
-          alt="Imagen de prueba 3" />
-        <div class="carousel-caption d-none d-md-block">
-          <h5 class="fw-bold">Visualiza tu progreso</h5>
-          <p>En el futuro: gráficas y resúmenes automáticos.</p>
-        </div>
-      </div>
-    </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#inicioCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Anterior</span>
-    </button>
-
-    <button class="carousel-control-next" type="button" data-bs-target="#inicioCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Siguiente</span>
-    </button>
-  </div>
-
-  <!-- BLOQUE EXTRA (opcional, para que se vea más “home”) -->
-  <section class="row g-3 mt-4">
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">Ingresos</h5>
-          <p class="card-text text-muted">Nómina, inversiones, extras…</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">Gastos</h5>
-          <p class="card-text text-muted">Fijos y variables con historial por mes.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">Presupuestos</h5>
-          <p class="card-text text-muted">Define límites y controla desviaciones.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<!-- FOOTER -->
-<footer class="border-top bg-white">
-  <div class="container py-4 d-flex flex-column flex-md-row gap-2 justify-content-between align-items-center">
-    <div class="d-flex gap-3">
-      <a class="text-muted text-decoration-none" href="#">Privacidad</a>
-      <a class="text-muted text-decoration-none" href="#">Términos</a>
-      <a class="text-muted text-decoration-none" href="#">Contacto</a>
+    <div class="mt-4 d-flex gap-3">
+      <a routerLink="/registro" class="btn btn-dark px-4 py-2">Empezar ahora</a>
     </div>
   </div>
-</footer>
+
+  <div class="hero-right">
+    <img src="/Ilustración financie.png" alt="Dashboard económico" class="hero-img">
+  </div>
+</section>
+
+<!-- DECORATIVE SUMMARY CARDS -->
+<section class="decorative-end container mb-4" aria-label="Resumen decorativo">
+  <div class="row g-3">
+    <div class="col-12 col-lg-4">
+      <article class="decorative-card">
+        <h3>Ingresos</h3>
+        <p>Nómina, inversiones, extras...</p>
+      </article>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <article class="decorative-card">
+        <h3>Gastos</h3>
+        <p>Fijos y variables con historial por mes.</p>
+      </article>
+    </div>
+
+    <div class="col-12 col-lg-4">
+      <article class="decorative-card">
+        <h3>Presupuestos</h3>
+        <p>Define límites y controla desviaciones.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST SECTION -->
+<section class="trust-section bg-dark text-white py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-12 col-lg-6">
+        <h2 class="display-4 fw-bold mb-4">Miles confían en nosotros</h2>
+        
+        <div class="trust-stat mb-4">
+          <p class="fs-5 mb-2"><strong>Más de 5,000 usuarios activos</strong></p>
+          <p class="text-muted">En todo el mundo gestionando sus finanzas de forma inteligente.</p>
+        </div>
+
+        <div class="trust-stat mb-4">
+          <p class="fs-5 mb-2"><strong>Más de 2 millones de euros</strong></p>
+          <p class="text-muted">En movimientos financieros controlados y organizados en nuestros usuarios.</p>
+        </div>
+
+        <div class="trust-stat">
+          <p class="fs-5 mb-2"><strong>Soporte disponible 24/7</strong></p>
+          <p class="text-muted">Habla con nuestro equipo de expertos cuando lo necesites. Estamos aquí para ayudarte.</p>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6 text-center">
+        <div class="trust-highlight trust-media-frame">
+          <div
+            class="trust-media-track"
+            [style.transform]="'translateX(-' + (currentImageIndex * 100) + '%)'"
+          >
+            <img
+              *ngFor="let image of carouselImages"
+              [src]="image"
+              alt="Vista de gestion financiera en EconomicBalance"
+              class="trust-media-image"
+            >
+          </div>
+
+          <div class="carousel-dots" aria-label="Indicadores del carrusel">
+            <button
+              *ngFor="let image of carouselImages; let i = index"
+              class="carousel-dot"
+              type="button"
+              [class.active]="currentImageIndex === i"
+              (click)="goToSlide(i)"
+              [attr.aria-label]="'Ir a la imagen ' + (i + 1)"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-footer></app-footer>
