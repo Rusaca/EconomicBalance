@@ -1,0 +1,125 @@
+/* Fondo suave corporativo */
+:host {
+  background: linear-gradient(135deg, #f5f7fa, #e4e7eb);
+}
+
+/* Card más elegante */
+.card-activacion {
+  max-width: 420px;
+  width: 100%;
+  border-radius: 14px;
+}
+
+/* Logo a la izquierda */
+.logo-izquierda {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 150px;
+  opacity: 0.95;
+  animation: fade 0.4s ease-out forwards;
+}
+
+/* Footer profesional */
+.footer-profesional {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.footer-profesional .marca {
+  font-weight: 600;
+  color: #4a6cf7;
+}
+
+/* Fade-in suave */
+.fade-in {
+  animation: fade 0.4s ease-out forwards;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CHECK VERDE ANIMADO */
+.check-animado {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 6px solid #4caf50;
+  position: relative;
+  animation: pop 0.4s ease-out forwards;
+}
+
+.check-animado::after {
+  content: "";
+  position: absolute;
+  left: 34px;
+  top: 20px;
+  width: 30px;
+  height: 60px;
+  border-right: 6px solid #4caf50;
+  border-bottom: 6px solid #4caf50;
+  transform: rotate(45deg);
+  opacity: 0;
+  animation: check-draw 0.4s 0.3s ease-out forwards;
+}
+
+/* X ROJA ANIMADA (ajustada arriba + izquierda) */
+.error-animado {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 6px solid #e53935;
+  position: relative;
+  animation: pop 0.4s ease-out forwards;
+}
+
+.error-animado::before,
+.error-animado::after {
+  content: "";
+  position: absolute;
+  top: 48px;      /* SUBIDO */
+  left: 24px;     /* MÁS A LA IZQUIERDA */
+  width: 55px;
+  height: 6px;
+  background: #e53935;
+  opacity: 0;
+  animation: x-draw 0.3s ease-out forwards;
+  transform-origin: center;
+}
+
+.error-animado::before {
+  transform: rotate(45deg);
+  animation-delay: 0.3s;
+}
+
+.error-animado::after {
+  transform: rotate(-45deg);
+  animation-delay: 0.45s;
+}
+/* Logo dentro de la tarjeta */
+/* Logo dentro de la tarjeta, centrado */
+.logo-card {
+  width: 160px;
+  opacity: 0.95;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  animation: fade 0.4s ease-out forwards;
+}
+
+
+/* Animaciones */
+@keyframes pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes check-draw {
+  to { opacity: 1; }
+}
+
+@keyframes x-draw {
+  to { opacity: 1; }
+}

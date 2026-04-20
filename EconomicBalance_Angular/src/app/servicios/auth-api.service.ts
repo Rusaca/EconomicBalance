@@ -30,4 +30,40 @@ export class AuthApiService {
     return await this.http.get('/cliente/users');
   }
 
+  async loginGoogle(data: { token: string }) {
+  try {
+    const respuesta = await fetch('http://localhost:3000/auth/google', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    return await respuesta.json();
+  } catch (error) {
+    console.error('Error login Google:', error);
+    return { ok: false, mensaje: 'Error conectando con el servidor' };
+  }
+}
+
+async activarCuenta(token: string): Promise<IRespuestaAuth> {
+  try {
+    const respuesta = await fetch(`http://localhost:3000/api/cliente/activar?token=${token}`);
+
+    const data = await respuesta.json();
+
+    return {
+      ok: data.ok === true,     // <-- ESTA ES LA CLAVE
+      mensaje: data.mensaje || '',
+      data
+    };
+
+  } catch (error) {
+    return {
+      ok: false,
+      mensaje: 'Error conectando con el servidor'
+    };
+  }
+}
 }

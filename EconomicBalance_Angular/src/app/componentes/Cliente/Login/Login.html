@@ -1,83 +1,61 @@
-<div class="container vh-100 d-flex justify-content-center align-items-center">
+<video #videoElement autoplay muted loop playsinline preload="auto" class="video-fondo">
+    <source src="assets/VideoLoginyregistro.mp4" type="video/mp4">
 
-  <div class="card shadow p-4" style="width:380px">
 
-    <h3 class="text-center mb-4">Iniciar sesión</h3>
 
-    <form (ngSubmit)="login()">
+</video>
 
-      <div class="mb-3">
-        <label class="form-label">Correo electrónico</label>
-        <input
-          type="email"
-          class="form-control"
-          [(ngModel)]="correo"
-          name="correo"
-          required>
-      </div>
 
-      <div class="mb-3">
-        <label class="form-label">Contraseña</label>
-        <input
-          type="password"
-          class="form-control"
-          [(ngModel)]="password"
-          name="password"
-          required>
-      </div>
+<div class="overlay"></div>
 
-      <div class="form-check mb-3">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          [(ngModel)]="remember"
-          name="remember">
-        <label class="form-check-label">
-          Recordar sesión
-        </label>
-      </div>
+<div class="container-login">
 
-      <button class="btn btn-primary w-100 mb-3">
-        Iniciar sesión
-      </button>
+    <!-- LOGO ARRIBA A LA IZQUIERDA -->
+    <img  src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-login" width="380" height="auto">
 
-    </form>
 
-    <div class="text-center mb-3">
-      o continuar con
-    </div>
+    <!-- TARJETA DE LOGIN -->
+    <div class="card shadow p-4 tarjeta-pro">
 
-    <!-- Google -->
+        <h3 class="titulo-login text-center fw-bold">Inicio de sesión</h3>
 
-    <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
+        <form (ngSubmit)="login()">
+
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" [(ngModel)]="correo" name="correo" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" [(ngModel)]="password" name="password" required>
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" [(ngModel)]="remember" name="remember">
+                <label class="form-check-label">Recordar sesión</label>
+            </div>
+
+            <button class="btn btn-primary w-100 mb-3">Iniciar sesión</button>
+
+        </form>
+
+        <div class="text-center mb-3">o continuar con</div>
+
+        <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
             (click)="loginGoogle()">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20"
+                class="me-2">
+            Continuar con Google
+        </button>
 
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-           width="20"
-           class="me-2">
 
-      Continuar con Google
 
-    </button>
+        <div class="text-center mt-3">
+            ¿No tienes cuenta?
+            <a routerLink="/registro" class="text-info fw-bold">Regístrate</a>
+        </div>
 
-    <!-- Apple -->
-
-    <button class="btn btn-dark w-100 d-flex align-items-center justify-content-center"
-            (click)="loginApple()">
-
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
-           width="20"
-           class="me-2">
-
-      Continuar con Apple
-
-    </button>
-
-    <div class="text-center mt-3">
-      ¿No tienes cuenta?
-      <a routerLink="/registro">Registrate</a>
     </div>
-
-  </div>
 
 </div>

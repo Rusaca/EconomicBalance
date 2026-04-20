@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
-import { IUsuario } from '../interfaces/IUsusario';
+import { IUsuario } from '../interfaces/IUsuario';
 
-const UserSchema = new Schema< IUsuario>(
+const UserSchema = new Schema<IUsuario>(
   {
     nombre: {
       type: String,
@@ -23,10 +23,19 @@ const UserSchema = new Schema< IUsuario>(
     password: {
       type: String,
       required: true
+    },
+
+    activo: {
+      type: Boolean,
+      default: false
+    },
+
+    tokenActivacion: {
+      type: String,
+      required: false
     }
   },
   {
-    // timestamps: true,
     versionKey: false
   }
 );

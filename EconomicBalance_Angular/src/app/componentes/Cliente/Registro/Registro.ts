@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
-import { AuthFormService } from '../../../servicios/auth-form.service';
+import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../servicios/auth-api.service';
 
 @Component({
@@ -9,57 +8,73 @@ import { AuthApiService } from '../../../servicios/auth-api.service';
   standalone: true,
   imports: [FormsModule, RouterLink],
   templateUrl: './Registro.html',
-  styleUrl: './Registro.css', // si lo tienes, si no quita esta línea
+  styleUrl: './Registro.css',
 })
 export class Registro {
+
   nombre: string = '';
   apellidos: string = '';
   correo: string = '';
   password: string = '';
   confirmPassword: string = '';
 
-   constructor(
-    private authFormService: AuthFormService,
+  constructor(
     private authApiService: AuthApiService,
     private router: Router
   ) {}
 
- async register() {
+  async register() {
+
+    // 🔴 VALIDACIÓN FRONTEND
+    if (!this.nombre || !this.apellidos || !this.correo || !this.password) {
+      alert('Faltan campos obligatorios');
+      return;
+    }
+
     if (this.password !== this.confirmPassword) {
       alert('Las contraseñas no coinciden');
       return;
     }
 
-    const payload = this.authFormService.collectRegistroData({
+    const payload = {
       nombre: this.nombre,
       apellidos: this.apellidos,
       correo: this.correo,
-      password: this.password,
-      confirmPassword: this.confirmPassword,
-    });
+      password: this.password
+    };
+
     console.log('Payload registro:', payload);
+
     try {
+
       const respuesta = await this.authApiService.registrarUsuario(payload);
 
-      console.log('respuesta registro backend:', respuesta);
+      console.log('Respuesta backend:', respuesta);
 
       if (!respuesta.ok) {
         alert(respuesta.mensaje);
         return;
       }
 
-      alert('Usuario registrado correctamente');
+      alert('Usuario registrado correctamente. Revisa tu correo 📩');
 
+      // 🔄 LIMPIAR FORMULARIO
       this.nombre = '';
       this.apellidos = '';
       this.correo = '';
       this.password = '';
       this.confirmPassword = '';
 
+      // 🔁 IR A LOGIN
       this.router.navigate(['/login']);
+
     } catch (error) {
       console.error('Error en registro:', error);
       alert('Error conectando con el servidor');
     }
+  }
+
+  loginGoogle() {
+    console.log("Login con Google desde registro");
   }
 }

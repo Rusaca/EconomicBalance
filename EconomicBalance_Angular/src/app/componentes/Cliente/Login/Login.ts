@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink , Router} from '@angular/router';
 import { AuthFormService } from '../../../servicios/auth-form.service';
 import { AuthApiService } from '../../../servicios/auth-api.service';
+
+declare const google: any; // ← AÑADIDO
 
 @Component({
   selector: 'app-login',
@@ -11,18 +13,37 @@ import { AuthApiService } from '../../../servicios/auth-api.service';
   templateUrl: './Login.html',
   styleUrl: './Login.css',
 })
-export class Login {
+export class Login implements OnInit, AfterViewInit {   // ← AÑADIDO implements OnInit, AfterViewInit
+
   correo: string = '';
   password: string = '';
   remember: boolean = false;
 
-   constructor(
+  @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
+
+  constructor(
     private authFormService: AuthFormService,
     private authApiService: AuthApiService,
     private router: Router
   ) {}
 
- async login() {
+  // ← AÑADIDO: Inicialización de Google Identity Services
+  ngOnInit() {
+    google.accounts.id.initialize({
+      client_id: 'TU_CLIENT_ID_DE_GOOGLE',
+      callback: (response: any) => this.handleGoogleCredential(response)
+    });
+  }
+
+  ngAfterViewInit() {
+    // Forzar la reproducción del video de fondo
+    const video = this.videoElement.nativeElement;
+    video.play().catch(error => {
+      console.log('Video autoplay failed:', error);
+    });
+  }
+
+  async login() {
     const payload = this.authFormService.collectLoginData({
       correo: this.correo,
       password: this.password,
@@ -49,12 +70,32 @@ export class Login {
     }
   }
 
+  // ← MODIFICADO: ahora abre el popup de Google
   loginGoogle() {
-    console.log('login google');
+    google.accounts.id.prompt();
   }
 
-  loginApple() {
-    console.log('login apple');
+  // ← AÑADIDO: recibe el token de Google y lo envía al backend
+  async handleGoogleCredential(response: any) {
+    try {
+      const googleToken = response.credential;
+
+      const respuesta = await this.authApiService.loginGoogle({ token: googleToken });
+
+      if (!respuesta.ok) {
+        alert(respuesta.mensaje);
+        return;
+      }
+
+      localStorage.setItem('usuario', JSON.stringify(respuesta.data));
+      alert('Login con Google correcto');
+
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Error Google Login:', error);
+      alert('Error conectando con Google');
+    }
   }
+
+
 }
-

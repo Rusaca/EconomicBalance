@@ -1,9 +1,7 @@
 <!-- 🔝 BARRA SUPERIOR -->
 <div class="barra-superior">
 
-  <button class="btn btn-primary"
-          (click)="guardarPlantilla()"
-          [disabled]="guardando">
+  <button class="btn btn-primary" (click)="guardarPlantilla()" [disabled]="guardando">
     {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
   </button>
 
@@ -16,15 +14,8 @@
 <!-- 🟦 LIENZO -->
 <div class="lienzo" (contextmenu)="abrirMenuLienzo($event)">
 
-  <!-- 🔲 BLOQUES -->
-  <div
-    class="bloque"
-    *ngFor="let bloque of template?.blocks"
-    [style.left.px]="bloque.x"
-    [style.top.px]="bloque.y"
-    (mousedown)="startDrag($event, bloque)"
-    (contextmenu)="abrirMenuBloque($event, bloque)"
-  >
+  <div class="bloque" *ngFor="let bloque of template?.blocks" [style.left.px]="bloque.x"
+    [style.top.px]="bloque.y" (mousedown)="startDrag($event, bloque)" (contextmenu)="abrirMenuBloque($event, bloque)">
 
     <div class="titulo">
       {{ bloque.titulo }}
@@ -39,26 +30,16 @@
   </div>
 
   <!-- 📌 MENÚ CONTEXTUAL LIENZO -->
-  <div
-    class="menu"
-    *ngIf="menuLienzo.visible"
-    [style.left.px]="menuLienzo.x"
-    [style.top.px]="menuLienzo.y"
-    (click)="$event.stopPropagation()"
-  >
+  <div class="menu" *ngIf="menuLienzo.visible" [style.left.px]="menuLienzo.x" [style.top.px]="menuLienzo.y"
+    (click)="$event.stopPropagation()">
     <div class="opcion-menu" (click)="crearBloque()">
       ➕ Crear bloque
     </div>
   </div>
 
   <!-- 📌 MENÚ CONTEXTUAL BLOQUE -->
-  <div
-    class="menu menu-fixed"
-    *ngIf="menuBloque.visible"
-    [style.left.px]="menuBloque.x"
-    [style.top.px]="menuBloque.y"
-    (click)="$event.stopPropagation()"
-  >
+  <div class="menu menu-fixed" *ngIf="menuBloque.visible" [style.left.px]="menuBloque.x" [style.top.px]="menuBloque.y"
+    (click)="$event.stopPropagation()">
     <div class="opcion-menu" (click)="abrirPopupCampo()">
       ➕ Crear campo
     </div>
