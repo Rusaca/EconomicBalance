@@ -32,15 +32,18 @@
     *ngFor="let bloque of template.blocks"
     [style.left.px]="bloque.x"
     [style.top.px]="bloque.y"
-    (mousedown)="startDrag($event, bloque)"
     (contextmenu)="abrirMenuBloque($event, bloque)"
   >
-    <div class="titulo d-flex justify-content-between align-items-center gap-2">
+    <div
+      class="titulo d-flex justify-content-between align-items-center gap-2"
+      (mousedown)="startDrag($event, bloque)"
+    >
       <input
         class="form-control form-control-sm"
         type="text"
         [(ngModel)]="bloque.titulo"
         placeholder="Título del bloque"
+        (mousedown)="$event.stopPropagation()"
       />
 
       <div class="d-flex gap-1">
@@ -125,6 +128,14 @@
   >
     <div class="opcion-menu" (click)="abrirPopupCampo()">
       ➕ Crear campo
+    </div>
+
+    <div
+      class="opcion-menu"
+      *ngIf="menuBloque.bloque"
+      (click)="clonarBloque(menuBloque.bloque!)"
+    >
+      📄 Clonar bloque
     </div>
 
     <div

@@ -84,7 +84,7 @@ export default class AuthService {
       },
       secret,
       {
-        expiresIn: '7d'
+        expiresIn: '1d'
       }
     );
 

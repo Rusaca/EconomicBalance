@@ -88,6 +88,10 @@ export class TemplatePage implements OnInit {
     });
   }
 
+  private generarId(): string {
+    return `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+  }
+
   abrirMenuLienzo(event: MouseEvent): void {
     event.preventDefault();
     this.menuBloque.visible = false;
@@ -115,7 +119,7 @@ export class TemplatePage implements OnInit {
 
   crearBloque(): void {
     const nuevoBloque: Bloque = {
-      id: Date.now().toString(),
+      id: this.generarId(),
       titulo: 'Nuevo bloque',
       x: this.menuLienzo.x,
       y: this.menuLienzo.y,
@@ -125,6 +129,28 @@ export class TemplatePage implements OnInit {
 
     this.template.blocks.push(nuevoBloque);
     this.cerrarMenus();
+  }
+
+  clonarBloque(bloque: Bloque): void {
+    const desplazamiento = 40;
+
+    const bloqueClonado: Bloque = {
+      ...bloque,
+      id: this.generarId(),
+      titulo: `${bloque.titulo} (copia)`,
+      x: bloque.x + desplazamiento,
+      y: bloque.y + desplazamiento,
+      fijado: false,
+      campos: bloque.campos.map((campo) => ({
+        ...campo,
+        id: this.generarId()
+      }))
+    };
+
+    this.template.blocks.push(bloqueClonado);
+    this.mensajeGuardado = 'Bloque clonado correctamente';
+    this.cerrarMenus();
+    this.limpiarMensajeGuardado();
   }
 
   eliminarBloque(bloqueId: string): void {
@@ -191,7 +217,7 @@ export class TemplatePage implements OnInit {
       }
     } else {
       this.bloqueSeleccionado.campos.push({
-        id: Date.now().toString(),
+        id: this.generarId(),
         tipo: this.nuevoCampo.tipo,
         categoria,
         nombre,
