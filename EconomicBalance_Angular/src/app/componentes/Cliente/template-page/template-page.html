@@ -1,15 +1,13 @@
 <div class="barra-superior">
-
   <button class="btn btn-primary"
           (click)="guardarPlantilla()"
           [disabled]="guardando">
     {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
   </button>
 
-    <span class="mensaje" *ngIf="mensajeGuardado">
-      {{ mensajeGuardado }}
-    </span>
-  </div>
+  <span class="mensaje" *ngIf="mensajeGuardado">
+    {{ mensajeGuardado }}
+  </span>
 </div>
 
 <div class="lienzo" (contextmenu)="abrirMenuLienzo($event)">
@@ -22,8 +20,7 @@
     [style.top.px]="bloque.y"
     (contextmenu)="abrirMenuBloque($event, bloque)"
   >
-
-     <div
+    <div
       class="titulo d-flex justify-content-between align-items-center gap-2"
       (mousedown)="startDrag($event, bloque)"
     >
@@ -35,7 +32,36 @@
         (mousedown)="$event.stopPropagation()"
       />
 
-  
+      <div class="d-flex gap-1">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          (click)="toggleFijado(bloque)"
+        >
+          {{ bloque.fijado ? 'Desfijar' : 'Fijar' }}
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          (click)="abrirPopupCampo(bloque)"
+        >
+          + Campo
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          (click)="eliminarBloque(bloque.id)"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="bloque.campos.length === 0" class="text-muted small mt-2">
+      Este bloque todavía no tiene campos.
+    </div>
 
     <div *ngFor="let campo of bloque.campos" class="campo d-flex flex-column gap-2 mt-2">
       <div class="d-flex justify-content-between align-items-start gap-2">
