@@ -1,5 +1,5 @@
 <header class="border-bottom bg-white">
-  <nav class="navbar navbar-expand-lg container py-3">
+  <nav class="navbar navbar-expand-lg navbar-header py-3">
     <img src="/Logo%20de%20Economic%20Bal.png" alt="EconomicBalance" class="brand-logo">
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -8,16 +8,12 @@
 
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto gap-3">
-        <li class="nav-item"><a class="nav-link" (click)="navegarConVerificacion('/')">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" (click)="navegarConVerificacion('/templates/0')">Plantillas</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
       </ul>
 
       <div class="d-flex ms-lg-4 gap-2 align-items-center">
         <span class="texto-bienvenida" *ngIf="sesionIniciada">Hola, {{ nombreUsuario }}</span>
-        <button class="btn btn-outline-dark" *ngIf="!sesionIniciada" routerLink="/login">Iniciar Sesión</button>
+        <button class="btn btn-dark" *ngIf="!sesionIniciada" routerLink="/login">Iniciar Sesión</button>
         <button class="btn btn-outline-dark" *ngIf="sesionIniciada" (click)="cerrarSesion()">Cerrar sesión</button>
-        <button class="btn btn-dark" (click)="crearPlantilla()">Crear plantilla</button>
       </div>
     </div>
   </nav>

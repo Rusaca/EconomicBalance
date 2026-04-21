@@ -1,9 +1,110 @@
-<footer class="border-top bg-white mt-5">
-  <div class="container py-4 d-flex flex-column flex-md-row gap-2 justify-content-between align-items-center">
-    <div class="d-flex gap-3">
-      <a class="text-muted text-decoration-none" href="#">Privacidad</a>
-      <a class="text-muted text-decoration-none" href="#">Términos</a>
-      <a class="text-muted text-decoration-none" href="#">Contacto</a>
+<footer class="border-top mt-5 footer-dark">
+  <div class="container-fluid py-4 footer-shell">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+      <div>
+        <p class="mb-1 fw-semibold text-dark">EconomicBalance</p>
+        <p class="mb-0 text-muted small">Gestiona tus finanzas con claridad y seguridad.</p>
+      </div>
     </div>
+
+    <div class="footer-accordion mt-4" aria-label="Informacion legal y contacto">
+      <div class="footer-menu">
+        <button
+          type="button"
+          class="footer-item"
+          [class.active]="activeSection === 'terms'"
+          (click)="setActiveSection('terms')"
+        >
+          Términos y condiciones
+        </button>
+
+        <button
+          type="button"
+          class="footer-item"
+          [class.active]="activeSection === 'privacy'"
+          (click)="setActiveSection('privacy')"
+        >
+          Política de privacidad
+        </button>
+
+        <button
+          type="button"
+          class="footer-item"
+          [class.active]="activeSection === 'cookies'"
+          (click)="setActiveSection('cookies')"
+        >
+          Política de cookies
+        </button>
+
+        <button
+          type="button"
+          class="footer-item"
+          [class.active]="activeSection === 'contact'"
+          (click)="setActiveSection('contact')"
+        >
+          Contacto
+        </button>
+      </div>
+
+      <div class="footer-doc-panel">
+        <div class="footer-doc" [hidden]="activeSection !== 'terms'">
+          <h4>Términos y condiciones</h4>
+          <p>
+      El uso de esta aplicación de gestión de gastos implica la aceptación de los presentes Términos y Condiciones.<br><br>
+
+      La aplicación permite al usuario registrar manualmente ingresos y gastos, organizarlos en tablas y visualizar resúmenes y gráficos financieros.<br><br>
+
+      El usuario es responsable de la veracidad de los datos introducidos y del uso que haga de la herramienta.<br><br>
+
+      La aplicación no se conecta a cuentas bancarias ni accede a información financiera externa.<br><br>
+
+      El servicio puede ser modificado, actualizado o interrumpido en cualquier momento sin previo aviso.<br><br>
+
+      Todos los contenidos y funcionalidades están protegidos por derechos de propiedad intelectual.
+    </p>
+        </div>
+
+        <div class="footer-doc" [hidden]="activeSection !== 'privacy'">
+          <h4>Política de privacidad</h4>
+          <p>
+    Esta aplicación respeta la privacidad de los usuarios.<br><br>
+
+    Los datos introducidos (gastos, ingresos, categorías y presupuestos) se almacenan únicamente para el funcionamiento de la aplicación y la generación de estadísticas y gráficos.<br><br>
+
+    No se recopilan datos bancarios ni información financiera externa.<br><br>
+
+    Los datos no son compartidos con terceros.<br><br>
+
+    El usuario es responsable de la información que introduce en la aplicación.
+  </p>
+        </div>
+
+        <div class="footer-doc" [hidden]="activeSection !== 'cookies'">
+          <h4>Política de cookies</h4>
+          <p>
+    Esta aplicación puede utilizar cookies o tecnologías similares con el fin de mejorar la experiencia del usuario y analizar el uso de la plataforma.<br><br>
+
+    Las cookies permiten recordar preferencias y optimizar el rendimiento de la aplicación.<br><br>
+
+    El usuario puede configurar o desactivar las cookies desde su navegador.<br><br>
+
+    El uso de la aplicación implica la aceptación del uso de cookies en los términos descritos.
+  </p>
+        </div>
+
+        <div class="footer-doc" [hidden]="activeSection !== 'contact'">
+          <h4>Contacto</h4>
+          <p>
+            Escríbenos a
+            <a href="mailto:contacto@economicbalance.com" class="text-decoration-none">contacto@economicbalance.com</a>
+            y te responderemos lo antes posible.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <p class="mb-0 text-muted small">© 2026 EconomicBalance. Todos los derechos reservados.</p>
   </div>
 </footer>
