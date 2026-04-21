@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import PlantillaModel from '../modelos/modelos/PlantillaModel';
 
 export default class PlantillaService {
-  public async crearPlantilla(data: { nombre: string; userId: string }) {
-    const { nombre, userId } = data;
+  public async crearPlantilla(data: { nombre: string; userId: string; blocks?: any[] }) {
+    const { nombre, userId, blocks = [] } = data;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return {
@@ -15,7 +15,7 @@ export default class PlantillaService {
     const nuevaPlantilla = new PlantillaModel({
       nombre,
       userId,
-      blocks: []
+      blocks: Array.isArray(blocks) ? blocks : []
     });
 
     const guardada = await nuevaPlantilla.save();
@@ -91,7 +91,7 @@ export default class PlantillaService {
       };
     }
 
-    plantilla.nombre = nombre;
+    plantilla.nombre = nombre.trim();
     plantilla.blocks = Array.isArray(blocks) ? blocks : [];
 
     const actualizada = await plantilla.save();
@@ -101,6 +101,31 @@ export default class PlantillaService {
       mensaje: 'Plantilla actualizada correctamente',
       data: this.mapearPlantilla(actualizada)
     };
+  }
+
+  public async obtenerPlantillasPorUsuario(userId: string) {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return {
+          ok: false,
+          mensaje: 'userId no válido'
+        };
+      }
+
+      const plantillas = await PlantillaModel.find({ userId }).sort({ updatedAt: -1 });
+
+      return {
+        ok: true,
+        mensaje: 'Plantillas obtenidas correctamente',
+        data: plantillas.map((plantilla) => this.mapearPlantilla(plantilla))
+      };
+    } catch (error) {
+      console.error('Error obteniendo plantillas por usuario:', error);
+      return {
+        ok: false,
+        mensaje: 'Error obteniendo las plantillas del usuario'
+      };
+    }
   }
 
   private mapearPlantilla(plantilla: any) {

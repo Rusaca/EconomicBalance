@@ -1,20 +1,33 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { plantillaService } from '../../servicios/servicioNecesario';
+import { authMiddleware, AuthRequest } from '../../middleware/authMiddleware';
 
 const router = Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const { nombre, userId } = req.body;
+    const { nombre, blocks } = req.body;
+    const userId = req.usuario?.id;
 
-    if (!nombre || !userId) {
+    if (!nombre) {
       return res.status(400).json({
         ok: false,
-        mensaje: 'Faltan nombre o userId'
+        mensaje: 'Falta el nombre de la plantilla'
       });
     }
 
-    const respuesta = await plantillaService.crearPlantilla({ nombre, userId });
+    if (!userId) {
+      return res.status(401).json({
+        ok: false,
+        mensaje: 'Usuario no autenticado'
+      });
+    }
+
+    const respuesta = await plantillaService.crearPlantilla({
+      nombre,
+      userId,
+      blocks
+    });
 
     if (!respuesta.ok) {
       return res.status(400).json(respuesta);
@@ -30,10 +43,39 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/mis-plantillas', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    res.set('Cache-Control', 'no-store');
+
+    const userId = req.usuario?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        ok: false,
+        mensaje: 'Usuario no autenticado'
+      });
+    }
+
+    const respuesta = await plantillaService.obtenerPlantillasPorUsuario(userId);
+
+    if (!respuesta.ok) {
+      return res.status(400).json(respuesta);
+    }
+
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    console.error('Error en GET /api/plantillas/mis-plantillas:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error obteniendo las plantillas del usuario'
+    });
+  }
+});
+
+router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
-    const userId = req.query.userId as string;
+    const userId = req.usuario?.id;
 
     if (!id) {
       return res.status(400).json({
@@ -43,9 +85,9 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 
     if (!userId) {
-      return res.status(400).json({
+      return res.status(401).json({
         ok: false,
-        mensaje: 'Falta userId'
+        mensaje: 'Usuario no autenticado'
       });
     }
 
@@ -65,10 +107,11 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
-    const { nombre, userId, blocks } = req.body;
+    const { nombre, blocks } = req.body;
+    const userId = req.usuario?.id;
 
     if (!id) {
       return res.status(400).json({
@@ -77,10 +120,17 @@ router.put('/:id', async (req: Request, res: Response) => {
       });
     }
 
-    if (!nombre || !userId) {
+    if (!nombre) {
       return res.status(400).json({
         ok: false,
-        mensaje: 'Faltan nombre o userId'
+        mensaje: 'Falta el nombre de la plantilla'
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        ok: false,
+        mensaje: 'Usuario no autenticado'
       });
     }
 

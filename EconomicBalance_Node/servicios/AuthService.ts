@@ -1,19 +1,14 @@
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 import UserModel from '../modelos/modelos/UsuarioModel';
-import { enviarCorreoActivacion } from './CorreoService';
 
 export default class AuthService {
-
-  // 🟢 REGISTRO CON EMAIL
   public async registrarUsuario(data: {
     nombre: string;
     apellidos: string;
     correo: string;
     password: string;
   }) {
-
     const { nombre, apellidos, correo, password } = data;
 
     const usuarioExistente = await UserModel.findOne({
@@ -29,64 +24,28 @@ export default class AuthService {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // 🔥 TOKEN DE ACTIVACIÓN
-    const token = crypto.randomBytes(32).toString('hex');
-
     const nuevoUsuario = new UserModel({
       nombre,
       apellidos,
       correo: correo.toLowerCase(),
-      password: passwordHash,
-      activo: false,
-      tokenActivacion: token
+      password: passwordHash
     });
 
     await nuevoUsuario.save();
 
-
     return {
       ok: true,
-      mensaje: 'Revisa tu correo para activar la cuenta'
+      mensaje: 'Usuario registrado correctamente',
+      data: {
+        id: nuevoUsuario._id,
+        nombre: nuevoUsuario.nombre,
+        apellidos: nuevoUsuario.apellidos,
+        correo: nuevoUsuario.correo
+      }
     };
   }
 
- public async activarCuenta(token: string) {
-
-  const usuario = await UserModel.findOne({ tokenActivacion: token });
-
-  if (!usuario) {
-    return {
-      ok: false,
-      mensaje: 'Token inválido'
-    };
-  }
-
-  if (usuario.activo) {
-    return {
-      ok: false,
-      mensaje: 'Esta cuenta ya estaba activada'
-    };
-  }
-
-  await UserModel.updateOne(
-    { tokenActivacion: token },
-    {
-      $set: { activo: true },
-      $unset: { tokenActivacion: "" }
-    }
-  );
-
-  return {
-    ok: true,
-    mensaje: 'Cuenta activada correctamente'
-  };
-}
-
-
-
-  // 🟢 LOGIN
   public async loginUsuario(data: { correo: string; password: string }) {
-
     const { correo, password } = data;
 
     const usuario = await UserModel.findOne({
@@ -100,14 +59,6 @@ export default class AuthService {
       };
     }
 
-    // 🔴 BLOQUEO SI NO ACTIVADO
-    if (!usuario.activo) {
-      return {
-        ok: false,
-        mensaje: 'Debes activar tu cuenta desde el correo'
-      };
-    }
-
     const passwordCorrecta = await bcrypt.compare(password, usuario.password);
 
     if (!passwordCorrecta) {
@@ -117,19 +68,41 @@ export default class AuthService {
       };
     }
 
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      return {
+        ok: false,
+        mensaje: 'JWT_SECRET no configurado'
+      };
+    }
+
+    const token = jwt.sign(
+      {
+        id: usuario._id.toString(),
+        correo: usuario.correo
+      },
+      secret,
+      {
+        expiresIn: '1d'
+      }
+    );
+
     return {
       ok: true,
       mensaje: 'Login correcto',
       data: {
-        id: usuario._id,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        correo: usuario.correo
+        token,
+        usuario: {
+          id: usuario._id,
+          nombre: usuario.nombre,
+          apellidos: usuario.apellidos,
+          correo: usuario.correo
+        }
       }
     };
   }
 
-  // 🟢 OBTENER USUARIOS
   public async obtenerUsuarios() {
     const usuarios = await UserModel.find().select('-password');
 

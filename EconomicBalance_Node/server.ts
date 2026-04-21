@@ -42,8 +42,7 @@ app.use('/api/plantillas', rutasPlantilla);
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    console.log('MongoDB conectada correctamente');
-    console.log('Base conectada:', mongoose.connection.name);
+    
 
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en http://localhost:${PORT}`);

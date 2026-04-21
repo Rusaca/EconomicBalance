@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TemplatesService } from '../../../services/templates-service';
-import { Plantilla, Bloque } from '../../../modelos/template.intetrfaces';
+import { Plantilla, Bloque, Campo } from '../../../modelos/template.intetrfaces';
 
 @Component({
   selector: 'app-template-page',
@@ -14,7 +14,14 @@ import { Plantilla, Bloque } from '../../../modelos/template.intetrfaces';
   styleUrl: './template-page.css',
 })
 export class TemplatePage implements OnInit {
-  template: Plantilla | null = null;
+    template: Plantilla = {
+    id: '',
+    nombre: '',
+    userId: '',
+    blocks: []
+  };
+
+  esNuevaPlantilla = true;
 
   menuLienzo = { visible: false, x: 0, y: 0 };
   menuBloque = { visible: false, x: 0, y: 0, bloque: null as Bloque | null };
@@ -26,6 +33,10 @@ export class TemplatePage implements OnInit {
 
   popupCampoVisible = false;
   bloqueSeleccionado: Bloque | null = null;
+  campoEditandoId: string | null = null;
+
+  popupNombrePlantillaVisible = false;
+  nombrePlantillaTemporal = '';
 
   nuevoCampo = {
     tipo: 'gasto' as 'ingreso' | 'gasto',
@@ -44,31 +55,41 @@ export class TemplatePage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-
-    if (!id) {
-      this.router.navigate(['/']);
+    if (!localStorage.getItem('token') || !localStorage.getItem('usuario')) {
+      this.router.navigate(['/login']);
       return;
     }
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (!id || id === 'nueva') {
+      this.esNuevaPlantilla = true;
+      return;
+    }
+
+    this.esNuevaPlantilla = false;
 
     this.templateService.getById(id).subscribe({
       next: (respuesta) => {
         if (!respuesta.ok) {
-          this.router.navigate(['/']);
+          this.router.navigate(['/dashboard']);
           return;
         }
 
-        this.template = respuesta.data;
-
-        if (!this.template.blocks) {
-          this.template.blocks = [];
-        }
+        this.template = {
+          ...respuesta.data,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        };
       },
       error: (err) => {
         console.error('Error al cargar plantilla', err);
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       }
     });
+  }
+
+  private generarId(): string {
+    return `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
   }
 
   abrirMenuLienzo(event: MouseEvent): void {
@@ -92,13 +113,13 @@ export class TemplatePage implements OnInit {
       visible: true,
       x: event.clientX,
       y: event.clientY,
-      bloque: bloque,
+      bloque,
     };
   }
 
   crearBloque(): void {
     const nuevoBloque: Bloque = {
-      id: Date.now().toString(),
+      id: this.generarId(),
       titulo: 'Nuevo bloque',
       x: this.menuLienzo.x,
       y: this.menuLienzo.y,
@@ -106,14 +127,89 @@ export class TemplatePage implements OnInit {
       campos: [],
     };
 
-    this.template?.blocks?.push(nuevoBloque);
+     this.template.blocks.push(nuevoBloque);
     this.cerrarMenus();
   }
 
-  abrirPopupCampo(): void {
-    if (!this.menuBloque.bloque) return;
+  clonarBloque(bloque: Bloque): void {
+    const desplazamiento = 40;
 
-    this.bloqueSeleccionado = this.menuBloque.bloque;
+    const bloqueClonado: Bloque = {
+      ...bloque,
+      id: this.generarId(),
+      titulo: `${bloque.titulo} (copia)`,
+      x: bloque.x + desplazamiento,
+      y: bloque.y + desplazamiento,
+      fijado: false,
+      campos: bloque.campos
+        .filter((campo) => campo.tipo !== 'total')
+        .map((campo) => ({
+          ...campo,
+          id: this.generarId()
+        }))
+    };
+
+    this.template.blocks.push(bloqueClonado);
+    this.mensajeGuardado = 'Bloque clonado correctamente';
+    this.cerrarMenus();
+    this.limpiarMensajeGuardado();
+  }
+
+  calcularTotalBloque(bloque: Bloque): void {
+    const total = bloque.campos.reduce((acumulado, campo) => {
+      if (campo.tipo === 'total') {
+        return acumulado;
+      }
+
+      const cantidad = Math.abs(Number(campo.cantidad) || 0);
+
+      if (campo.tipo === 'gasto') {
+        return acumulado - cantidad;
+      }
+
+      if (campo.tipo === 'ingreso') {
+        return acumulado + cantidad;
+      }
+
+      return acumulado;
+    }, 0);
+
+    const campoTotalExistente = bloque.campos.find(campo => campo.tipo === 'total');
+
+    if (campoTotalExistente) {
+      campoTotalExistente.nombre = 'Total';
+      campoTotalExistente.categoria = 'Resumen';
+      campoTotalExistente.cantidad = total;
+    } else {
+      bloque.campos.push({
+        id: this.generarId(),
+        tipo: 'total',
+        categoria: 'Resumen',
+        nombre: 'Total',
+        cantidad: total,
+      });
+    }
+
+    this.mensajeGuardado = 'Total calculado correctamente';
+    this.cerrarMenus();
+    this.limpiarMensajeGuardado();
+  }
+
+  eliminarBloque(bloqueId: string): void {
+    this.template.blocks = this.template.blocks.filter(b => b.id !== bloqueId);
+    this.cerrarMenus();
+  }
+
+  toggleFijado(bloque: Bloque): void {
+    bloque.fijado = !bloque.fijado;
+  }
+
+  abrirPopupCampo(bloque?: Bloque): void {
+    const bloqueObjetivo = bloque || this.menuBloque.bloque;
+    if (!bloqueObjetivo) return;
+
+    this.bloqueSeleccionado = bloqueObjetivo;
+    this.campoEditandoId = null;
 
     this.nuevoCampo = {
       tipo: 'gasto',
@@ -126,28 +222,91 @@ export class TemplatePage implements OnInit {
     this.cerrarMenus();
   }
 
+  editarCampo(bloque: Bloque, campo: Campo): void {
+    if (campo.tipo === 'total') {
+      this.mensajeGuardado = 'El campo Total se calcula automáticamente';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    this.bloqueSeleccionado = bloque;
+    this.campoEditandoId = campo.id;
+
+    this.nuevoCampo = {
+      tipo: campo.tipo,
+      categoria: campo.categoria,
+      nombre: campo.nombre,
+      cantidad: campo.cantidad,
+    };
+
+    this.popupCampoVisible = true;
+  }
+
   guardarCampo(): void {
     if (!this.bloqueSeleccionado) return;
 
-    this.bloqueSeleccionado.campos.push({
-      id: Date.now().toString(),
-      tipo: this.nuevoCampo.tipo,
-      categoria: this.nuevoCampo.categoria,
-      nombre: this.nuevoCampo.nombre,
-      cantidad: Number(this.nuevoCampo.cantidad),
-    });
+    const nombre = this.nuevoCampo.nombre.trim();
+    const categoria = this.nuevoCampo.categoria.trim();
+    const cantidad = Number(this.nuevoCampo.cantidad);
+
+    if (!nombre) {
+      this.mensajeGuardado = 'El campo debe tener un nombre';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    if (isNaN(cantidad) || cantidad < 0) {
+      this.mensajeGuardado = 'La cantidad debe ser positiva o 0';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    if (this.campoEditandoId) {
+      const campo = this.bloqueSeleccionado.campos.find(c => c.id === this.campoEditandoId);
+
+      if (campo) {
+        campo.tipo = this.nuevoCampo.tipo;
+        campo.categoria = categoria;
+        campo.nombre = nombre;
+        campo.cantidad = cantidad;
+      }
+    } else {
+      this.bloqueSeleccionado.campos.push({
+        id: this.generarId(),
+        tipo: this.nuevoCampo.tipo,
+        categoria,
+        nombre,
+        cantidad,
+      });
+    }
 
     this.popupCampoVisible = false;
     this.bloqueSeleccionado = null;
+    this.campoEditandoId = null;
+  }
+
+  eliminarCampo(bloque: Bloque, campoId: string): void {
+    bloque.campos = bloque.campos.filter(campo => campo.id !== campoId);
   }
 
   cerrarPopupCampo(): void {
     this.popupCampoVisible = false;
     this.bloqueSeleccionado = null;
+    this.campoEditandoId = null;
   }
 
   startDrag(event: MouseEvent, bloque: Bloque): void {
-    if (bloque.fijado) return;
+    const target = event.target as HTMLElement;
+
+    if (
+      bloque.fijado ||
+      target.closest('input') ||
+      target.closest('select') ||
+      target.closest('button') ||
+      target.closest('textarea')
+    ) {
+      return;
+    }
 
     event.stopPropagation();
 
@@ -182,32 +341,107 @@ export class TemplatePage implements OnInit {
   }
 
   guardarPlantilla(): void {
-    if (!this.template?.id) return;
+    const nombreActual = this.template.nombre?.trim();
+
+    if (!this.template.id) {
+      this.nombrePlantillaTemporal = nombreActual || '';
+      this.popupNombrePlantillaVisible = true;
+      return;
+    }
+
+    if (!nombreActual) {
+      this.mensajeGuardado = 'La plantilla debe tener un nombre';
+      this.limpiarMensajeGuardado();
+      return;
+    }
 
     this.guardando = true;
     this.mensajeGuardado = '';
 
     this.templateService.updateTemplate(this.template.id, this.template).subscribe({
       next: (respuesta) => {
+        this.guardando = false;
+
         if (!respuesta.ok) {
-          this.guardando = false;
           this.mensajeGuardado = respuesta.mensaje || 'Error al guardar la plantilla';
+          this.limpiarMensajeGuardado();
           return;
         }
 
-        this.template = respuesta.data;
-        this.guardando = false;
-        this.mensajeGuardado = 'Plantilla guardada correctamente';
+        this.template = {
+          ...respuesta.data,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        };
 
-        setTimeout(() => {
-          this.mensajeGuardado = '';
-        }, 2500);
+        this.esNuevaPlantilla = false;
+        this.mensajeGuardado = 'Plantilla guardada correctamente';
+        this.limpiarMensajeGuardado();
       },
       error: (err) => {
         console.error('Error al guardar plantilla', err);
         this.guardando = false;
         this.mensajeGuardado = 'Error al guardar la plantilla';
+        this.limpiarMensajeGuardado();
       }
     });
+  }
+
+  confirmarPrimerGuardado(): void {
+    const nombre = this.nombrePlantillaTemporal.trim();
+
+    if (!nombre) {
+      this.mensajeGuardado = 'Debes indicar un nombre para guardar la plantilla';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    this.guardando = true;
+    this.mensajeGuardado = '';
+
+    this.templateService.createTemplate(nombre, this.template.blocks || []).subscribe({
+      next: (respuesta) => {
+        this.guardando = false;
+
+        if (!respuesta.ok) {
+          this.mensajeGuardado = respuesta.mensaje || 'Error creando la plantilla';
+          this.limpiarMensajeGuardado();
+          return;
+        }
+
+        this.template = {
+          ...respuesta.data,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        };
+
+        this.esNuevaPlantilla = false;
+        this.popupNombrePlantillaVisible = false;
+        this.nombrePlantillaTemporal = '';
+        this.mensajeGuardado = 'Plantilla guardada correctamente';
+        this.limpiarMensajeGuardado();
+
+        this.router.navigate(['/templates', this.template.id]);
+      },
+      error: (error) => {
+        console.error('Error creando plantilla', error);
+        this.guardando = false;
+        this.mensajeGuardado = 'Error creando la plantilla';
+        this.limpiarMensajeGuardado();
+      }
+    });
+  }
+
+  cancelarPrimerGuardado(): void {
+    this.popupNombrePlantillaVisible = false;
+    this.nombrePlantillaTemporal = '';
+  }
+
+  volverAlDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
+  private limpiarMensajeGuardado(): void {
+    setTimeout(() => {
+      this.mensajeGuardado = '';
+    }, 2500);
   }
 }

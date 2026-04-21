@@ -1,6 +1,6 @@
 export interface Campo {
   id: string;
-  tipo: 'ingreso' | 'gasto';
+  tipo: 'ingreso' | 'gasto' | 'total';
   categoria: string;
   nombre: string;
   cantidad: number;

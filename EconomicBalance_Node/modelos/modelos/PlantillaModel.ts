@@ -4,7 +4,7 @@ import { IPlantilla } from '../interfaces/IPlantilla';
 const CampoSchema = new Schema(
   {
     id: { type: String, required: true },
-    tipo: { type: String, enum: ['ingreso', 'gasto'], required: true },
+    tipo: { type: String, enum: ['ingreso', 'gasto', 'total'], required: true },
     categoria: { type: String, default: '' },
     nombre: { type: String, required: true, trim: true },
     cantidad: { type: Number, required: true, default: 0 }

@@ -1,0 +1,95 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { TemplatesService } from '../../../../services/templates-service';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './dashboard.html',
+  styleUrl: './dashboard.css'
+})
+export class Dashboard implements OnInit {
+  nombreUsuario = '';
+  plantillas: any[] = [];
+  cargandoPlantillas = false;
+
+  constructor(
+    private router: Router,
+    private templateService: TemplatesService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    console.log('Dashboard cargado');
+
+    if (!this.sesionIniciada) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.cargarNombreUsuario();
+    this.cargarPlantillas();
+  }
+
+  get sesionIniciada(): boolean {
+    return !!localStorage.getItem('usuario') && !!localStorage.getItem('token');
+  }
+
+  nuevaPlantilla(): void {
+    this.router.navigate(['/templates/nueva']);
+  }
+
+  abrirPlantilla(id: string): void {
+    this.router.navigate(['/templates', id]);
+  }
+
+  cerrarSesion(): void {
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
+  }
+
+  private cargarPlantillas(): void {
+    console.log('Entrando en cargarPlantillas');
+    this.cargandoPlantillas = true;
+    this.cdr.detectChanges();
+
+    this.templateService.getMisPlantillas().subscribe({
+      next: (respuesta) => {
+        console.log('RESPUESTA COMPLETA:', respuesta);
+
+        this.plantillas = Array.isArray(respuesta?.data) ? [...respuesta.data] : [];
+        this.cargandoPlantillas = false;
+
+        console.log('Plantillas cargadas:', this.plantillas);
+        console.log('cargandoPlantillas:', this.cargandoPlantillas);
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error cargando plantillas:', error);
+        this.plantillas = [];
+        this.cargandoPlantillas = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private cargarNombreUsuario(): void {
+    const usuarioRaw = localStorage.getItem('usuario');
+
+    if (!usuarioRaw || usuarioRaw === 'undefined') {
+      this.nombreUsuario = '';
+      return;
+    }
+
+    try {
+      const usuario = JSON.parse(usuarioRaw);
+      this.nombreUsuario = usuario?.nombre ?? '';
+    } catch {
+      this.nombreUsuario = '';
+    }
+  }
+}

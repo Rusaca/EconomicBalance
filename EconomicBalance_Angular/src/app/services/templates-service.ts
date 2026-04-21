@@ -10,43 +10,38 @@ export class TemplatesService {
 
   constructor(private http: HttpClient) {}
 
-  private getUsuarioLogueado(): any | null {
-    const raw = localStorage.getItem('usuario');
-    if (!raw) return null;
-
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
-  }
-
-  createBlank(name = 'Nueva plantilla'): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
-    const usuario = this.getUsuarioLogueado();
-
+  createTemplate(
+    nombre: string,
+    blocks: Plantilla['blocks'] = []
+  ): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
     return this.http.post<{ ok: boolean; mensaje: string; data: Plantilla }>(this.apiUrl, {
-      nombre: name,
-      userId: usuario?.id
+      nombre,
+      blocks
     });
   }
 
   getById(id: string): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
-    const usuario = this.getUsuarioLogueado();
-
     return this.http.get<{ ok: boolean; mensaje: string; data: Plantilla }>(
-      `${this.apiUrl}/${id}?userId=${usuario?.id || ''}`
+      `${this.apiUrl}/${id}`
     );
   }
 
-  updateTemplate(id: string, plantilla: Plantilla): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
-    const usuario = this.getUsuarioLogueado();
-
+  updateTemplate(
+    id: string,
+    plantilla: Plantilla
+  ): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
     return this.http.put<{ ok: boolean; mensaje: string; data: Plantilla }>(
       `${this.apiUrl}/${id}`,
       {
-        ...plantilla,
-        userId: usuario?.id
+        nombre: plantilla.nombre,
+        blocks: plantilla.blocks
       }
+    );
+  }
+
+  getMisPlantillas(): Observable<{ ok: boolean; mensaje: string; data: Plantilla[] }> {
+    return this.http.get<{ ok: boolean; mensaje: string; data: Plantilla[] }>(
+      `${this.apiUrl}/mis-plantillas`
     );
   }
 }
