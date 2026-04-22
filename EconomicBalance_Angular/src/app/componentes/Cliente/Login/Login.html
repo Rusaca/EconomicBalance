@@ -1,61 +1,80 @@
-<video #videoElement autoplay muted loop playsinline preload="auto" class="video-fondo">
-    <source src="assets/VideoLoginyregistro.mp4" type="video/mp4">
-
-
-
+<video #videoElement autoplay muted [attr.muted]="true" loop playsinline preload="auto" class="video-fondo">
+  <source src="assets/VideoLoginyregistro.mp4" type="video/mp4" />
 </video>
-
 
 <div class="overlay"></div>
 
 <div class="container-login">
+  <img src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-login" width="380" height="auto">
 
-    <!-- LOGO ARRIBA A LA IZQUIERDA -->
-    <img  src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-login" width="380" height="auto">
+  <div class="card shadow p-4 tarjeta-pro">
+    <h3 class="titulo-login text-center fw-bold">Inicio de sesión</h3>
 
+    <form (ngSubmit)="login()">
+      <div class="mb-3">
+        <label class="form-label">Correo electrónico</label>
+        <input
+          type="email"
+          class="form-control"
+          [(ngModel)]="correo"
+          name="correo"
+          (ngModelChange)="limpiarError()"
+          required
+        >
+      </div>
 
-    <!-- TARJETA DE LOGIN -->
-    <div class="card shadow p-4 tarjeta-pro">
+      <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <input
+          type="password"
+          class="form-control"
+          [(ngModel)]="password"
+          name="password"
+          (ngModelChange)="limpiarError()"
+          required
+        >
+      </div>
 
-        <h3 class="titulo-login text-center fw-bold">Inicio de sesión</h3>
+      <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" [(ngModel)]="remember" name="remember">
+        <label class="form-check-label">Recordar sesión</label>
+      </div>
 
-        <form (ngSubmit)="login()">
+      <div *ngIf="mensajeError" class="text-danger fw-semibold mb-3">
+        {{ mensajeError }}
+      </div>
 
-            <div class="mb-3">
-                <label class="form-label">Correo electrónico</label>
-                <input type="email" class="form-control" [(ngModel)]="correo" name="correo" required>
-            </div>
+      <button type="submit" class="btn btn-primary w-100 mb-3">
+        Iniciar sesión
+      </button>
+    </form>
 
-            <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <input type="password" class="form-control" [(ngModel)]="password" name="password" required>
-            </div>
+    <div class="text-center mb-3">o continuar con</div>
 
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" [(ngModel)]="remember" name="remember">
-                <label class="form-check-label">Recordar sesión</label>
-            </div>
+    <button
+      type="button"
+      class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
+      (click)="loginGoogle()"
+    >
+      <img
+        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+        width="20"
+        class="me-2"
+      >
+      Continuar con Google
+    </button>
 
-            <button class="btn btn-primary w-100 mb-3">Iniciar sesión</button>
+    <div class="bloque-enlaces-login">
+      <p class="texto-secundario-login">
+        ¿No tienes cuenta?
+        <a routerLink="/registro" class="enlace-login enlace-registro">Regístrate</a>
+      </p>
 
-        </form>
-
-        <div class="text-center mb-3">o continuar con</div>
-
-        <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
-            (click)="loginGoogle()">
-            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20"
-                class="me-2">
-            Continuar con Google
-        </button>
-
-
-
-        <div class="text-center mt-3">
-            ¿No tienes cuenta?
-            <a routerLink="/registro" class="text-info fw-bold">Regístrate</a>
-        </div>
-
+      <p class="texto-secundario-login mb-0">
+        <a routerLink="/recuperar-password" class="enlace-login enlace-recuperar">
+          ¿Has olvidado tu contraseña?
+        </a>
+      </p>
     </div>
-
+  </div>
 </div>

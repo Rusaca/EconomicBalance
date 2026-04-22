@@ -1,0 +1,42 @@
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+  <div class="card shadow p-4" style="max-width: 420px; width: 100%;">
+    <img src="assets/Logo.png" alt="Economic Balance" class="img-fluid mx-auto d-block mb-4" style="max-width: 220px;">
+
+    <h3 class="text-center mb-3">Recuperar contraseña</h3>
+
+    <p class="text-center text-muted mb-4">
+      Indica el correo para la recuperación de la cuenta
+    </p>
+
+    <form (ngSubmit)="recuperarPassword()">
+      <div class="mb-3">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" class="form-control" [(ngModel)]="correo" name="correo" (ngModelChange)="limpiarMensajes()"
+          required>
+      </div>
+
+      <div *ngIf="mensajeError" class="alert alert-danger py-2 mb-3 text-center">
+        {{ mensajeError }}
+      </div>
+
+      <div *ngIf="mensaje" class="alert alert-success py-2 mb-3 text-center d-block">
+        {{ mensaje }}
+      </div>
+
+
+      <button type="submit" class="btn btn-primary w-100">
+        Enviar enlace
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <a routerLink="/login" class="btn btn-primary px-4 rounded-pill volver-login-btn">
+        Volver al login
+      </a>
+    </div>
+
+    <p class="text-center text-muted mt-4 mb-0">
+      © 2026 EconomicBalance. Todos los derechos reservados.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+body {
+  background: #f5f7fb;
+}
+.card {
+  border-radius: 18px;
+}
+.volver-login-btn {
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: all 0.25s ease;
+}
+
+.volver-login-btn:hover {
+    transform: translateY(-1px);
+}
+
+

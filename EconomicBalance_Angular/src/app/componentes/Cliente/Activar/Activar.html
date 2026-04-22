@@ -1,0 +1,43 @@
+<div class="vh-100 d-flex justify-content-center align-items-center bg-light position-relative">
+  <div class="card p-4 shadow-lg border-0 text-center card-activacion">
+    <img src="assets/logosinfondo.png" class="logo-card mb-4 fade-in" alt="Logo">
+
+    <div [ngSwitch]="estado">
+      <div *ngSwitchCase="'loading'" class="fade-in">
+        <div class="loader mx-auto mb-4"></div>
+        <h2 class="fw-bold titulo-estado">Activando cuenta...</h2>
+        <p class="text-muted">{{ mensaje }}</p>
+      </div>
+
+      <div *ngSwitchCase="'ok'" class="fade-in">
+        <div class="check-animado mx-auto"></div>
+        <h2 class="fw-bold mt-3 text-success titulo-estado">Cuenta activada correctamente</h2>
+        <p class="text-muted">{{ mensaje }}</p>
+
+        <div class="d-flex justify-content-center gap-3 mt-3 flex-wrap">
+          <button class="btn btn-primary btn-lg shadow" (click)="irALogin()">
+            Loggear
+          </button>
+
+          <button class="btn btn-outline-secondary btn-lg shadow" (click)="cerrarVentana()">
+            Cerrar ventana
+          </button>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'error'" class="fade-in">
+        <div class="error-animado mx-auto"></div>
+        <h2 class="fw-bold text-danger mt-3 titulo-estado">Se ha producido un error</h2>
+        <p class="text-muted">{{ mensaje }}</p>
+        <button class="btn btn-danger btn-lg mt-3 shadow" (click)="cerrarVentana()">
+          Cerrar ventana
+        </button>
+      </div>
+    </div>
+
+    <p class="footer-profesional mt-4">
+      © 2026 <span class="marca">EconomicBalance</span>. Todos los derechos reservados.
+    </p>
+  </div>
+</div>
+

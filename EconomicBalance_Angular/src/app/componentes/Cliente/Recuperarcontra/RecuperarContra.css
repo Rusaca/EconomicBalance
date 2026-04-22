@@ -1,0 +1,28 @@
+body {
+  background: #f5f7fb;
+}
+
+.tarjeta-recuperar {
+  max-width: 420px;
+  width: 100%;
+  border-radius: 18px;
+}
+
+.logo-recuperar {
+  max-width: 220px;
+}
+
+.form-control {
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+}
+
+.volver-login-btn {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all 0.25s ease;
+}
+
+.volver-login-btn:hover {
+  transform: translateY(-1px);
+}
