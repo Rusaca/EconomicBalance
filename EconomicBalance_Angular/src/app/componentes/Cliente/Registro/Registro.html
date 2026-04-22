@@ -1,21 +1,16 @@
-<video autoplay muted loop playsinline preload="auto" class="video-fondo">
-    <source src="assets/VideoLoginyregistro.mp4" type="video/mp4">
+<video #videoElement autoplay muted [attr.muted]="true" loop playsinline preload="auto" class="video-fondo">
+  <source src="assets/VideoLoginyregistro.mp4" type="video/mp4" />
 </video>
-
-
 
 <div class="overlay"></div>
 
-    <img  src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-registro" >
+<img src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-registro">
 
 <div class="container vh-100 d-flex justify-content-center align-items-center">
-
   <div class="card shadow p-4 tarjeta-registro">
-
     <h3 class="titulo-registro text-center mb-4">Crear cuenta</h3>
 
     <form (ngSubmit)="register()">
-
       <div class="mb-3">
         <label class="form-label">Nombre</label>
         <input type="text" class="form-control" [(ngModel)]="nombre" name="nombre" required>
@@ -28,12 +23,34 @@
 
       <div class="mb-3">
         <label class="form-label">Correo</label>
-        <input type="email" class="form-control" [(ngModel)]="correo" name="correo" required>
+        <input
+          type="email"
+          class="form-control"
+          [(ngModel)]="correo"
+          name="correo"
+          required
+          pattern=".*@.*"
+          #correoInput="ngModel"
+        >
+        <div class="text-danger mt-1" *ngIf="correoInput.invalid && correoInput.touched">
+          El correo debe contener @.
+        </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Contraseña</label>
-        <input type="password" class="form-control" [(ngModel)]="password" name="password" required>
+        <input
+          type="password"
+          class="form-control"
+          [(ngModel)]="password"
+          name="password"
+          required
+          pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
+          #passwordInput="ngModel"
+        >
+        <div class="text-danger mt-1" *ngIf="passwordInput.invalid && passwordInput.touched">
+          La contraseña debe tener 6 caracteres o más, una mayúscula y un número.
+        </div>
       </div>
 
       <div class="mb-3">
@@ -41,15 +58,21 @@
         <input type="password" class="form-control" [(ngModel)]="confirmPassword" name="confirmPassword" required>
       </div>
 
-      <button class="btn btn-success w-100">Registrarse</button>
+      <div *ngIf="mensajeError" class="text-danger fw-semibold mb-3">
+        {{ mensajeError }}
+      </div>
 
+      <button class="btn btn-success w-100">Registrarse</button>
     </form>
+
     <div class="text-center my-3">
       o registrarse con
     </div>
 
-    <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
-      (click)="loginGoogle()">
+    <button
+      class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
+      (click)="loginGoogle()"
+    >
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" class="me-2">
       Registro con Google
     </button>
@@ -59,5 +82,4 @@
       <a routerLink="/login" class="text-info fw-bold">Iniciar sesión</a>
     </div>
   </div>
-
 </div>

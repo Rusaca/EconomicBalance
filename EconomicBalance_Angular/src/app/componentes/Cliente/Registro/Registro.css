@@ -5,7 +5,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
+  z-index: -2;
 }
 
 .overlay {
@@ -18,23 +18,93 @@
   z-index: -1;
 }
 
+.logo-registro {
+  width: 380px;
+  max-width: 32vw;
+  height: auto;
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+  z-index: 10;
+}
+
 .tarjeta-registro {
-  width: 400px !important;              /* 🔥 más ancha */
-  background: rgba(255, 255, 255, 0.10) !important; /* 🔥 más transparente */
+  width: 400px !important;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.10) !important;
   border-radius: 20px;
-  backdrop-filter: blur(12px);          /* efecto glass suave */
-  box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
   padding: 2rem;
   color: white;
 }
 
-
-.logo-registro {
-    width: 380px;
-    position: absolute;
-    left: 10px;
-    top: -10px;
-    filter: drop-shadow(0 0 12px rgba(255,255,255,0.4));
-    z-index: 10;
+.text-danger {
+  font-size: 0.95rem;
 }
 
+.mensaje-error {
+  color: #ff6b6b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+  .logo-registro {
+    width: 280px;
+    max-width: 42vw;
+    left: 20px;
+    top: 10px;
+  }
+
+  .tarjeta-registro {
+    width: 380px !important;
+  }
+}
+
+/* Móvil */
+@media (max-width: 768px) {
+  .logo-registro {
+    position: static;
+    display: block;
+    width: 220px;
+    max-width: 70vw;
+    margin: 24px auto 16px auto;
+  }
+
+  .container.vh-100 {
+    height: auto !important;
+    min-height: 100vh;
+    padding: 20px 16px 30px;
+    align-items: flex-start !important;
+  }
+
+  .tarjeta-registro {
+    width: 100% !important;
+    max-width: 420px;
+    padding: 1.5rem;
+    border-radius: 18px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .logo-registro {
+    width: 180px;
+    max-width: 75vw;
+    margin: 20px auto 12px auto;
+  }
+
+  .tarjeta-registro {
+    padding: 1.2rem;
+    border-radius: 16px;
+  }
+
+  .text-danger,
+  .mensaje-error {
+    font-size: 0.9rem;
+  }
+}

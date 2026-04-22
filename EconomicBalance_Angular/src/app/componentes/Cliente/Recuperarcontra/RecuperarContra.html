@@ -1,0 +1,65 @@
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+  <div class="card shadow p-4 tarjeta-recuperar">
+    <img
+      src="assets/Logo.png"
+      alt="Economic Balance"
+      class="img-fluid mx-auto d-block mb-4 logo-recuperar"
+    >
+
+    <h3 class="text-center mb-3">Restablecer contraseña</h3>
+
+    <p class="text-center text-muted mb-4">
+      Introduce tu nueva contraseña y confírmala para completar el cambio
+    </p>
+
+    <form (ngSubmit)="cambiarPassword()">
+      <div class="mb-3">
+        <label class="form-label">Nueva contraseña</label>
+        <input
+          type="password"
+          class="form-control"
+          [(ngModel)]="nuevaPassword"
+          name="nuevaPassword"
+          (ngModelChange)="limpiarMensajes()"
+          placeholder="Introduce tu nueva contraseña"
+          required
+        >
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Confirmar contraseña</label>
+        <input
+          type="password"
+          class="form-control"
+          [(ngModel)]="confirmarPassword"
+          name="confirmarPassword"
+          (ngModelChange)="limpiarMensajes()"
+          placeholder="Confirma tu nueva contraseña"
+          required
+        >
+      </div>
+
+      <div *ngIf="mensajeError" class="alert alert-danger py-2 mb-3 text-center">
+        {{ mensajeError }}
+      </div>
+
+      <div *ngIf="mensaje" class="alert alert-success py-2 mb-3 text-center">
+        {{ mensaje }}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">
+        Cambiar contraseña
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <a routerLink="/login" class="btn btn-primary px-4 rounded-pill volver-login-btn">
+        Volver al login
+      </a>
+    </div>
+
+    <p class="text-center text-muted mt-4 mb-0">
+      © 2026 EconomicBalance. Todos los derechos reservados.
+    </p>
+  </div>
+

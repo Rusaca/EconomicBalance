@@ -15,8 +15,8 @@ const MONGO_URI = process.env.MONGO_URI || '';
 
 app.use(express.json());
 
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -28,9 +28,9 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((error, success) => {
   if (error) {
-    console.error("❌ Error SMTP:", error);
+    console.error('Error SMTP:', error);
   } else {
-    console.log("✅ SMTP listo para enviar correos");
+    console.log('SMTP listo para enviar correos');
   }
 });
 

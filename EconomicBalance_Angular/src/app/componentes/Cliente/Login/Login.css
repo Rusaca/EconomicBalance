@@ -1,4 +1,4 @@
-/* 🎬 Video de fondo */
+/* Video de fondo */
 .video-fondo {
     position: fixed;
     top: 0;
@@ -6,7 +6,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -1;
+    z-index: -2;
 }
 
 /* Capa oscura encima del video */
@@ -20,49 +20,53 @@
     z-index: -1;
 }
 
-/* 📐 Contenedor principal */
+/* Contenedor principal */
 .container-login {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     padding: 40px;
     position: relative;
     gap: 60px;
 }
 
-/* 🧩 LOGO MUCHO MÁS ARRIBA A LA IZQUIERDA */
+/* Logo en escritorio */
 .logo-login {
     width: 380px;
+    max-width: 32vw;
+    height: auto;
     position: absolute;
-    left: 10px;   /* más a la izquierda */
-    top: -10px;   /* 🔥 aún más arriba */
-    filter: drop-shadow(0 0 12px rgba(255,255,255,0.4));
+    left: 10px;
+    top: -10px;
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
+    z-index: 2;
 }
 
-/* 🧊 Tarjeta estilo glass (más pequeña) */
-.card {
+/* Tarjeta */
+.card,
+.tarjeta-pro {
     background: rgba(255, 255, 255, 0.12) !important;
     border-radius: 22px !important;
     backdrop-filter: blur(18px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
     color: white;
     border: none;
-    width: 340px !important;   /* 🔥 más pequeña */
+    width: 340px !important;
+    max-width: 100%;
     padding: 1.9rem !important;
+    z-index: 2;
 }
 
 .titulo-login {
-    font-size: 1.8rem !important;   /* 🔥 un poco más pequeño */
-    margin-bottom: 2rem !important; 
+    font-size: 1.8rem !important;
+    margin-bottom: 2rem !important;
     font-weight: 400 !important;
 }
 
-
-
 /* Inputs */
 .form-control {
-    background: rgba(255,255,255,0.85);
+    background: rgba(255, 255, 255, 0.85);
     border: none;
     font-size: 1.1rem;
     padding: 0.75rem;
@@ -88,4 +92,169 @@
 
 .btn-primary:hover {
     transform: scale(1.05);
+}
+
+.separador-login {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1rem;
+    margin: 18px 0 16px;
+}
+
+.bloque-enlaces-login {
+    margin-top: 22px;
+    text-align: center;
+}
+
+.texto-secundario-login {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+
+.enlace-login {
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.enlace-registro {
+    color: #35d0ff;
+}
+
+.enlace-registro:hover {
+    color: #7fe3ff;
+    text-decoration: underline;
+}
+
+.enlace-recuperar {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration: none;
+}
+
+.enlace-recuperar:hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
+
+
+
+.mensaje-error-login {
+    color: #ff7b7b;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.btn-outline-danger {
+    border-width: 1.5px;
+    color: #ff5c5c;
+}
+
+.btn-outline-danger:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: #ff6b6b;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-check-input {
+    margin-top: 0 !important;
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+    .container-login {
+        padding: 32px 20px;
+    }
+
+    .logo-login {
+        width: 280px;
+        max-width: 40vw;
+        left: 20px;
+        top: 10px;
+    }
+}
+
+/* Movil */
+@media (max-width: 768px) {
+    .container-login {
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 28px 16px 20px;
+        gap: 20px;
+    }
+
+    .logo-login {
+        position: static;
+        display: block;
+        width: 220px;
+        max-width: 70vw;
+        margin: 0 auto 10px auto;
+    }
+
+    .card,
+    .tarjeta-pro {
+        width: 100% !important;
+        max-width: 420px;
+        padding: 1.5rem !important;
+        border-radius: 18px !important;
+    }
+
+    .titulo-login {
+        font-size: 1.55rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 0.7rem;
+    }
+
+    .form-label,
+    .text-center,
+    .form-check-label {
+        font-size: 1rem;
+    }
+
+    .btn-primary,
+    .btn,
+    .btn-outline-danger,
+    .btn-dark {
+        font-size: 1rem;
+        padding: 0.7rem;
+    }
+}
+
+/* Moviles pequeños */
+@media (max-width: 480px) {
+    .container-login {
+        padding: 20px 12px 16px;
+    }
+
+    .logo-login {
+        width: 180px;
+        max-width: 75vw;
+        margin-bottom: 8px;
+    }
+
+    .card,
+    .tarjeta-pro {
+        padding: 1.2rem !important;
+        border-radius: 16px !important;
+    }
+
+    .titulo-login {
+        font-size: 1.35rem !important;
+    }
 }
