@@ -17,8 +17,8 @@ header {
 header .navbar-header {
   width: 100%;
   max-width: none;
-  padding-left: clamp(1rem, 3vw, 3rem);
-  padding-right: clamp(1rem, 3vw, 3rem);
+  padding-left: clamp(0.7rem, 2.1vw, 2rem);
+  padding-right: clamp(0.7rem, 2.1vw, 2rem);
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
   align-items: center;
@@ -33,27 +33,55 @@ header .navbar-nav {
   margin-left: auto;
 }
 
+.header-auth-mobile {
+  gap: 0.5rem;
+}
+
+.header-auth-mobile .texto-bienvenida {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   header .navbar-header {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+    padding-top: 0.05rem;
+    padding-bottom: 0.05rem;
   }
 
   .brand-logo {
-    width: 210px;
-    transform: scale(1.02);
+    width: 136px;
+    transform: scale(0.84);
     margin-left: 0;
+  }
+
+  header .navbar-toggler {
+    display: none;
   }
 
   header .navbar-collapse {
     gap: 0.75rem;
   }
+
+  .header-auth-mobile {
+    gap: 0.35rem;
+  }
+
+  .header-auth-mobile .texto-bienvenida {
+    font-size: 0.78rem;
+  }
+
+  .header-auth-mobile .btn {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 992px) {
   header .navbar-header {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .brand-logo {
