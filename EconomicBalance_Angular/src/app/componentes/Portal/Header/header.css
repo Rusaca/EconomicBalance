@@ -1,95 +1,75 @@
-header {
+.app-header {
   position: sticky;
   top: 0;
   z-index: 1000;
   background-color: #ffffff;
 }
 
-.brand-logo {
-  width: 90px;
-  height: auto;
-  display: block;
-  transform: scale(1.6);
-  transform-origin: left center;
-  margin-left: -8px;
-}
-
-header .navbar-header {
+.app-header .navbar.navbar-header {
   width: 100%;
   max-width: none;
-  padding-left: clamp(0.7rem, 2.1vw, 2rem);
-  padding-right: clamp(0.7rem, 2.1vw, 2rem);
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
+  min-height: 46px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: clamp(0.6rem, 1.8vw, 1.25rem);
+  padding-right: clamp(0.6rem, 1.8vw, 1.25rem);
   align-items: center;
 }
 
-header .navbar-collapse {
-  justify-content: flex-end;
-  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  margin-right: 0.5rem;
 }
 
-header .navbar-nav {
-  margin-left: auto;
+.brand-logo {
+  width: clamp(104px, 10vw, 138px);
+  max-height: 150px;
+  height: auto;
+  display: block;
+  object-fit: contain;
 }
 
-.header-auth-mobile {
-  gap: 0.5rem;
-}
-
-.header-auth-mobile .texto-bienvenida {
-  font-size: 0.85rem;
+.texto-bienvenida {
+  font-size: 0.82rem;
+  color: #111827;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  header .navbar-header {
-    padding-left: 0.65rem;
-    padding-right: 0.65rem;
-    padding-top: 0.05rem;
-    padding-bottom: 0.05rem;
+.header-auth-mobile {
+  gap: 0.35rem;
+}
+
+#mainNav {
+  justify-content: flex-end;
+}
+
+.app-header .btn.btn-sm {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.1;
+}
+
+@media (max-width: 991.98px) {
+  .app-header .navbar.navbar-header {
+    min-height: 42px;
+    padding-left: 0.55rem;
+    padding-right: 0.55rem;
   }
 
   .brand-logo {
-    width: 136px;
-    transform: scale(0.84);
-    margin-left: 0;
+    width: 108px;
+    max-height: 30px;
   }
 
-  header .navbar-toggler {
-    display: none;
-  }
-
-  header .navbar-collapse {
-    gap: 0.75rem;
-  }
-
-  .header-auth-mobile {
-    gap: 0.35rem;
-  }
-
-  .header-auth-mobile .texto-bienvenida {
-    font-size: 0.78rem;
+  .texto-bienvenida {
+    font-size: 0.75rem;
   }
 
   .header-auth-mobile .btn {
-    font-size: 0.875rem;
-    padding: 0.25rem 0.5rem;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 992px) {
-  header .navbar-header {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .brand-logo {
-    transform: scale(1.14);
-    margin-left: -4px;
-  }
-
-  header .navbar-collapse {
-    gap: 1rem;
+    padding: 0.18rem 0.38rem;
+    font-size: 0.74rem;
   }
 }

@@ -1,44 +1,65 @@
-<header class="border-bottom bg-white">
-  <nav class="navbar navbar-expand-lg navbar-header py-3">
-    <img src="/Logo%20de%20Economic%20Bal.png" alt="EconomicBalance" class="brand-logo">
+<header class="border-bottom bg-white app-header">
+  <nav class="navbar navbar-expand-lg navbar-header">
+    <a class="brand-link" routerLink="/">
+      <img src="/Logo_de_Economic_Bal.png" alt="EconomicBalance" class="brand-logo" />
+    </a>
 
     <div class="header-auth-mobile d-flex d-lg-none align-items-center ms-auto me-2">
       <span class="texto-bienvenida" *ngIf="sesionIniciada">Hola, {{ nombreUsuario }}</span>
-      <button class="btn btn-dark btn-sm" *ngIf="!sesionIniciada" routerLink="/login">Iniciar Sesión</button>
-      <button class="btn btn-outline-dark btn-sm" *ngIf="sesionIniciada" (click)="cerrarSesion()">Cerrar sesión</button>
+
+      <button
+        class="btn btn-dark btn-sm"
+        type="button"
+        *ngIf="!sesionIniciada"
+        routerLink="/login"
+      >
+        Iniciar sesion
+      </button>
+
+      <button
+        class="btn btn-outline-dark btn-sm"
+        type="button"
+        *ngIf="sesionIniciada"
+        (click)="cerrarSesion()"
+      >
+        Cerrar sesion
+      </button>
     </div>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu de navegacion">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNav"
+      aria-controls="mainNav"
+      aria-expanded="false"
+      aria-label="Abrir menu de navegacion"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav ms-auto gap-3">
-      </ul>
-
-      <div class="d-none d-lg-flex ms-lg-4 gap-2 align-items-center">
+      <div class="d-none d-lg-flex ms-auto gap-2 align-items-center">
         <span class="texto-bienvenida" *ngIf="sesionIniciada">Hola, {{ nombreUsuario }}</span>
-        <button class="btn btn-dark" *ngIf="!sesionIniciada" routerLink="/login">Iniciar Sesión</button>
-        <button class="btn btn-outline-dark" *ngIf="sesionIniciada" (click)="cerrarSesion()">Cerrar sesión</button>
+
+        <button
+          class="btn btn-dark btn-sm"
+          type="button"
+          *ngIf="!sesionIniciada"
+          routerLink="/login"
+        >
+          Iniciar sesion
+        </button>
+
+        <button
+          class="btn btn-outline-dark btn-sm"
+          type="button"
+          *ngIf="sesionIniciada"
+          (click)="cerrarSesion()"
+        >
+          Cerrar sesion
+        </button>
       </div>
-
-      <button class="btn btn-success w-100">
-        Registrarse
-      </button>
-
-    </form>
-
-    <div class="text-center mt-3">
-
-      ¿Ya tienes cuenta?
-      <a routerLink="/login">
-        Iniciar sesión
-      </a>
-
     </div>
-
-  </div>
-
-</div>
-
-<p>HEADER</p>
+  </nav>
+</header>
