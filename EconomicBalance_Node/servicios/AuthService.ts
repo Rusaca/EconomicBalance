@@ -9,7 +9,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export default class AuthService {
 
-
   // REGISTRO CON EMAIL
   public async registrarUsuario(data: {
     nombre: string;
@@ -58,7 +57,7 @@ export default class AuthService {
     if (!usuario) {
       return {
         ok: false,
-        mensaje: 'Token inválido'
+        mensaje: 'Token invalido'
       };
     }
 
@@ -94,7 +93,7 @@ export default class AuthService {
     if (!usuario) {
       return {
         ok: false,
-        mensaje: 'Correo o contraseña incorrectos'
+        mensaje: 'Correo o contrasena incorrectos'
       };
     }
 
@@ -110,7 +109,7 @@ export default class AuthService {
     if (!passwordCorrecta) {
       return {
         ok: false,
-        mensaje: 'Correo o contraseña incorrectos'
+        mensaje: 'Correo o contrasena incorrectos'
       };
     }
 
@@ -161,238 +160,248 @@ export default class AuthService {
   }
 
   // RECUPERAR PASSWORD
- public async recuperarPassword(correo: string) {
-  console.log('CORREO RECIBIDO:', correo);
+  public async recuperarPassword(correo: string) {
+    console.log('CORREO RECIBIDO:', correo);
 
-  const usuario = await UserModel.findOne({
-    correo: correo.toLowerCase()
-  });
-
-  console.log('USUARIO ENCONTRADO:', usuario);
-
-  if (!usuario) {
-    return {
-      ok: false,
-      mensaje: 'No existe un usuario con ese correo'
-    };
-  }
-
-  const token = crypto.randomBytes(32).toString('hex');
-  const expiracion = new Date(Date.now() + 1000 * 60 * 30);
-
-  console.log('TOKEN NUEVO GENERADO:', token);
-  console.log('EXPIRACION NUEVA:', expiracion);
-
-  await UserModel.updateOne(
-    { _id: usuario._id },
-    {
-      $set: {
-        tokenRecuperacion: token,
-        expiracionTokenRecuperacion: expiracion
-      }
-    }
-  );
-
-  const usuarioActualizado = await UserModel.findById(usuario._id);
-  console.log('USUARIO ACTUALIZADO TRAS GUARDAR TOKEN:', usuarioActualizado);
-
-  const enlace = `http://localhost:4200/restablecer-password?token=${token}`;
-  console.log('ENLACE ENVIADO EN CORREO:', enlace);
-
-  await enviarCorreoRecuperacion(usuario.correo, enlace);
-
-  return {
-    ok: true,
-    mensaje: 'Correo de recuperación enviado'
-  };
-}
-
-
-
-
-  // RESTABLECER PASSWORD
-  public async restablecerPassword(data: { token: string; password: string }) {
-  const { token, password } = data;
-
-  console.log('TOKEN RECIBIDO EN RESTABLECER:', token);
-  console.log('PASSWORD RECIBIDA EN RESTABLECER:', password);
-
-  const usuario = await UserModel.findOne({
-    tokenRecuperacion: token,
-    expiracionTokenRecuperacion: { $gt: new Date() }
-  });
-
-  console.log('USUARIO ENCONTRADO EN RESTABLECER:', usuario);
-
-  if (!usuario) {
-    const usuarioSoloToken = await UserModel.findOne({ tokenRecuperacion: token });
-    console.log('USUARIO SOLO POR TOKEN:', usuarioSoloToken);
-
-    return {
-      ok: false,
-      mensaje: 'Token inválido o expirado'
-    };
-  }
-
-  const passwordHash = await bcrypt.hash(password, 10);
-
-  await UserModel.updateOne(
-    { _id: usuario._id },
-    {
-      $set: { password: passwordHash },
-      $unset: {
-        tokenRecuperacion: '',
-        expiracionTokenRecuperacion: ''
-      }
-    }
-  );
-
-  return {
-    ok: true,
-    mensaje: 'Contraseña actualizada correctamente'
-  };
-}
-
-
- public async loginGoogle(token: string) {
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID
+    const usuario = await UserModel.findOne({
+      correo: correo.toLowerCase()
     });
 
-    const payload = ticket.getPayload();
-
-    if (!payload || !payload.email) {
-      return {
-        ok: false,
-        mensaje: 'No se pudo obtener la información de Google'
-      };
-    }
-
-    const correo = payload.email.toLowerCase();
-
-    const usuario = await UserModel.findOne({ correo });
+    console.log('USUARIO ENCONTRADO:', usuario);
 
     if (!usuario) {
       return {
         ok: false,
-        mensaje: 'No existe una cuenta registrada con ese correo de Google'
+        mensaje: 'No existe un usuario con ese correo'
       };
     }
 
-    if (!usuario.activo) {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiracion = new Date(Date.now() + 1000 * 60 * 30);
+
+    console.log('TOKEN NUEVO GENERADO:', token);
+    console.log('EXPIRACION NUEVA:', expiracion);
+
+    await UserModel.updateOne(
+      { _id: usuario._id },
+      {
+        $set: {
+          tokenRecuperacion: token,
+          expiracionTokenRecuperacion: expiracion
+        }
+      }
+    );
+
+    const usuarioActualizado = await UserModel.findById(usuario._id);
+    console.log('USUARIO ACTUALIZADO TRAS GUARDAR TOKEN:', usuarioActualizado);
+
+    const enlace = `http://localhost:4200/restablecer-password?token=${token}`;
+    console.log('ENLACE ENVIADO EN CORREO:', enlace);
+
+    await enviarCorreoRecuperacion(usuario.correo, enlace);
+
+    return {
+      ok: true,
+      mensaje: 'Correo de recuperacion enviado'
+    };
+  }
+
+  // RESTABLECER PASSWORD
+  public async restablecerPassword(data: { token: string; password: string }) {
+    const { token, password } = data;
+
+    console.log('TOKEN RECIBIDO EN RESTABLECER:', token);
+    console.log('PASSWORD RECIBIDA EN RESTABLECER:', password);
+
+    const usuario = await UserModel.findOne({
+      tokenRecuperacion: token,
+      expiracionTokenRecuperacion: { $gt: new Date() }
+    });
+
+    console.log('USUARIO ENCONTRADO EN RESTABLECER:', usuario);
+
+    if (!usuario) {
+      const usuarioSoloToken = await UserModel.findOne({ tokenRecuperacion: token });
+      console.log('USUARIO SOLO POR TOKEN:', usuarioSoloToken);
+
       return {
         ok: false,
-        mensaje: 'Debes activar tu cuenta desde el correo'
+        mensaje: 'Token invalido o expirado'
       };
     }
 
-    const secret = process.env.JWT_SECRET;
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    if (!secret) {
-      return {
-        ok: false,
-        mensaje: 'JWT_SECRET no configurado'
-      };
-    }
-
-    const jwtToken = jwt.sign(
+    await UserModel.updateOne(
+      { _id: usuario._id },
       {
-        id: usuario._id.toString(),
-        correo: usuario.correo
-      },
-      secret,
-      {
-        expiresIn: '1d'
+        $set: { password: passwordHash },
+        $unset: {
+          tokenRecuperacion: '',
+          expiracionTokenRecuperacion: ''
+        }
       }
     );
 
     return {
       ok: true,
-      mensaje: 'Login con Google correcto',
-      data: {
-        token: jwtToken,
-        usuario: {
-          id: usuario._id,
-          nombre: usuario.nombre,
-          apellidos: usuario.apellidos,
-          correo: usuario.correo
-        }
+      mensaje: 'Contrasena actualizada correctamente'
+    };
+  }
+
+  public async loginGoogle(token: string) {
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID
+      });
+
+      const payload = ticket.getPayload();
+      const email = payload?.email;
+
+      if (!email) {
+        return {
+          ok: false,
+          mensaje: 'No se pudo obtener la informacion de Google'
+        };
       }
-    };
-  } catch (error) {
-    console.error('Error en loginGoogle:', error);
 
-    return {
-      ok: false,
-      mensaje: 'Error en login con Google'
-    };
-  }
-}
+      const correo = email.toLowerCase();
+      const usuario = await UserModel.findOne({ correo });
 
-public async registerGoogle(token: string) {
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID
-    });
+      if (!usuario) {
+        return {
+          ok: false,
+          mensaje: 'No existe una cuenta registrada con ese correo de Google'
+        };
+      }
 
-    const payload = ticket.getPayload();
+      if (!usuario.activo) {
+        return {
+          ok: false,
+          mensaje: 'Debes activar tu cuenta desde el correo'
+        };
+      }
 
-    if (!payload || !payload.email) {
+      const secret = process.env.JWT_SECRET;
+
+      if (!secret) {
+        return {
+          ok: false,
+          mensaje: 'JWT_SECRET no configurado'
+        };
+      }
+
+      const jwtToken = jwt.sign(
+        {
+          id: usuario._id.toString(),
+          correo: usuario.correo
+        },
+        secret,
+        {
+          expiresIn: '1d'
+        }
+      );
+
+      return {
+        ok: true,
+        mensaje: 'Login con Google correcto',
+        data: {
+          token: jwtToken,
+          usuario: {
+            id: usuario._id,
+            nombre: usuario.nombre,
+            apellidos: usuario.apellidos,
+            correo: usuario.correo
+          }
+        }
+      };
+    } catch (error) {
+      console.error('Error en loginGoogle:', error);
+
       return {
         ok: false,
-        mensaje: 'No se pudo obtener la información de Google'
+        mensaje: 'Error en login con Google'
       };
     }
+  }
 
-    const correo = payload.email.toLowerCase();
-    const nombreCompleto = payload.name || '';
-    const partesNombre = nombreCompleto.trim().split(' ');
-    const nombre = partesNombre[0] || 'Usuario';
-    const apellidos = partesNombre.slice(1).join(' ') || '';
+  public async registerGoogle(token: string) {
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID
+      });
 
-    const usuarioExistente = await UserModel.findOne({ correo });
+      const payload = ticket.getPayload();
+      const email = payload?.email;
 
-    if (usuarioExistente) {
+      if (!email) {
+        return {
+          ok: false,
+          mensaje: 'No se pudo obtener la informacion de Google'
+        };
+      }
+
+      const correo = email.toLowerCase();
+
+      const nombreGoogle = (payload?.given_name || '').trim();
+      const apellidoGoogle = (payload?.family_name || '').trim();
+      const nombreCompleto = (payload?.name || '').trim();
+
+      let nombre = nombreGoogle;
+      let apellidos = apellidoGoogle;
+
+      if (!nombre && nombreCompleto) {
+        const partes = nombreCompleto.split(' ').filter(Boolean);
+        nombre = partes[0] || 'Usuario';
+        apellidos = partes.slice(1).join(' ');
+      }
+
+      if (!nombre) {
+        nombre = 'Usuario';
+      }
+
+      if (!apellidos) {
+        apellidos = 'Sin apellidos';
+      }
+
+      const usuarioExistente = await UserModel.findOne({ correo });
+
+      if (usuarioExistente) {
+        return {
+          ok: false,
+          mensaje: 'Ya existe un usuario con ese correo'
+        };
+      }
+
+      const tokenActivacion = crypto.randomBytes(32).toString('hex');
+      const passwordTemporal = crypto.randomBytes(32).toString('hex');
+      const passwordHash = await bcrypt.hash(passwordTemporal, 10);
+
+      const nuevoUsuario = new UserModel({
+        nombre,
+        apellidos,
+        correo,
+        password: passwordHash,
+        activo: false,
+        tokenActivacion
+      });
+
+      await nuevoUsuario.save();
+      await enviarCorreoActivacion(correo, tokenActivacion);
+
+      return {
+        ok: true,
+        mensaje: 'Registro con Google correcto. Revisa tu correo para activar la cuenta.'
+      };
+    } catch (error) {
+      console.error('Error en registerGoogle:', error);
+
       return {
         ok: false,
-        mensaje: 'Ya existe un usuario con ese correo'
+        mensaje: 'Error en registro con Google'
       };
     }
-
-    const tokenActivacion = crypto.randomBytes(32).toString('hex');
-    const passwordTemporal = crypto.randomBytes(32).toString('hex');
-    const passwordHash = await bcrypt.hash(passwordTemporal, 10);
-
-    const nuevoUsuario = new UserModel({
-      nombre,
-      apellidos,
-      correo,
-      password: passwordHash,
-      activo: false,
-      tokenActivacion
-    });
-
-    await nuevoUsuario.save();
-    await enviarCorreoActivacion(correo, tokenActivacion);
-
-    return {
-      ok: true,
-      mensaje: 'Registro con Google correcto. Revisa tu correo para activar la cuenta.'
-    };
-  } catch (error) {
-    console.error('Error en registerGoogle:', error);
-
-    return {
-      ok: false,
-      mensaje: 'Error en registro con Google'
-    };
   }
 }
-
-
-
-}
-

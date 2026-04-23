@@ -1,11 +1,23 @@
-import { Component, AfterViewInit, OnInit, ViewChild, ElementRef, ChangeDetectorRef, NgZone } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  ChangeDetectorRef,
+  NgZone
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../servicios/auth-api.service';
 import { environment } from '../../../environments/environment';
 
-declare const google: any;
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
 
 @Component({
   selector: 'app-registro',
@@ -22,6 +34,8 @@ export class Registro implements OnInit, AfterViewInit {
   confirmPassword: string = '';
   mensajeError: string = '';
 
+  private googleInicializado = false;
+
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
 
   constructor(
@@ -31,11 +45,8 @@ export class Registro implements OnInit, AfterViewInit {
     private ngZone: NgZone
   ) {}
 
-  ngOnInit(): void {
-    google.accounts.id.initialize({
-      client_id: environment.googleClientId,
-      callback: (response: any) => this.handleGoogleRegister(response)
-    });
+  async ngOnInit(): Promise<void> {
+    await this.inicializarGoogleRegistro(false);
   }
 
   ngAfterViewInit(): void {
@@ -47,7 +58,7 @@ export class Registro implements OnInit, AfterViewInit {
     video.load();
 
     video.oncanplay = () => {
-      video.play().catch(error => {
+      video.play().catch((error) => {
         console.log('Video autoplay failed:', error);
       });
     };
@@ -69,12 +80,12 @@ export class Registro implements OnInit, AfterViewInit {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
 
     if (!passwordRegex.test(this.password)) {
-      this.mensajeError = 'La contraseña debe tener 6 caracteres o más, una mayúscula y un número';
+      this.mensajeError = 'La contrasena debe tener 6 caracteres o mas, una mayuscula y un numero';
       return;
     }
 
     if (this.password !== this.confirmPassword) {
-      this.mensajeError = 'Las contraseñas no coinciden';
+      this.mensajeError = 'Las contrasenas no coinciden';
       return;
     }
 
@@ -96,7 +107,7 @@ export class Registro implements OnInit, AfterViewInit {
         }
 
         this.mensajeError = '';
-        alert('Correo de activacion enviado 📧');
+        alert('Correo de activacion enviado');
         this.router.navigate(['/login']);
         this.cdr.detectChanges();
       });
@@ -112,35 +123,103 @@ export class Registro implements OnInit, AfterViewInit {
     }
   }
 
-  loginGoogle() {
+  async loginGoogle() {
     this.mensajeError = '';
-    google.accounts.id.prompt();
+
+    const listo = await this.inicializarGoogleRegistro(true);
+    if (!listo) {
+      return;
+    }
+
+    try {
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification?.isNotDisplayed?.()) {
+          console.warn('Google prompt no mostrado:', notification.getNotDisplayedReason?.());
+        }
+        if (notification?.isSkippedMoment?.()) {
+          console.warn('Google prompt omitido:', notification.getSkippedReason?.());
+        }
+        if (notification?.isDismissedMoment?.()) {
+          console.warn('Google prompt cerrado:', notification.getDismissedReason?.());
+        }
+      });
+    } catch (error) {
+      console.error('Error abriendo Google prompt:', error);
+      this.mensajeError = 'No se pudo iniciar registro con Google';
+      this.cdr.detectChanges();
+    }
   }
 
-async handleGoogleRegister(response: any) {
-  try {
-    const googleToken = response.credential;
-    const respuesta = await this.authApiService.registerGoogle({ token: googleToken });
+  async handleGoogleRegister(response: any) {
+    try {
+      const googleToken = response?.credential;
 
-    console.log('RESPUESTA REGISTER GOOGLE:', respuesta);
-
-    this.ngZone.run(() => {
-      if (!respuesta?.ok) {
-        this.mensajeError = respuesta?.mensaje || 'No se pudo registrar con Google';
+      if (!googleToken) {
+        this.mensajeError = 'No se pudo obtener el token de Google';
         this.cdr.detectChanges();
         return;
       }
 
-      alert('Correo de activacion enviado');
-      this.router.navigate(['/login']);
-      this.cdr.detectChanges();
-    });
-  } catch (error: any) {
-    this.ngZone.run(() => {
-      this.mensajeError = 'Error al registrarse con Google';
-      this.cdr.detectChanges();
-    });
-  }
-}
+      const respuesta = await this.authApiService.registerGoogle({ token: googleToken });
+      console.log('RESPUESTA REGISTER GOOGLE:', respuesta);
 
+      this.ngZone.run(() => {
+        if (!respuesta?.ok) {
+          this.mensajeError = respuesta?.mensaje || 'No se pudo registrar con Google';
+          this.cdr.detectChanges();
+          return;
+        }
+
+        alert('Correo de activacion enviado');
+        this.router.navigate(['/login']);
+        this.cdr.detectChanges();
+      });
+    } catch (error: any) {
+      this.ngZone.run(() => {
+        this.mensajeError = 'Error al registrarse con Google';
+        this.cdr.detectChanges();
+      });
+    }
+  }
+
+  private async inicializarGoogleRegistro(mostrarError: boolean): Promise<boolean> {
+    if (this.googleInicializado) {
+      return true;
+    }
+
+    if (!environment.googleClientId) {
+      if (mostrarError) {
+        this.mensajeError = 'Falta configurar el Client ID de Google';
+        this.cdr.detectChanges();
+      }
+      return false;
+    }
+
+    if (!window.google?.accounts?.id) {
+      if (mostrarError) {
+        this.mensajeError = 'Google no esta disponible en este momento';
+        this.cdr.detectChanges();
+      }
+      return false;
+    }
+
+    try {
+      window.google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (credentialResponse: any) => this.handleGoogleRegister(credentialResponse)
+      });
+
+      this.googleInicializado = true;
+      return true;
+    } catch (error) {
+      console.error('Error inicializando Google en registro:', error);
+
+      if (mostrarError) {
+        this.mensajeError = 'No se pudo iniciar registro con Google';
+        this.cdr.detectChanges();
+      }
+
+      return false;
+    }
+  }
 }
