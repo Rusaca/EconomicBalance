@@ -2,6 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TemplatesService } from '../../../../services/templates-service';
+import { Plantilla } from '../../../../modelos/template.intetrfaces';
+
+type PlantillaDashboard = Plantilla & {
+  _id?: string;
+};
 
 @Component({
   selector: 'app-dashboard',
@@ -12,7 +17,7 @@ import { TemplatesService } from '../../../../services/templates-service';
 })
 export class Dashboard implements OnInit {
   nombreUsuario = '';
-  plantillas: any[] = [];
+  plantillas: PlantillaDashboard[] = [];
   cargandoPlantillas = false;
 
   constructor(
@@ -41,7 +46,14 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/templates/nueva']);
   }
 
-  abrirPlantilla(id: string): void {
+  abrirPlantilla(plantilla: PlantillaDashboard): void {
+    const id = plantilla.id || plantilla._id;
+
+    if (!id) {
+      console.error('No se puede abrir la plantilla porque no tiene id:', plantilla);
+      return;
+    }
+
     this.router.navigate(['/templates', id]);
   }
 
@@ -60,12 +72,16 @@ export class Dashboard implements OnInit {
       next: (respuesta) => {
         console.log('RESPUESTA COMPLETA:', respuesta);
 
-        this.plantillas = Array.isArray(respuesta?.data) ? [...respuesta.data] : [];
+        const plantillas = Array.isArray(respuesta?.data) ? respuesta.data : [];
+
+        this.plantillas = plantillas.map((plantilla: any) => ({
+          ...plantilla,
+          id: plantilla.id || plantilla._id || ''
+        }));
+
         this.cargandoPlantillas = false;
 
         console.log('Plantillas cargadas:', this.plantillas);
-        console.log('cargandoPlantillas:', this.cargandoPlantillas);
-
         this.cdr.detectChanges();
       },
       error: (error) => {

@@ -6,4 +6,6 @@ export interface IUsuario {
 
   activo?: boolean;
   tokenActivacion?: string;
+  tokenRecuperacion?: string;
+  expiracionTokenRecuperacion?: Date;
 }

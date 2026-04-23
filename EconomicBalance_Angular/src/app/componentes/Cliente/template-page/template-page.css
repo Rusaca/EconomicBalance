@@ -10,6 +10,13 @@
   flex-wrap: wrap;
 }
 
+.acciones-barra {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .barra-superior input {
   border-radius: 8px;
   border: 1px solid #d1d5db;
@@ -27,8 +34,6 @@
   height: calc(100vh - 70px);
   background: #f9fafb;
   overflow: hidden;
-
-  /* cuadrícula suave */
   background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
   background-size: 20px 20px;
 }
@@ -80,7 +85,7 @@
   background: rgba(99, 102, 241, 0.35);
 }
 
-/* ====== INPUT DEL TÍTULO ====== */
+/* ====== INPUT DEL TITULO ====== */
 .titulo input {
   font-weight: 600;
   border: none;
@@ -114,7 +119,7 @@
   font-size: 0.75rem;
 }
 
-/* ====== MENÚ CONTEXTUAL ====== */
+/* ====== MENU CONTEXTUAL ====== */
 .menu {
   position: absolute;
   background: white;
@@ -133,10 +138,27 @@
   padding: 8px 14px;
   cursor: pointer;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .opcion-menu:hover {
   background: #f3f4f6;
+}
+
+.icono-menu {
+  width: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.opcion-menu.text-danger .icono-menu {
+  color: inherit;
 }
 
 /* ====== POPUPS ====== */
@@ -187,12 +209,34 @@ button {
   border-radius: 8px !important;
 }
 
-/* ====== ANIMACIÓN ====== */
+.btn-icono {
+  width: 32px;
+  height: 32px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.icono-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.icono-fijado {
+  color: #0d6efd;
+}
+
+/* ====== ANIMACION ====== */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);

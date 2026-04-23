@@ -1,9 +1,22 @@
 <div class="barra-superior">
-  <button class="btn btn-primary"
-          (click)="guardarPlantilla()"
-          [disabled]="guardando">
-    {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
-  </button>
+  <div class="acciones-barra">
+    <button
+      class="btn btn-outline-secondary"
+      type="button"
+      (click)="volverAlDashboard()"
+    >
+      Volver al dashboard
+    </button>
+
+    <button
+      class="btn btn-primary"
+      type="button"
+      (click)="guardarPlantilla()"
+      [disabled]="guardando"
+    >
+      {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
+    </button>
+  </div>
 
   <span class="mensaje" *ngIf="mensajeGuardado">
     {{ mensajeGuardado }}
@@ -12,7 +25,7 @@
 
 <div class="lienzo" (contextmenu)="abrirMenuLienzo($event)">
 
-  <!-- 🔲 BLOQUES -->
+  <!-- BLOQUES -->
   <div
     class="bloque"
     *ngFor="let bloque of template?.blocks"
@@ -28,39 +41,47 @@
         class="form-control form-control-sm"
         type="text"
         [(ngModel)]="bloque.titulo"
-        placeholder="Título del bloque"
+        placeholder="Titulo del bloque"
         (mousedown)="$event.stopPropagation()"
       />
 
       <div class="d-flex gap-1">
         <button
           type="button"
-          class="btn btn-sm btn-outline-secondary"
+          class="btn btn-sm btn-outline-secondary btn-icono"
           (click)="toggleFijado(bloque)"
+          [title]="bloque.fijado ? 'Desfijar bloque' : 'Fijar bloque'"
+          [attr.aria-label]="bloque.fijado ? 'Desfijar bloque' : 'Fijar bloque'"
         >
-          {{ bloque.fijado ? 'Desfijar' : 'Fijar' }}
+          <span class="icono-accion" [class.icono-fijado]="bloque.fijado" aria-hidden="true">
+            &#128204;
+          </span>
         </button>
 
         <button
           type="button"
-          class="btn btn-sm btn-outline-primary"
+          class="btn btn-sm btn-outline-primary btn-icono"
           (click)="abrirPopupCampo(bloque)"
+          title="Crear campo"
+          aria-label="Crear campo"
         >
-          + Campo
+          <span class="icono-accion" aria-hidden="true">&#43;</span>
         </button>
 
         <button
           type="button"
-          class="btn btn-sm btn-outline-danger"
+          class="btn btn-sm btn-outline-danger btn-icono"
           (click)="eliminarBloque(bloque.id)"
+          title="Eliminar bloque"
+          aria-label="Eliminar bloque"
         >
-          ✕
+          <span class="icono-accion" aria-hidden="true">&#128465;</span>
         </button>
       </div>
     </div>
 
     <div *ngIf="bloque.campos.length === 0" class="text-muted small mt-2">
-      Este bloque todavía no tiene campos.
+      Este bloque todavia no tiene campos.
     </div>
 
     <div *ngFor="let campo of bloque.campos" class="campo d-flex flex-column gap-2 mt-2">
@@ -68,7 +89,7 @@
         <div>
           <strong>{{ campo.nombre }}</strong>
           <div class="small text-muted">
-            {{ campo.categoria || 'Sin categoría' }} · {{ campo.tipo }} · {{ campo.cantidad }} €
+            {{ campo.categoria || 'Sin categoria' }} · {{ campo.tipo }} · {{ campo.cantidad }} €
           </div>
         </div>
 
@@ -93,7 +114,7 @@
     </div>
   </div>
 
-  <!-- 📌 MENÚ CONTEXTUAL LIENZO -->
+  <!-- MENU CONTEXTUAL LIENZO -->
   <div
     class="menu"
     *ngIf="menuLienzo.visible"
@@ -102,11 +123,11 @@
     (click)="$event.stopPropagation()"
   >
     <div class="opcion-menu" (click)="crearBloque()">
-      ➕ Crear bloque
+      + Crear bloque
     </div>
   </div>
 
-  <!-- 📌 MENÚ CONTEXTUAL BLOQUE -->
+  <!-- MENU CONTEXTUAL BLOQUE -->
   <div
     class="menu menu-fixed"
     *ngIf="menuBloque.visible"
@@ -115,7 +136,8 @@
     (click)="$event.stopPropagation()"
   >
     <div class="opcion-menu" (click)="abrirPopupCampo()">
-      ➕ Crear campo
+      <span class="icono-menu" aria-hidden="true">&#10133;</span>
+      <span>Crear campo</span>
     </div>
 
     <div
@@ -123,7 +145,8 @@
       *ngIf="menuBloque.bloque"
       (click)="clonarBloque(menuBloque.bloque!)"
     >
-      📄 Clonar bloque
+      <span class="icono-menu" aria-hidden="true">&#128203;</span>
+      <span>Clonar bloque</span>
     </div>
 
     <div
@@ -131,7 +154,8 @@
       *ngIf="menuBloque.bloque"
       (click)="calcularTotalBloque(menuBloque.bloque!)"
     >
-      🧮 Calcular total
+      <span class="icono-menu" aria-hidden="true">&#8721;</span>
+      <span>Calcular total</span>
     </div>
 
     <div
@@ -139,7 +163,8 @@
       *ngIf="menuBloque.bloque"
       (click)="eliminarBloque(menuBloque.bloque!.id)"
     >
-      🗑️ Eliminar bloque
+      <span class="icono-menu" aria-hidden="true">&#128465;</span>
+      <span>Eliminar bloque</span>
     </div>
   </div>
 </div>
@@ -154,7 +179,7 @@
       <option value="gasto">Gasto</option>
     </select>
 
-    <label>Categoría</label>
+    <label>Categoria</label>
     <input type="text" [(ngModel)]="nuevoCampo.categoria" />
 
     <label>Nombre</label>
@@ -164,11 +189,11 @@
     <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.cantidad" />
 
     <div class="acciones">
-      <button class="btn btn-success" (click)="guardarCampo()">
+      <button class="btn btn-success" type="button" (click)="guardarCampo()">
         Guardar
       </button>
 
-      <button class="btn btn-secondary" (click)="cerrarPopupCampo()">
+      <button class="btn btn-secondary" type="button" (click)="cerrarPopupCampo()">
         Cancelar
       </button>
     </div>
@@ -187,11 +212,21 @@
     />
 
     <div class="acciones">
-      <button class="btn btn-success" type="button" (click)="confirmarPrimerGuardado()" [disabled]="guardando">
+      <button
+        class="btn btn-success"
+        type="button"
+        (click)="confirmarPrimerGuardado()"
+        [disabled]="guardando"
+      >
         Confirmar
       </button>
 
-      <button class="btn btn-secondary" type="button" (click)="cancelarPrimerGuardado()" [disabled]="guardando">
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="cancelarPrimerGuardado()"
+        [disabled]="guardando"
+      >
         Cancelar
       </button>
     </div>

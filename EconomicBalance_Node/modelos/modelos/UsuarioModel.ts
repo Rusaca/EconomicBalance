@@ -33,6 +33,16 @@ const UserSchema = new Schema<IUsuario>(
     tokenActivacion: {
       type: String,
       required: false
+    },
+
+    tokenRecuperacion: {
+      type: String,
+      required: false
+    },
+
+    expiracionTokenRecuperacion: {
+      type: Date,
+      required: false
     }
   },
   {

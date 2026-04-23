@@ -26,7 +26,7 @@ export class AuthApiService {
   constructor(private http: FetchNodeService) {}
 
   async registrarUsuario(payload: IRegistroPayload): Promise<IRespuestaAuth> {
-    return await this.http.post('/cliente/register', payload);
+    return await this.http.post('/cliente/registro', payload);
   }
 
   async loginUsuario(payload: ILoginPayload): Promise<IRespuestaAuth> {

@@ -136,11 +136,54 @@ export const plantillaService = {
     }
   },
 
+  obtenerPlantillasPorUsuario: async (userId: string) => {
+    try {
+      const plantillas = await Plantilla.find({ userId }).sort({ updatedAt: -1 });
+
+      return {
+        ok: true,
+        data: plantillas
+      };
+    } catch (error) {
+      console.error('Error en obtenerPlantillasPorUsuario:', error);
+      return {
+        ok: false,
+        mensaje: 'Error obteniendo las plantillas'
+      };
+    }
+  },
+
+  obtenerPlantillaPorId: async (id: string, userId: string) => {
+    try {
+      const plantilla = await Plantilla.findOne({ _id: id, userId });
+
+      if (!plantilla) {
+        return {
+          ok: false,
+          mensaje: 'Plantilla no encontrada'
+        };
+      }
+
+      return {
+        ok: true,
+        data: plantilla
+      };
+    } catch (error) {
+      console.error('Error en obtenerPlantillaPorId:', error);
+      return {
+        ok: false,
+        mensaje: 'Error obteniendo la plantilla'
+      };
+    }
+  },
+
   actualizarPlantilla: async (id: string, data: any) => {
     try {
-      const actualizada = await Plantilla.findByIdAndUpdate(
-        id,
-        data,
+      const { userId, nombre, blocks } = data;
+
+      const actualizada = await Plantilla.findOneAndUpdate(
+        { _id: id, userId },
+        { nombre, blocks },
         { new: true }
       );
 

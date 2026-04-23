@@ -12,7 +12,7 @@
       </button>
 
       <button class="btn btn-outline-dark px-4" type="button" (click)="cerrarSesion()">
-        Cerrar sesión
+        Cerrar sesion
       </button>
     </div>
   </nav>
@@ -23,10 +23,10 @@
     <section class="hero-dashboard mb-5">
       <div class="row align-items-center g-4">
         <div class="col-lg-8">
-          <span class="dashboard-chip">Área personal</span>
+          <span class="dashboard-chip">Area personal</span>
           <h1 class="display-5 fw-bold titulo-dashboard mt-3 mb-3">Tus plantillas</h1>
           <p class="lead text-muted mb-0 subtitulo-dashboard">
-            Gestiona tus plantillas guardadas, continúa editando las que ya tienes y crea nuevas
+            Gestiona tus plantillas guardadas, continua editando las que ya tienes y crea nuevas
             estructuras para organizar tus finanzas.
           </p>
         </div>
@@ -52,8 +52,8 @@
       *ngIf="!cargandoPlantillas && plantillas.length === 0"
       class="empty-state-dashboard shadow-sm"
     >
-      <div class="empty-icon">📂</div>
-      <h3 class="fw-bold mb-2">Todavía no tienes plantillas</h3>
+      <div class="empty-icon">&#128193;</div>
+      <h3 class="fw-bold mb-2">Todavia no tienes plantillas</h3>
       <p class="text-muted mb-4">
         Crea tu primera plantilla y empieza a construir tu espacio de trabajo financiero.
       </p>
@@ -71,13 +71,13 @@
                 <span class="plantilla-tag">Plantilla</span>
                 <h5 class="card-title fw-bold mt-2 mb-1">{{ plantilla.nombre }}</h5>
                 <p class="text-muted small mb-0">
-                  Última actualización:
+                  Ultima actualizacion:
                   {{ plantilla.updatedAt || plantilla.createdAt }}
                 </p>
               </div>
 
               <div class="icono-plantilla">
-                <span>🧩</span>
+                <span>&#129513;</span>
               </div>
             </div>
 
@@ -90,7 +90,7 @@
               <div class="stat-item">
                 <span class="stat-label">Estado</span>
                 <span class="stat-value">
-                  {{ (plantilla.blocks?.length || 0) > 0 ? 'Activa' : 'Vacía' }}
+                  {{ (plantilla.blocks?.length || 0) > 0 ? 'Activa' : 'Vacia' }}
                 </span>
               </div>
             </div>
@@ -99,7 +99,7 @@
               <button
                 class="btn btn-outline-primary btn-abrir"
                 type="button"
-                (click)="abrirPlantilla(plantilla.id)"
+                (click)="abrirPlantilla(plantilla)"
               >
                 Abrir plantilla
               </button>

@@ -22,6 +22,7 @@ export class TemplatePage implements OnInit {
   };
 
   esNuevaPlantilla = true;
+  private plantillaIdRuta: string | null = null;
 
   menuLienzo = { visible: false, x: 0, y: 0 };
   menuBloque = { visible: false, x: 0, y: 0, bloque: null as Bloque | null };
@@ -53,40 +54,42 @@ export class TemplatePage implements OnInit {
     private router: Router,
     private templateService: TemplatesService
   ) {}
-
-  ngOnInit(): void {
-    if (!localStorage.getItem('token') || !localStorage.getItem('usuario')) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    const id = this.route.snapshot.paramMap.get('id');
-
-    if (!id || id === 'nueva') {
-      this.esNuevaPlantilla = true;
-      return;
-    }
-
-    this.esNuevaPlantilla = false;
-
-    this.templateService.getById(id).subscribe({
-      next: (respuesta) => {
-        if (!respuesta.ok) {
-          this.router.navigate(['/dashboard']);
-          return;
-        }
-
-        this.template = {
-          ...respuesta.data,
-          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
-        };
-      },
-      error: (err) => {
-        console.error('Error al cargar plantilla', err);
-        this.router.navigate(['/dashboard']);
-      }
-    });
+ngOnInit(): void {
+  if (!localStorage.getItem('token') || !localStorage.getItem('usuario')) {
+    this.router.navigate(['/login']);
+    return;
   }
+
+  const id = this.route.snapshot.paramMap.get('id');
+  this.plantillaIdRuta = id && id !== 'nueva' ? id : null;
+
+  if (!this.plantillaIdRuta) {
+    this.esNuevaPlantilla = true;
+    return;
+  }
+
+  this.esNuevaPlantilla = false;
+
+  this.templateService.getById(this.plantillaIdRuta).subscribe({
+    next: (respuesta) => {
+      if (!respuesta.ok) {
+        this.router.navigate(['/dashboard']);
+        return;
+      }
+
+      this.template = {
+        ...respuesta.data,
+        id: respuesta.data.id || this.plantillaIdRuta || '',
+        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+      };
+    },
+    error: (err) => {
+      console.error('Error al cargar plantilla', err);
+      this.router.navigate(['/dashboard']);
+    }
+  });
+}
+
 
   private generarId(): string {
     return `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
@@ -340,51 +343,59 @@ export class TemplatePage implements OnInit {
     this.menuBloque.visible = false;
   }
 
-  guardarPlantilla(): void {
-    const nombreActual = this.template.nombre?.trim();
+ guardarPlantilla(): void {
+  const idPlantilla = this.template.id || this.plantillaIdRuta;
+  const nombreActual = this.template.nombre?.trim();
 
-    if (!this.template.id) {
-      this.nombrePlantillaTemporal = nombreActual || '';
-      this.popupNombrePlantillaVisible = true;
-      return;
-    }
-
-    if (!nombreActual) {
-      this.mensajeGuardado = 'La plantilla debe tener un nombre';
-      this.limpiarMensajeGuardado();
-      return;
-    }
-
-    this.guardando = true;
-    this.mensajeGuardado = '';
-
-    this.templateService.updateTemplate(this.template.id, this.template).subscribe({
-      next: (respuesta) => {
-        this.guardando = false;
-
-        if (!respuesta.ok) {
-          this.mensajeGuardado = respuesta.mensaje || 'Error al guardar la plantilla';
-          this.limpiarMensajeGuardado();
-          return;
-        }
-
-        this.template = {
-          ...respuesta.data,
-          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
-        };
-
-        this.esNuevaPlantilla = false;
-        this.mensajeGuardado = 'Plantilla guardada correctamente';
-        this.limpiarMensajeGuardado();
-      },
-      error: (err) => {
-        console.error('Error al guardar plantilla', err);
-        this.guardando = false;
-        this.mensajeGuardado = 'Error al guardar la plantilla';
-        this.limpiarMensajeGuardado();
-      }
-    });
+  if (!idPlantilla) {
+    this.nombrePlantillaTemporal = nombreActual || '';
+    this.popupNombrePlantillaVisible = true;
+    return;
   }
+
+  if (!nombreActual) {
+    this.mensajeGuardado = 'La plantilla debe tener un nombre';
+    this.limpiarMensajeGuardado();
+    return;
+  }
+
+  this.guardando = true;
+  this.mensajeGuardado = '';
+
+  this.templateService.updateTemplate(idPlantilla, {
+    ...this.template,
+    id: idPlantilla,
+    nombre: nombreActual
+  }).subscribe({
+    next: (respuesta) => {
+      this.guardando = false;
+
+      if (!respuesta.ok) {
+        this.mensajeGuardado = respuesta.mensaje || 'Error al guardar la plantilla';
+        this.limpiarMensajeGuardado();
+        return;
+      }
+
+      this.template = {
+        ...respuesta.data,
+        id: respuesta.data.id || idPlantilla,
+        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+      };
+
+      this.plantillaIdRuta = this.template.id;
+      this.esNuevaPlantilla = false;
+      this.mensajeGuardado = 'Plantilla guardada correctamente';
+      this.limpiarMensajeGuardado();
+    },
+    error: (err) => {
+      console.error('Error al guardar plantilla', err);
+      this.guardando = false;
+      this.mensajeGuardado = 'Error al guardar la plantilla';
+      this.limpiarMensajeGuardado();
+    }
+  });
+}
+
 
   confirmarPrimerGuardado(): void {
     const nombre = this.nombrePlantillaTemporal.trim();

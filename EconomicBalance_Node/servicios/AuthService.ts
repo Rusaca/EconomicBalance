@@ -37,7 +37,9 @@ export default class AuthService {
       nombre,
       apellidos,
       correo: correo.toLowerCase(),
-      password: passwordHash
+      password: passwordHash,
+      activo: false,
+      tokenActivacion: token
     });
 
     await nuevoUsuario.save();
@@ -194,7 +196,7 @@ export default class AuthService {
   const usuarioActualizado = await UserModel.findById(usuario._id);
   console.log('USUARIO ACTUALIZADO TRAS GUARDAR TOKEN:', usuarioActualizado);
 
-  const enlace = `http://localhost:4200/EconomicBalance/restablecer-password?token=${token}`;
+  const enlace = `http://localhost:4200/restablecer-password?token=${token}`;
   console.log('ENLACE ENVIADO EN CORREO:', enlace);
 
   await enviarCorreoRecuperacion(usuario.correo, enlace);
@@ -286,14 +288,37 @@ export default class AuthService {
       };
     }
 
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      return {
+        ok: false,
+        mensaje: 'JWT_SECRET no configurado'
+      };
+    }
+
+    const jwtToken = jwt.sign(
+      {
+        id: usuario._id.toString(),
+        correo: usuario.correo
+      },
+      secret,
+      {
+        expiresIn: '1d'
+      }
+    );
+
     return {
       ok: true,
       mensaje: 'Login con Google correcto',
       data: {
-        id: usuario._id,
-        nombre: usuario.nombre,
-        apellidos: usuario.apellidos,
-        correo: usuario.correo
+        token: jwtToken,
+        usuario: {
+          id: usuario._id,
+          nombre: usuario.nombre,
+          apellidos: usuario.apellidos,
+          correo: usuario.correo
+        }
       }
     };
   } catch (error) {

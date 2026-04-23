@@ -1,20 +1,21 @@
 import { Router, Request, Response } from 'express';
-import { clienteService } from '../../servicios/servicioNecesario';
+import AuthService from '../../servicios/AuthService';
 
 const router = Router();
+const authService = new AuthService();
 
 router.post('/registro', async (req: Request, res: Response) => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, apellidos, correo, password } = req.body;
 
-    if (!nombre || !email || !password) {
+    if (!nombre || !apellidos || !correo || !password) {
       return res.status(400).json({
         ok: false,
         mensaje: 'Faltan datos obligatorios'
       });
     }
 
-    const respuesta = await clienteService.registrarCliente({ nombre, email, password });
+    const respuesta = await authService.registrarUsuario({ nombre, apellidos, correo, password });
 
     if (!respuesta.ok) {
       return res.status(400).json(respuesta);
@@ -33,21 +34,45 @@ router.post('/registro', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { nombre, apellidos, correo, password } = req.body;
 
-    if (!email || !password) {
+    if (!nombre || !apellidos || !correo || !password) {
       return res.status(400).json({
         ok: false,
-        mensaje: 'Faltan email o password'
+        mensaje: 'Faltan datos obligatorios'
       });
     }
 
-    const respuesta = await clienteService.loginCliente({ email, password });
+    const respuesta = await authService.registrarUsuario({ nombre, apellidos, correo, password });
+
+    return res.status(respuesta.ok ? 201 : 400).json(respuesta);
+  } catch (error) {
+    console.error('Error en POST /api/cliente/register:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error en el registro'
+    });
+  }
+});
+
+router.post('/login', async (req: Request, res: Response) => {
+  try {
+    const correo = req.body.correo ?? req.body.email;
+    const { password } = req.body;
+
+    if (!correo || !password) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'Faltan correo o password'
+      });
+    }
+
+    const respuesta = await authService.loginUsuario({ correo, password });
 
     if (!respuesta.ok) {
-      return res.status(400).json(respuesta);
+      return res.status(401).json(respuesta);
     }
 
     return res.status(200).json(respuesta);
@@ -56,6 +81,42 @@ router.post('/login', async (req: Request, res: Response) => {
     return res.status(500).json({
       ok: false,
       mensaje: 'Error en el login'
+    });
+  }
+});
+
+router.get('/users', async (_req: Request, res: Response) => {
+  try {
+    const respuesta = await authService.obtenerUsuarios();
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    console.error('Error en GET /api/cliente/users:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error obteniendo usuarios'
+    });
+  }
+});
+
+router.get('/activar', async (req: Request, res: Response) => {
+  try {
+    const token = req.query.token as string | undefined;
+
+    if (!token) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'Falta token de activacion'
+      });
+    }
+
+    const respuesta = await authService.activarCuenta(token);
+
+    return res.status(respuesta.ok ? 200 : 400).json(respuesta);
+  } catch (error) {
+    console.error('Error en GET /api/cliente/activar:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error al activar la cuenta'
     });
   }
 });

@@ -14,7 +14,11 @@ import { AuthFormService } from '../../../servicios/auth-form.service';
 import { AuthApiService } from '../../../servicios/auth-api.service';
 import { environment } from '../../../environments/environment';
 
-declare const google: any;
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
 
 @Component({
   selector: 'app-login',
@@ -29,6 +33,9 @@ export class Login implements OnInit, AfterViewInit {
   remember: boolean = false;
   mensajeError: string = '';
 
+  googleReady: boolean = false;
+  cargandoGoogle: boolean = false;
+
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
 
   constructor(
@@ -39,18 +46,8 @@ export class Login implements OnInit, AfterViewInit {
     private ngZone: NgZone
   ) { }
 
-  ngOnInit() {
-    console.log('Google Client ID:', environment.googleClientId);
-
-    if (!google?.accounts?.id) {
-      this.mensajeError = 'Google no está disponible en este momento';
-      return;
-    }
-
-    google.accounts.id.initialize({
-      client_id: environment.googleClientId,
-      callback: (response: any) => this.handleGoogleCredential(response)
-    });
+  async ngOnInit() {
+    await this.inicializarGoogleAuth(true);
   }
 
   ngAfterViewInit() {
@@ -86,19 +83,26 @@ export class Login implements OnInit, AfterViewInit {
 
       this.ngZone.run(() => {
         if (!respuesta?.ok) {
-          this.mensajeError = 'Correo o contraseña incorrectos';
+          this.mensajeError = 'Correo o contrasena incorrectos';
           this.cdr.detectChanges();
           return;
         }
 
-        localStorage.setItem('usuario', JSON.stringify(respuesta.data));
-        this.router.navigate(['/']);
+        if (!respuesta.data?.token || !respuesta.data?.usuario) {
+          this.mensajeError = 'Respuesta de login incompleta';
+          this.cdr.detectChanges();
+          return;
+        }
+
+        localStorage.setItem('token', respuesta.data.token);
+        localStorage.setItem('usuario', JSON.stringify(respuesta.data.usuario));
+        this.router.navigate(['/dashboard']);
         this.cdr.detectChanges();
       });
     } catch (error: any) {
       this.ngZone.run(() => {
         if (error?.status === 401) {
-          this.mensajeError = 'Correo o contraseña incorrectos';
+          this.mensajeError = 'Correo o contrasena incorrectos';
         } else {
           this.mensajeError = 'Error conectando con el servidor';
         }
@@ -107,16 +111,33 @@ export class Login implements OnInit, AfterViewInit {
     }
   }
 
-  loginGoogle() {
+  async loginGoogle() {
     this.mensajeError = '';
 
+    const listo = await this.inicializarGoogleAuth(false);
+
+    if (!listo) {
+      this.mensajeError = 'Google no esta disponible en este momento';
+      this.cdr.detectChanges();
+      return;
+    }
+
     try {
-      google.accounts.id.prompt((notification: any) => {
-        console.log('Google prompt notification:', notification);
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification?.isNotDisplayed?.()) {
+          console.warn('Google prompt no mostrado:', notification.getNotDisplayedReason?.());
+        }
+        if (notification?.isSkippedMoment?.()) {
+          console.warn('Google prompt omitido:', notification.getSkippedReason?.());
+        }
+        if (notification?.isDismissedMoment?.()) {
+          console.warn('Google prompt cerrado:', notification.getDismissedReason?.());
+        }
       });
     } catch (error) {
       console.error('Error abriendo Google prompt:', error);
-      this.mensajeError = 'No se pudo iniciar sesión con Google';
+      this.mensajeError = 'No se pudo iniciar sesion con Google';
+      this.cdr.detectChanges();
     }
   }
 
@@ -124,21 +145,32 @@ export class Login implements OnInit, AfterViewInit {
     this.mensajeError = '';
 
     try {
-      const googleToken = response.credential;
-      console.log('TOKEN GOOGLE:', googleToken);
+      const googleToken = response?.credential;
+
+      if (!googleToken) {
+        this.mensajeError = 'No se pudo obtener el token de Google';
+        this.cdr.detectChanges();
+        return;
+      }
 
       const respuesta = await this.authApiService.loginGoogle({ token: googleToken });
-      console.log('RESPUESTA BACKEND LOGIN GOOGLE:', respuesta);
 
       this.ngZone.run(() => {
         if (!respuesta?.ok) {
-          this.mensajeError = respuesta?.mensaje || 'No se pudo iniciar sesión con Google';
+          this.mensajeError = respuesta?.mensaje || 'No se pudo iniciar sesion con Google';
           this.cdr.detectChanges();
           return;
         }
 
-        localStorage.setItem('usuario', JSON.stringify(respuesta.data));
-        this.router.navigate(['/']);
+        if (!respuesta.data?.token || !respuesta.data?.usuario) {
+          this.mensajeError = 'Respuesta de login con Google incompleta';
+          this.cdr.detectChanges();
+          return;
+        }
+
+        localStorage.setItem('token', respuesta.data.token);
+        localStorage.setItem('usuario', JSON.stringify(respuesta.data.usuario));
+        this.router.navigate(['/dashboard']);
         this.cdr.detectChanges();
       });
     } catch (error: any) {
@@ -151,4 +183,74 @@ export class Login implements OnInit, AfterViewInit {
     }
   }
 
+  private async inicializarGoogleAuth(mostrarError: boolean): Promise<boolean> {
+    if (this.googleReady) {
+      return true;
+    }
+
+    if (!environment.googleClientId) {
+      if (mostrarError) {
+        this.mensajeError = 'Falta configurar el Client ID de Google';
+        this.cdr.detectChanges();
+      }
+      return false;
+    }
+
+    this.cargandoGoogle = true;
+    this.cdr.detectChanges();
+
+    try {
+      await this.cargarScriptGoogle();
+
+      if (!window.google?.accounts?.id) {
+        throw new Error('Google Identity Services no disponible');
+      }
+
+      window.google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: (credentialResponse: any) => this.handleGoogleCredential(credentialResponse)
+      });
+
+      this.googleReady = true;
+      return true;
+    } catch (error) {
+      console.error('Error inicializando Google Auth:', error);
+
+      if (mostrarError) {
+        this.mensajeError = 'Google no esta disponible en este momento';
+        this.cdr.detectChanges();
+      }
+
+      return false;
+    } finally {
+      this.cargandoGoogle = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  private cargarScriptGoogle(): Promise<void> {
+    if (window.google?.accounts?.id) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+      const idScript = 'google-gsi-client';
+      const scriptExistente = document.getElementById(idScript) as HTMLScriptElement | null;
+
+      if (scriptExistente) {
+        scriptExistente.addEventListener('load', () => resolve(), { once: true });
+        scriptExistente.addEventListener('error', () => reject(new Error('No se pudo cargar Google GSI')), { once: true });
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.id = idScript;
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('No se pudo cargar Google GSI'));
+      document.head.appendChild(script);
+    });
+  }
 }
