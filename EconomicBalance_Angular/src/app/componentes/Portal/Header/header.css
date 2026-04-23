@@ -1,11 +1,95 @@
-/* Ajuste simple para que las imágenes del carrusel se vean “tipo hero” 
-.carousel-item img {
-  height: 420px;
-  object-fit: cover;
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
 }
 
-/* Mejor legibilidad del texto encima de la imagen 
-.carousel-caption {
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+.brand-logo {
+  width: 90px;
+  height: auto;
+  display: block;
+  transform: scale(1.6);
+  transform-origin: left center;
+  margin-left: -8px;
 }
-  */
+
+header .navbar-header {
+  width: 100%;
+  max-width: none;
+  padding-left: clamp(0.7rem, 2.1vw, 2rem);
+  padding-right: clamp(0.7rem, 2.1vw, 2rem);
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  align-items: center;
+}
+
+header .navbar-collapse {
+  justify-content: flex-end;
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+
+header .navbar-nav {
+  margin-left: auto;
+}
+
+.header-auth-mobile {
+  gap: 0.5rem;
+}
+
+.header-auth-mobile .texto-bienvenida {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  header .navbar-header {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+    padding-top: 0.05rem;
+    padding-bottom: 0.05rem;
+  }
+
+  .brand-logo {
+    width: 136px;
+    transform: scale(0.84);
+    margin-left: 0;
+  }
+
+  header .navbar-toggler {
+    display: none;
+  }
+
+  header .navbar-collapse {
+    gap: 0.75rem;
+  }
+
+  .header-auth-mobile {
+    gap: 0.35rem;
+  }
+
+  .header-auth-mobile .texto-bienvenida {
+    font-size: 0.78rem;
+  }
+
+  .header-auth-mobile .btn {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  header .navbar-header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .brand-logo {
+    transform: scale(1.14);
+    margin-left: -4px;
+  }
+
+  header .navbar-collapse {
+    gap: 1rem;
+  }
+}
