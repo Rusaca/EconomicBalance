@@ -1,0 +1,35 @@
+<div class="sidebar" [class.open]="abierto">
+
+    <!-- TOP -->
+    <div class="sidebar-top d-flex align-items-center justify-content-between px-3 py-2">
+        <img src="assets/logosinfondo.png" class="sidebar-logo" alt="Economic Balance">
+
+        <button class="sidebar-close-btn" (click)="cerrar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+
+    <!-- CONTENIDO SCROLLEABLE -->
+    <div class="sidebar-content">
+        <ul class="list-group list-group-flush">
+
+            <li class="list-group-item sidebar-item" (click)="ir('plantillas')">Mis Plantillas</li>
+            <li class="list-group-item sidebar-item" (click)="ir('estadisticas')">Estadísticas</li>
+            <li class="list-group-item sidebar-item" (click)="ir('configuracion')">Configuración</li>
+            <li class="list-group-item sidebar-item" (click)="ir('plantillas')">Mis Plantillas</li>
+            <li class="list-group-item sidebar-item" (click)="ir('estadisticas')">Estadísticas</li>
+            <li class="list-group-item sidebar-item" (click)="ir('configuracion')">Configuración</li>
+
+        </ul>
+    </div>
+
+    <!-- BOTÓN ABAJO DEL TODO -->
+    <div class="sidebar-bottom px-3 py-3">
+        <button class="btn btn-outline-dark w-100 fw-semibold" (click)="toggleTheme()">
+            {{ temaOscuro ? 'Modo claro' : 'Modo oscuro' }}
+        </button>
+    </div>
+
+</div>

@@ -3,6 +3,10 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TemplatesService } from '../../../../services/templates-service';
 import { Plantilla } from '../../../../modelos/template.intetrfaces';
+import { SidebarComponent } from '../../../Portal/Sidebar/sidebar';
+import { PerfilUsuComponent } from '../../../Portal/perfilUsu/perfilusu';
+import { NotiComponent } from '../../../Portal/notificacion/noti';
+
 
 type PlantillaDashboard = Plantilla & {
   _id?: string;
@@ -11,7 +15,7 @@ type PlantillaDashboard = Plantilla & {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SidebarComponent,PerfilUsuComponent, NotiComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -24,7 +28,7 @@ export class Dashboard implements OnInit {
     private router: Router,
     private templateService: TemplatesService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     console.log('Dashboard cargado');
@@ -56,6 +60,23 @@ export class Dashboard implements OnInit {
 
     this.router.navigate(['/templates', id]);
   }
+  sidebarAbierto = false;
+
+  toggleSidebar() {
+    this.sidebarAbierto = !this.sidebarAbierto;
+  }
+
+ menuAbierto = false;
+
+toggleUserMenu() {
+  this.menuAbierto = !this.menuAbierto;
+}
+notificacionesAbierto = false;
+
+toggleNotificaciones() {
+  this.notificacionesAbierto = !this.notificacionesAbierto;
+  this.menuAbierto = false; 
+}
 
   cerrarSesion(): void {
     localStorage.removeItem('usuario');

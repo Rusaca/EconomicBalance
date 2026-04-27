@@ -1,22 +1,52 @@
-<header class="border-bottom bg-white shadow-sm">
-  <nav class="navbar navbar-expand-lg container py-3">
-    <a class="navbar-brand fw-bold brand-logo" routerLink="/">EconomicBalance</a>
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 py-2">
 
-    <div class="ms-auto d-flex align-items-center gap-3">
-      <div class="usuario-badge" *ngIf="nombreUsuario">
-        Hola, {{ nombreUsuario }}
+  <!-- IZQUIERDA -->
+  <div class="d-flex align-items-center gap-5">
+
+    <!-- Botón menú -->
+    <button class="menu-btn d-flex flex-column justify-content-between" (click)="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Logo -->
+    <a routerLink="/inicio" class="d-flex align-items-center">
+      <img src="assets/logosinfondo.png" class="brand-logo-dashboard" alt="Economic Balance">
+    </a>
+
+  </div>
+
+  <!-- DERECHA -->
+  <div class="header-right d-flex align-items-center">
+
+    <!-- Campana -->
+    <button class="notif-btn me-4" (click)="toggleNotificaciones()">
+      <img src="assets/campana.png" class="notif-icon">
+    </button>
+
+
+    <!-- BLOQUE: Hola + avatar (clic abre menú) -->
+    <div class="user-block d-flex align-items-center" (click)="toggleUserMenu()">
+      <span class="fw-semibold">Hola, {{ nombreUsuario }}</span>
+      <div class="user-avatar ms-1">
+        {{ nombreUsuario.charAt(0) | uppercase }}
       </div>
-
-      <button class="btn btn-primary btn-accion px-4" type="button" (click)="nuevaPlantilla()">
-        Nueva plantilla
-      </button>
-
-      <button class="btn btn-outline-dark px-4" type="button" (click)="cerrarSesion()">
-        Cerrar sesion
-      </button>
     </div>
-  </nav>
+
+  </div>
+
 </header>
+
+<!-- MENÚ DE PERFIL (FUERA DEL HEADER, DEBAJO) -->
+<div class="menu-perfil-wrapper" *ngIf="menuAbierto">
+  <app-perfilusu></app-perfilusu>
+</div>
+<div class="notif-dropdown-wrapper" *ngIf="notificacionesAbierto">
+  <app-noti></app-noti>
+</div>
+<app-sidebar [abierto]="sidebarAbierto"></app-sidebar>
+
 
 <main class="dashboard-page">
   <div class="container py-5">
@@ -48,10 +78,7 @@
       <span>Cargando plantillas...</span>
     </div>
 
-    <section
-      *ngIf="!cargandoPlantillas && plantillas.length === 0"
-      class="empty-state-dashboard shadow-sm"
-    >
+    <section *ngIf="!cargandoPlantillas && plantillas.length === 0" class="empty-state-dashboard shadow-sm">
       <div class="empty-icon">&#128193;</div>
       <h3 class="fw-bold mb-2">Todavia no tienes plantillas</h3>
       <p class="text-muted mb-4">
@@ -96,11 +123,7 @@
             </div>
 
             <div class="mt-auto d-grid">
-              <button
-                class="btn btn-outline-primary btn-abrir"
-                type="button"
-                (click)="abrirPlantilla(plantilla)"
-              >
+              <button class="btn btn-outline-primary btn-abrir" type="button" (click)="abrirPlantilla(plantilla)">
                 Abrir plantilla
               </button>
             </div>

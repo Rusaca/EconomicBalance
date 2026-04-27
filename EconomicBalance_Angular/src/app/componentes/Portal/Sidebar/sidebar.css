@@ -1,0 +1,83 @@
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e3e8ef;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.08);
+  transition: left 0.3s ease;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column; /* ⭐ NECESARIO PARA PEGAR EL BOTÓN ABAJO */
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+/* MINI HEADER DEL SIDEBAR */
+/* MINI HEADER DEL SIDEBAR */
+.sidebar-top {
+  height:63px; /* ⭐ MISMA ALTURA VISUAL QUE EL HEADER */
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e3e8ef;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+
+/* LOGO IGUAL QUE EL DEL HEADER */
+.sidebar-logo {
+  height: 54px; /* ⭐ MISMA ALTURA */
+  transform: scale(1.85); /* ⭐ MISMO SCALE */
+  transform-origin: left center;
+  margin-top: -4px;
+  margin-bottom: -4px;
+}
+
+/* BOTÓN DE 3 LÍNEAS VERTICALES */
+.sidebar-close-btn {
+  width: 28px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: row; /* ⭐ EN FILA PARA QUE SEAN VERTICALES */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-close-btn span {
+  width: 4px;      /* ⭐ GROSOR */
+  height: 100%;    /* ⭐ ALTURA COMPLETA */
+  background: #111;
+  border-radius: 4px;
+}
+
+/* ITEMS */
+.sidebar-item {
+  cursor: pointer;
+  padding: 0.9rem 1.2rem;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background: #f5f7fa;
+}
+/* ZONA CENTRAL */
+.sidebar-content {
+  flex: 1; /* ⭐ OCUPA TODO EL ESPACIO DISPONIBLE */
+  overflow-y: auto;
+}
+
+/* ZONA INFERIOR */
+.sidebar-bottom {
+  border-top: 1px solid #e3e8ef;
+}
