@@ -12,7 +12,7 @@ import { Router, RouterLink } from '@angular/router';
 export class HeaderComponent implements OnInit {
   nombreUsuario = '';
 
-  constructor(private router: Router) {}
+  constructor(public router: Router) {}   // 🔥 CAMBIO AQUÍ
 
   ngOnInit(): void {
     this.cargarNombreUsuario();

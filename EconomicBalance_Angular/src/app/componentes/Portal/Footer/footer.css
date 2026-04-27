@@ -1,11 +1,13 @@
 .footer-dark {
 	background: #000000;
 	color: #f9fafb;
+	padding-bottom: 60px !important;
 }
 
 .footer-shell {
 	padding-left: clamp(1.25rem, 4vw, 4rem);
 	padding-right: clamp(1.25rem, 4vw, 4rem);
+
 }
 
 .footer-dark .text-dark,
@@ -55,10 +57,15 @@
 	border-radius: 12px;
 	padding: 1rem 1.1rem;
 	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+	height: 300px;
+	overflow-y: auto;
+	transition: opacity 0.25s ease;
+
 }
 
 .footer-doc {
 	min-height: 160px;
+	animation: fadeIn 0.25s ease;
 }
 
 .footer-doc-panel h4 {
@@ -113,5 +120,17 @@
 
 	.footer-doc-panel p {
 		font-size: 0.9rem;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
 	}
 }
