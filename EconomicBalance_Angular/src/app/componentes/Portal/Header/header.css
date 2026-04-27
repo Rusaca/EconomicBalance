@@ -3,78 +3,84 @@
   top: 0;
   z-index: 1000;
   background-color: #ffffff;
+  padding-top: 0.45rem;   /* 🔥 antes 0.2rem */
+  padding-bottom: 0.45rem;
 }
 
+/* 🔥 Header más alto y con más presencia */
 .app-header .navbar.navbar-header {
   width: 100%;
-  max-width: none;
-  min-height: 46px;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  padding-left: clamp(0.6rem, 1.8vw, 1.25rem);
-  padding-right: clamp(0.6rem, 1.8vw, 1.25rem);
+  min-height: 54px; /* 🔥 antes 38px */
+  padding-left: clamp(0.8rem, 2vw, 1.6rem);
+  padding-right: clamp(0.8rem, 2vw, 1.6rem);
   align-items: center;
-}
-.app-header .btn.btn-dark.btn-sm {
-  font-size: 0.95rem;
-  padding: 0.42rem 0.9rem;
-  line-height: 1.2;
-}
-
-.brand-link {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  margin-right: 0.5rem;
 }
 
 .brand-logo {
-  width: clamp(104px, 10vw, 138px);
-  max-height: 150px;
-  height: auto;
+  height: 100%;
+  max-height: 54px;                 /* NO cambia el tamaño real del header */
+  transform: scale(1.85) translateX(22px); /* 🔥 más a la derecha */
+  transform-origin: left center;
+  margin-top: -4px;
+  margin-bottom: -4px;
   display: block;
-  object-fit: contain;
 }
 
+
+.btn-elegante {
+  border: 1.5px solid #343a40;        /* borde más fino y elegante */
+  color: #343a40;
+  background-color: transparent;
+  padding: 6px 16px;                  /* más estilizado */
+  font-size: 0.88rem;                 /* más fino */
+  font-weight: 500;                   /* elegante */
+  border-radius: 6px;                 /* esquinas suaves */
+  transition: all 0.25s ease;         /* animación suave */
+}
+
+.btn-elegante:hover {
+  background-color: #343a40;          /* elegante */
+  color: white;
+  transform: translateY(-1px);        /* efecto premium */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+
+
+
+/* 🔥 Texto de bienvenida un poco más grande */
 .texto-bienvenida {
-  font-size: 0.82rem;
-  color: #111827;
+  font-size: 0.9rem; /* antes 0.75rem */
   font-weight: 600;
   white-space: nowrap;
 }
 
-.header-auth-mobile {
-  gap: 0.35rem;
-}
-
-#mainNav {
-  justify-content: flex-end;
-}
-
+/* 🔥 Botones ligeramente más grandes */
 .app-header .btn.btn-sm {
-  padding: 0.2rem 0.45rem;
-  font-size: 0.8rem;
-  line-height: 1.1;
+  padding: 0.32rem 0.75rem; /* antes 0.18rem 0.55rem */
+  font-size: 0.85rem; /* antes 0.75rem */
+  line-height: 1.2;
 }
 
+/* 🔥 Ajuste móvil */
 @media (max-width: 991.98px) {
   .app-header .navbar.navbar-header {
-    min-height: 42px;
-    padding-left: 0.55rem;
-    padding-right: 0.55rem;
+    min-height: 48px; /* antes 34px */
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
   }
 
   .brand-logo {
-    width: 108px;
-    max-height: 30px;
+    width: 120px;
+    max-height: 40px;
   }
 
   .texto-bienvenida {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .header-auth-mobile .btn {
-    padding: 0.18rem 0.38rem;
-    font-size: 0.74rem;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.8rem;
   }
 }

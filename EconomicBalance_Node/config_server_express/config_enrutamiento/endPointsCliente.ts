@@ -166,6 +166,9 @@ router.post('/login-google', async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
+    console.log('TOKEN RECIBIDO:', token); // 👈 AQUÍ
+
+
     if (!token) {
       return res.status(400).json({
         ok: false,
@@ -189,6 +192,8 @@ router.post('/login-google', async (req: Request, res: Response) => {
 router.post('/register-google', async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
+
+    console.log('TOKEN RECIBIDO:', token); // 👈 AQUÍ
 
     if (!token) {
       return res.status(400).json({

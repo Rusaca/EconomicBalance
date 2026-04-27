@@ -3,10 +3,17 @@ import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import UserModel from '../modelos/modelos/UsuarioModel';
-import { enviarCorreoActivacion, enviarCorreoRecuperacion } from './CorreoService';
+import { enviarCorreoActivacion, enviarCorreoBienvenida, enviarCorreoRecuperacion } from './CorreoService';
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+function getGoogleClientId(): string {
+  const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
 
+  if (!googleClientId) {
+    throw new Error('GOOGLE_CLIENT_ID no configurado');
+  }
+
+  return googleClientId;
+}
 export default class AuthService {
 
   // REGISTRO CON EMAIL
@@ -51,36 +58,39 @@ export default class AuthService {
   }
 
   // ACTIVAR CUENTA
-  public async activarCuenta(token: string) {
-    const usuario = await UserModel.findOne({ tokenActivacion: token });
+ public async activarCuenta(token: string) {
+  const usuario = await UserModel.findOne({ tokenActivacion: token });
 
-    if (!usuario) {
-      return {
-        ok: false,
-        mensaje: 'Token invalido'
-      };
-    }
-
-    if (usuario.activo) {
-      return {
-        ok: false,
-        mensaje: 'Esta cuenta ya estaba activada'
-      };
-    }
-
-    await UserModel.updateOne(
-      { tokenActivacion: token },
-      {
-        $set: { activo: true },
-        $unset: { tokenActivacion: '' }
-      }
-    );
-
+  if (!usuario) {
     return {
-      ok: true,
-      mensaje: 'Cuenta activada correctamente'
+      ok: false,
+      mensaje: 'Token invalido'
     };
   }
+
+  if (usuario.activo) {
+    return {
+      ok: false,
+      mensaje: 'Esta cuenta ya estaba activada'
+    };
+  }
+
+  await UserModel.updateOne(
+    { tokenActivacion: token },
+    {
+      $set: { activo: true },
+      $unset: { tokenActivacion: '' }
+    }
+  );
+  await enviarCorreoBienvenida(usuario.correo, usuario.nombre);
+  
+  return {
+    ok: true,
+    mensaje: 'Cuenta activada correctamente',
+    nombre: usuario.nombre   
+  };
+}
+
 
   // LOGIN
   public async loginUsuario(data: { correo: string; password: string }) {
@@ -249,159 +259,165 @@ export default class AuthService {
     };
   }
 
-  public async loginGoogle(token: string) {
-    try {
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID
-      });
+ public async loginGoogle(token: string) {
+  try {
+    const googleClientId = getGoogleClientId();
+    const client = new OAuth2Client(googleClientId);
 
-      const payload = ticket.getPayload();
-      const email = payload?.email;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: googleClientId
+    });
 
-      if (!email) {
-        return {
-          ok: false,
-          mensaje: 'No se pudo obtener la informacion de Google'
-        };
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+
+    if (!email) {
+      return {
+        ok: false,
+        mensaje: 'No se pudo obtener la informacion de Google'
+      };
+    }
+
+    const correo = email.toLowerCase();
+    const usuario = await UserModel.findOne({ correo });
+
+    if (!usuario) {
+      return {
+        ok: false,
+        mensaje: 'No existe una cuenta registrada con ese correo de Google'
+      };
+    }
+
+    if (!usuario.activo) {
+      return {
+        ok: false,
+        mensaje: 'Debes activar tu cuenta desde el correo'
+      };
+    }
+
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      return {
+        ok: false,
+        mensaje: 'JWT_SECRET no configurado'
+      };
+    }
+
+    const jwtToken = jwt.sign(
+      {
+        id: usuario._id.toString(),
+        correo: usuario.correo
+      },
+      secret,
+      {
+        expiresIn: '1d'
       }
+    );
 
-      const correo = email.toLowerCase();
-      const usuario = await UserModel.findOne({ correo });
-
-      if (!usuario) {
-        return {
-          ok: false,
-          mensaje: 'No existe una cuenta registrada con ese correo de Google'
-        };
-      }
-
-      if (!usuario.activo) {
-        return {
-          ok: false,
-          mensaje: 'Debes activar tu cuenta desde el correo'
-        };
-      }
-
-      const secret = process.env.JWT_SECRET;
-
-      if (!secret) {
-        return {
-          ok: false,
-          mensaje: 'JWT_SECRET no configurado'
-        };
-      }
-
-      const jwtToken = jwt.sign(
-        {
-          id: usuario._id.toString(),
+    return {
+      ok: true,
+      mensaje: 'Login con Google correcto',
+      data: {
+        token: jwtToken,
+        usuario: {
+          id: usuario._id,
+          nombre: usuario.nombre,
+          apellidos: usuario.apellidos,
           correo: usuario.correo
-        },
-        secret,
-        {
-          expiresIn: '1d'
         }
-      );
+      }
+    };
+  } catch (error) {
+    console.error('Error en loginGoogle:', error);
 
-      return {
-        ok: true,
-        mensaje: 'Login con Google correcto',
-        data: {
-          token: jwtToken,
-          usuario: {
-            id: usuario._id,
-            nombre: usuario.nombre,
-            apellidos: usuario.apellidos,
-            correo: usuario.correo
-          }
-        }
-      };
-    } catch (error) {
-      console.error('Error en loginGoogle:', error);
+    return {
+      ok: false,
+      mensaje: 'Error en login con Google'
+    };
+  }
+}
 
+public async registerGoogle(token: string) {
+  try {
+    const googleClientId = getGoogleClientId();
+    const client = new OAuth2Client(googleClientId);
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: googleClientId
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+
+    if (!email) {
       return {
         ok: false,
-        mensaje: 'Error en login con Google'
+        mensaje: 'No se pudo obtener la informacion de Google'
       };
     }
-  }
 
-  public async registerGoogle(token: string) {
-    try {
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID
-      });
+    const correo = email.toLowerCase();
 
-      const payload = ticket.getPayload();
-      const email = payload?.email;
+    const nombreGoogle = (payload?.given_name || '').trim();
+    const apellidoGoogle = (payload?.family_name || '').trim();
+    const nombreCompleto = (payload?.name || '').trim();
 
-      if (!email) {
-        return {
-          ok: false,
-          mensaje: 'No se pudo obtener la informacion de Google'
-        };
-      }
+    let nombre = nombreGoogle;
+    let apellidos = apellidoGoogle;
 
-      const correo = email.toLowerCase();
+    if (!nombre && nombreCompleto) {
+      const partes = nombreCompleto.split(' ').filter(Boolean);
+      nombre = partes[0] || 'Usuario';
+      apellidos = partes.slice(1).join(' ');
+    }
 
-      const nombreGoogle = (payload?.given_name || '').trim();
-      const apellidoGoogle = (payload?.family_name || '').trim();
-      const nombreCompleto = (payload?.name || '').trim();
+    if (!nombre) {
+      nombre = 'Usuario';
+    }
 
-      let nombre = nombreGoogle;
-      let apellidos = apellidoGoogle;
+    if (!apellidos) {
+      apellidos = 'Sin apellidos';
+    }
 
-      if (!nombre && nombreCompleto) {
-        const partes = nombreCompleto.split(' ').filter(Boolean);
-        nombre = partes[0] || 'Usuario';
-        apellidos = partes.slice(1).join(' ');
-      }
+    const usuarioExistente = await UserModel.findOne({ correo });
 
-      if (!nombre) {
-        nombre = 'Usuario';
-      }
-
-      if (!apellidos) {
-        apellidos = 'Sin apellidos';
-      }
-
-      const usuarioExistente = await UserModel.findOne({ correo });
-
-      if (usuarioExistente) {
-        return {
-          ok: false,
-          mensaje: 'Ya existe un usuario con ese correo'
-        };
-      }
-
-      const tokenActivacion = crypto.randomBytes(32).toString('hex');
-      const passwordTemporal = crypto.randomBytes(32).toString('hex');
-      const passwordHash = await bcrypt.hash(passwordTemporal, 10);
-
-      const nuevoUsuario = new UserModel({
-        nombre,
-        apellidos,
-        correo,
-        password: passwordHash,
-        activo: false,
-        tokenActivacion
-      });
-
-      await nuevoUsuario.save();
-      await enviarCorreoActivacion(correo, tokenActivacion);
-
-      return {
-        ok: true,
-        mensaje: 'Registro con Google correcto. Revisa tu correo para activar la cuenta.'
-      };
-    } catch (error) {
-      console.error('Error en registerGoogle:', error);
-
+    if (usuarioExistente) {
       return {
         ok: false,
-        mensaje: 'Error en registro con Google'
+        mensaje: 'Ya existe un usuario con ese correo'
       };
     }
+
+    const tokenActivacion = crypto.randomBytes(32).toString('hex');
+    const passwordTemporal = crypto.randomBytes(32).toString('hex');
+    const passwordHash = await bcrypt.hash(passwordTemporal, 10);
+
+    const nuevoUsuario = new UserModel({
+      nombre,
+      apellidos,
+      correo,
+      password: passwordHash,
+      activo: false,
+      tokenActivacion
+    });
+
+    await nuevoUsuario.save();
+    await enviarCorreoActivacion(correo, tokenActivacion);
+
+    return {
+      ok: true,
+      mensaje: 'Registro con Google correcto. Revisa tu correo para activar la cuenta.'
+    };
+  } catch (error) {
+    console.error('Error en registerGoogle:', error);
+
+    return {
+      ok: false,
+      mensaje: 'Error en registro con Google'
+    };
   }
+}
 }
