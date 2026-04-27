@@ -9,3 +9,51 @@
   z-index: -1;
   display: none; /* oculto por defecto */
 }
+
+/* MODO OSCURO GLOBAL */
+.dark-mode {
+  background-color: #111 !important;
+  color: #f1f1f1 !important;
+}
+
+/* Sidebar en modo oscuro */
+.dark-mode .sidebar {
+  background: #1a1a1a !important;
+  border-right: 1px solid #333 !important;
+}
+
+.dark-mode .sidebar-item {
+  background: #1a1a1a !important;
+  color: #f1f1f1 !important;
+}
+
+.dark-mode .sidebar-item:hover {
+  background: #222 !important;
+}
+
+/* Botón modo oscuro */
+.dark-mode .btn-outline-dark {
+  border-color: #f1f1f1 !important;
+  color: #f1f1f1 !important;
+}
+
+.dark-mode .btn-outline-dark:hover {
+  background: #f1f1f1 !important;
+  color: #111 !important;
+}
+
+/* Header en modo oscuro */
+.dark-mode .dashboard-header {
+  background: #1a1a1a !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+.dark-mode .brand-logo-dashboard {
+  filter: brightness(0.8);
+}
+
+/* Avatar */
+.dark-mode .user-avatar {
+  background: #333 !important;
+  color: #fff !important;
+}

@@ -1,0 +1,23 @@
+.notif-menu-contenido {
+  width: 190px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+  padding: 0.6rem 0.8rem;
+  animation: fadeIn 0.18s ease-out;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-empty {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
