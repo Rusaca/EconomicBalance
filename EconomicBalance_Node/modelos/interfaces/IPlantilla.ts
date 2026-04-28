@@ -1,12 +1,22 @@
 import { Document, Types } from 'mongoose';
 
+export interface IMovimientoCampo {
+  id: string;
+  fecha: string;
+  descripcion: string;
+  importe: number;
+}
+
+
 export interface ICampo {
   id: string;
   tipo: 'ingreso' | 'gasto' | 'total';
-  categoria: string;
-  nombre: string;
-  cantidad: number;
+  categoria: 'fijo' | 'variable' | 'resumen';
+  concepto: string;
+  importe: number;
+  movimientos?: IMovimientoCampo[];
 }
+
 
 export interface IBloque {
   id: string;

@@ -41,9 +41,18 @@ export class TemplatePage implements OnInit {
 
   nuevoCampo = {
     tipo: 'gasto' as 'ingreso' | 'gasto',
-    categoria: '',
-    nombre: '',
-    cantidad: 0,
+    categoria: 'fijo' as 'fijo' | 'variable',
+    concepto: '',
+    importe: 0,
+  };
+
+  popupMovimientoVisible = false;
+  campoMovimientoSeleccionado: Campo | null = null;
+
+  nuevoMovimiento = {
+    fecha: '',
+    descripcion: '',
+    importe: 0,
   };
 
   guardando = false;
@@ -148,7 +157,11 @@ ngOnInit(): void {
         .filter((campo) => campo.tipo !== 'total')
         .map((campo) => ({
           ...campo,
-          id: this.generarId()
+          id: this.generarId(),
+          movimientos: (campo.movimientos || []).map((movimiento) => ({
+            ...movimiento,
+            id: this.generarId()
+          }))
         }))
     };
 
@@ -164,14 +177,14 @@ ngOnInit(): void {
         return acumulado;
       }
 
-      const cantidad = Math.abs(Number(campo.cantidad) || 0);
+      const importe = Math.abs(Number(campo.importe) || 0);
 
       if (campo.tipo === 'gasto') {
-        return acumulado - cantidad;
+        return acumulado - importe;
       }
 
       if (campo.tipo === 'ingreso') {
-        return acumulado + cantidad;
+        return acumulado + importe;
       }
 
       return acumulado;
@@ -180,16 +193,17 @@ ngOnInit(): void {
     const campoTotalExistente = bloque.campos.find(campo => campo.tipo === 'total');
 
     if (campoTotalExistente) {
-      campoTotalExistente.nombre = 'Total';
-      campoTotalExistente.categoria = 'Resumen';
-      campoTotalExistente.cantidad = total;
+      campoTotalExistente.concepto = 'Total';
+      campoTotalExistente.categoria = 'resumen';
+      campoTotalExistente.importe = total;
     } else {
       bloque.campos.push({
         id: this.generarId(),
         tipo: 'total',
-        categoria: 'Resumen',
-        nombre: 'Total',
-        cantidad: total,
+        categoria: 'resumen',
+        concepto: 'Total',
+        importe: total,
+        movimientos: [],
       });
     }
 
@@ -216,9 +230,9 @@ ngOnInit(): void {
 
     this.nuevoCampo = {
       tipo: 'gasto',
-      categoria: '',
-      nombre: '',
-      cantidad: 0,
+      categoria: 'fijo',
+      concepto: '',
+      importe: 0,
     };
 
     this.popupCampoVisible = true;
@@ -237,55 +251,113 @@ ngOnInit(): void {
 
     this.nuevoCampo = {
       tipo: campo.tipo,
-      categoria: campo.categoria,
-      nombre: campo.nombre,
-      cantidad: campo.cantidad,
+      categoria: campo.categoria === 'resumen' ? 'fijo' : campo.categoria,
+      concepto: campo.concepto,
+      importe: campo.importe,
     };
 
     this.popupCampoVisible = true;
   }
 
-  guardarCampo(): void {
-    if (!this.bloqueSeleccionado) return;
+ guardarCampo(): void {
+  if (!this.bloqueSeleccionado) return;
 
-    const nombre = this.nuevoCampo.nombre.trim();
-    const categoria = this.nuevoCampo.categoria.trim();
-    const cantidad = Number(this.nuevoCampo.cantidad);
+  const concepto = this.nuevoCampo.concepto.trim();
+  const categoria = this.nuevoCampo.categoria;
+  const importe = Number(this.nuevoCampo.importe);
 
-    if (!nombre) {
-      this.mensajeGuardado = 'El campo debe tener un nombre';
+  if (!concepto) {
+    this.mensajeGuardado = 'El campo debe tener un concepto';
+    this.limpiarMensajeGuardado();
+    return;
+  }
+
+  if (isNaN(importe) || importe < 0) {
+    this.mensajeGuardado = 'El importe debe ser positivo o 0';
+    this.limpiarMensajeGuardado();
+    return;
+  }
+
+  if (this.campoEditandoId) {
+    const campo = this.bloqueSeleccionado.campos.find(c => c.id === this.campoEditandoId);
+
+    if (campo) {
+      campo.tipo = this.nuevoCampo.tipo;
+      campo.categoria = categoria;
+      campo.concepto = concepto;
+      campo.importe = importe;
+      campo.movimientos = campo.categoria === 'variable' ? (campo.movimientos || []) : [];
+    }
+  } else {
+    this.bloqueSeleccionado.campos.push({
+      id: this.generarId(),
+      tipo: this.nuevoCampo.tipo,
+      categoria,
+      concepto,
+      importe,
+      movimientos: categoria === 'variable' ? [] : [],
+    });
+  }
+
+  this.popupCampoVisible = false;
+  this.bloqueSeleccionado = null;
+  this.campoEditandoId = null;
+}
+
+
+  abrirPopupMovimiento(campo: Campo): void {
+    if (campo.categoria !== 'variable' || campo.tipo === 'total') return;
+
+    this.campoMovimientoSeleccionado = campo;
+    this.nuevoMovimiento = {
+      fecha: new Date().toISOString().slice(0, 10),
+      descripcion: '',
+      importe: 0,
+    };
+
+    this.popupMovimientoVisible = true;
+  }
+
+  guardarMovimiento(): void {
+    if (!this.campoMovimientoSeleccionado) return;
+
+    const fecha = this.nuevoMovimiento.fecha;
+    const descripcion = this.nuevoMovimiento.descripcion.trim();
+    const importe = Number(this.nuevoMovimiento.importe);
+
+    if (!fecha) {
+      this.mensajeGuardado = 'Debes indicar una fecha';
       this.limpiarMensajeGuardado();
       return;
     }
 
-    if (isNaN(cantidad) || cantidad < 0) {
-      this.mensajeGuardado = 'La cantidad debe ser positiva o 0';
+    if (isNaN(importe) || importe <= 0) {
+      this.mensajeGuardado = 'El importe gastado debe ser mayor que 0';
       this.limpiarMensajeGuardado();
       return;
     }
 
-    if (this.campoEditandoId) {
-      const campo = this.bloqueSeleccionado.campos.find(c => c.id === this.campoEditandoId);
+    this.campoMovimientoSeleccionado.movimientos = this.campoMovimientoSeleccionado.movimientos || [];
+    this.campoMovimientoSeleccionado.movimientos.push({
+      id: this.generarId(),
+      fecha,
+      descripcion,
+      importe,
+    });
 
-      if (campo) {
-        campo.tipo = this.nuevoCampo.tipo;
-        campo.categoria = categoria;
-        campo.nombre = nombre;
-        campo.cantidad = cantidad;
-      }
-    } else {
-      this.bloqueSeleccionado.campos.push({
-        id: this.generarId(),
-        tipo: this.nuevoCampo.tipo,
-        categoria,
-        nombre,
-        cantidad,
-      });
-    }
+    this.popupMovimientoVisible = false;
+    this.campoMovimientoSeleccionado = null;
+  }
 
-    this.popupCampoVisible = false;
-    this.bloqueSeleccionado = null;
-    this.campoEditandoId = null;
+  cerrarPopupMovimiento(): void {
+    this.popupMovimientoVisible = false;
+    this.campoMovimientoSeleccionado = null;
+  }
+
+  calcularGastadoCampo(campo: Campo): number {
+    return (campo.movimientos || []).reduce((total, movimiento) => {
+      return total + (Number(movimiento.importe) || 0);
+    }, 0);
   }
 
   eliminarCampo(bloque: Bloque, campoId: string): void {

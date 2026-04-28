@@ -1,13 +1,29 @@
 import mongoose, { Schema } from 'mongoose';
 import { IPlantilla } from '../interfaces/IPlantilla';
 
+const MovimientoCampoSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    fecha: { type: String, required: true },
+    descripcion: { type: String, default: '' },
+    importe: { type: Number, required: true, default: 0 }
+  },
+  { _id: false }
+);
+
+
 const CampoSchema = new Schema(
   {
     id: { type: String, required: true },
     tipo: { type: String, enum: ['ingreso', 'gasto', 'total'], required: true },
-    categoria: { type: String, default: '' },
-    nombre: { type: String, required: true, trim: true },
-    cantidad: { type: Number, required: true, default: 0 }
+    categoria: {
+      type: String,
+      enum: ['fijo', 'variable', 'resumen'],
+      default: 'fijo'
+    },
+    concepto: { type: String, required: true, trim: true },
+    importe: { type: Number, required: true, default: 0 },
+    movimientos: { type: [MovimientoCampoSchema], default: [] }
   },
   { _id: false }
 );

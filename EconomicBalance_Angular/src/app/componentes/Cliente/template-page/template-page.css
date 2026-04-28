@@ -105,10 +105,47 @@
   padding: 8px;
   border-radius: 10px;
   transition: background 0.2s ease;
+  position: relative;
 }
 
 .campo:hover {
   background: #e5e7eb;
+}
+
+.campo-variable {
+  cursor: pointer;
+  border: 1px dashed #6366f1;
+}
+
+.desplegable-movimientos {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 260px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+  z-index: 1500;
+}
+
+.campo-variable:hover .desplegable-movimientos {
+  display: block;
+}
+
+.movimiento-linea {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 6px;
+  font-size: 0.75rem;
+  padding: 4px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.movimiento-linea:last-child {
+  border-bottom: none;
 }
 
 .campo strong {

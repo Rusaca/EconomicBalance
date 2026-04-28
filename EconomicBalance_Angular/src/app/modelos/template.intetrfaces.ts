@@ -1,9 +1,17 @@
+export interface MovimientoCampo {
+  id: string;
+  fecha: string;
+  descripcion: string;
+  importe: number;
+}
+
 export interface Campo {
   id: string;
   tipo: 'ingreso' | 'gasto' | 'total';
-  categoria: string;
-  nombre: string;
-  cantidad: number;
+  categoria: 'fijo' | 'variable' | 'resumen';
+  concepto: string;
+  importe: number;
+  movimientos?: MovimientoCampo[];
 }
 
 export interface Bloque {

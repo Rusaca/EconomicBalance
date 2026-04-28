@@ -84,12 +84,33 @@
       Este bloque todavia no tiene campos.
     </div>
 
-    <div *ngFor="let campo of bloque.campos" class="campo d-flex flex-column gap-2 mt-2">
+    <div
+      *ngFor="let campo of bloque.campos"
+      class="campo d-flex flex-column gap-2 mt-2"
+      [class.campo-variable]="campo.categoria === 'variable'"
+      (click)="abrirPopupMovimiento(campo)"
+    >
       <div class="d-flex justify-content-between align-items-start gap-2">
         <div>
-          <strong>{{ campo.nombre }}</strong>
+          <strong>{{ campo.concepto }}</strong>
           <div class="small text-muted">
-            {{ campo.categoria || 'Sin categoria' }} · {{ campo.tipo }} · {{ campo.cantidad }} €
+            {{ campo.categoria || 'Sin categoria' }} · {{ campo.tipo }} · {{ campo.importe }} €
+          </div>
+
+          <div class="small text-muted" *ngIf="campo.categoria === 'variable'">
+            Gastado: {{ calcularGastadoCampo(campo) }} € / Presupuesto: {{ campo.importe }} €
+          </div>
+
+          <div class="desplegable-movimientos" *ngIf="campo.categoria === 'variable'">
+            <div *ngIf="!campo.movimientos?.length" class="small text-muted">
+              Sin gastos registrados.
+            </div>
+
+            <div *ngFor="let movimiento of campo.movimientos" class="movimiento-linea">
+              <span>{{ movimiento.fecha }}</span>
+              <span>{{ movimiento.descripcion || 'Sin descripcion' }}</span>
+              <strong>{{ movimiento.importe }} €</strong>
+            </div>
           </div>
         </div>
 
@@ -97,7 +118,7 @@
           <button
             type="button"
             class="btn btn-sm btn-outline-primary"
-            (click)="editarCampo(bloque, campo)"
+            (click)="$event.stopPropagation(); editarCampo(bloque, campo)"
           >
             Editar
           </button>
@@ -105,7 +126,7 @@
           <button
             type="button"
             class="btn btn-sm btn-outline-danger"
-            (click)="eliminarCampo(bloque, campo.id)"
+            (click)="$event.stopPropagation(); eliminarCampo(bloque, campo.id)"
           >
             Eliminar
           </button>
@@ -180,13 +201,16 @@
     </select>
 
     <label>Categoria</label>
-    <input type="text" [(ngModel)]="nuevoCampo.categoria" />
+    <select [(ngModel)]="nuevoCampo.categoria">
+      <option value="fijo">Fijo</option>
+      <option value="variable">Variable</option>
+    </select>
 
-    <label>Nombre</label>
-    <input type="text" [(ngModel)]="nuevoCampo.nombre" />
+    <label>Concepto</label>
+    <input type="text" [(ngModel)]="nuevoCampo.concepto" />
 
-    <label>Cantidad</label>
-    <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.cantidad" />
+    <label>Importe</label>
+    <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.importe" />
 
     <div class="acciones">
       <button class="btn btn-success" type="button" (click)="guardarCampo()">
@@ -194,6 +218,31 @@
       </button>
 
       <button class="btn btn-secondary" type="button" (click)="cerrarPopupCampo()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="popupMovimientoVisible">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <h3>Nuevo gasto</h3>
+
+    <label>Fecha</label>
+    <input type="date" [(ngModel)]="nuevoMovimiento.fecha" />
+
+    <label>Descripcion</label>
+    <input type="text" [(ngModel)]="nuevoMovimiento.descripcion" />
+
+    <label>Importe gastado</label>
+    <input type="number" min="0.01" step="0.01" [(ngModel)]="nuevoMovimiento.importe" />
+
+    <div class="acciones">
+      <button class="btn btn-success" type="button" (click)="guardarMovimiento()">
+        Guardar
+      </button>
+
+      <button class="btn btn-secondary" type="button" (click)="cerrarPopupMovimiento()">
         Cancelar
       </button>
     </div>
