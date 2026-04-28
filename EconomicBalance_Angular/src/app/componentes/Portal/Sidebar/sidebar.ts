@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class SidebarComponent {
 
   @Input() abierto = false;
+  @Output() abiertoChange = new EventEmitter<boolean>();
 
   temaOscuro = false;
 
@@ -38,6 +39,7 @@ export class SidebarComponent {
 
   cerrar() {
     this.abierto = false;
+    this.abiertoChange.emit(false);
   }
 
   ir(ruta: string) {

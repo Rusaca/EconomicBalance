@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TemplatesService } from '../../../../services/templates-service';
 import { Plantilla } from '../../../../modelos/template.intetrfaces';
-import { SidebarComponent } from '../../../Portal/Sidebar/sidebar';
-import { PerfilUsuComponent } from '../../../Portal/perfilUsu/perfilusu';
-import { NotiComponent } from '../../../Portal/notificacion/noti';
+import { HeaderAutenticado } from '../../../Portal/HeaderAutenticado/HeaderAutenticado';
 
 
 type PlantillaDashboard = Plantilla & {
@@ -15,12 +13,11 @@ type PlantillaDashboard = Plantilla & {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, SidebarComponent,PerfilUsuComponent, NotiComponent],
+  imports: [CommonModule, HeaderAutenticado],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
 export class Dashboard implements OnInit {
-  nombreUsuario = '';
   plantillas: PlantillaDashboard[] = [];
   cargandoPlantillas = false;
 
@@ -38,7 +35,6 @@ export class Dashboard implements OnInit {
       return;
     }
 
-    this.cargarNombreUsuario();
     this.cargarPlantillas();
   }
 
@@ -60,23 +56,6 @@ export class Dashboard implements OnInit {
 
     this.router.navigate(['/templates', id]);
   }
-  sidebarAbierto = false;
-
-  toggleSidebar() {
-    this.sidebarAbierto = !this.sidebarAbierto;
-  }
-
- menuAbierto = false;
-
-toggleUserMenu() {
-  this.menuAbierto = !this.menuAbierto;
-}
-notificacionesAbierto = false;
-
-toggleNotificaciones() {
-  this.notificacionesAbierto = !this.notificacionesAbierto;
-  this.menuAbierto = false; 
-}
 
   cerrarSesion(): void {
     localStorage.removeItem('usuario');
@@ -112,21 +91,5 @@ toggleNotificaciones() {
         this.cdr.detectChanges();
       }
     });
-  }
-
-  private cargarNombreUsuario(): void {
-    const usuarioRaw = localStorage.getItem('usuario');
-
-    if (!usuarioRaw || usuarioRaw === 'undefined') {
-      this.nombreUsuario = '';
-      return;
-    }
-
-    try {
-      const usuario = JSON.parse(usuarioRaw);
-      this.nombreUsuario = usuario?.nombre ?? '';
-    } catch {
-      this.nombreUsuario = '';
-    }
   }
 }
