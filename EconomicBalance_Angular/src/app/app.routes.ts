@@ -8,6 +8,8 @@ import { Registro } from './componentes/Cliente/Registro/Registro';
 import { Activar } from './componentes/Cliente/Activar/Activar';
 import { Contrasena } from './componentes/Cliente/Contraseña/Contrasena';
 import { RecuperarContra } from './componentes/Cliente/Recuperarcontra/RecuperarContra';
+import { PerfilComponent } from './componentes/Cliente/Perfil/perfil';
+import { AjustesComponent } from './componentes/Cliente/Ajustes/ajustes';
 
 
 export const routes: Routes = [
@@ -15,10 +17,14 @@ export const routes: Routes = [
     path: '',
     component: Inicio
   },
-  { path: 'login',
-     component: Login },
-  { path: 'registro', 
-    component: Registro },
+  {
+    path: 'login',
+    component: Login
+  },
+  {
+    path: 'registro',
+    component: Registro
+  },
   {
     path: 'templates/nueva',
     component: TemplatePage
@@ -27,11 +33,12 @@ export const routes: Routes = [
     path: 'templates/:id',
     component: TemplatePage
   },
-  { path: 'activar', 
-    component: Activar 
+  {
+    path: 'activar',
+    component: Activar
 
   },
-    {
+  {
     path: 'dashboard',
     component: Dashboard
   },
@@ -39,7 +46,7 @@ export const routes: Routes = [
     path: 'mis-plantillas',
     component: MisPlantillas
   },
-   {
+  {
     path: 'activar',
     component: Activar
   },
@@ -50,5 +57,15 @@ export const routes: Routes = [
   {
     path: 'restablecer-password',
     component: RecuperarContra
+  },
+  {
+    path: 'perfil',
+    component: PerfilComponent
+  },
+  {
+    path: 'ajustes',
+    component: AjustesComponent
   }
+
+
 ];

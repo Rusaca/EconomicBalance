@@ -14,7 +14,7 @@ export class PerfilUsuComponent {
   nombreUsuario: string = '';
   correoUsuario: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   ngOnInit() {
     const usuario = localStorage.getItem('usuario');
@@ -30,4 +30,13 @@ export class PerfilUsuComponent {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
+
+  irAPerfil() {
+    this.router.navigate(['/perfil']);
+  }
+  irAAjustes() {
+    this.router.navigate(['/ajustes']);
+  }
+
+
 }
