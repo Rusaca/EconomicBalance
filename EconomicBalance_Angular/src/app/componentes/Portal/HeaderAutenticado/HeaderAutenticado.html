@@ -1,0 +1,48 @@
+<header class="dashboard-header d-flex align-items-center justify-content-between px-3 py-2">
+
+  <!-- IZQUIERDA -->
+  <div class="d-flex align-items-center gap-5">
+
+    <!-- Botón menú -->
+    <button class="menu-btn d-flex flex-column justify-content-between" (click)="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Logo -->
+    <a routerLink="/dashboard" class="d-flex align-items-center">
+      <img src="assets/logosinfondo.png" class="brand-logo-dashboard" alt="Economic Balance">
+    </a>
+
+  </div>
+
+  <!-- DERECHA -->
+  <div class="header-right d-flex align-items-center">
+
+    <!-- Campana -->
+    <button class="notif-btn me-4" (click)="toggleNotificaciones()">
+      <img src="assets/campana.png" class="notif-icon">
+    </button>
+
+
+    <!-- BLOQUE: Hola + avatar (clic abre menú) -->
+    <div class="user-block d-flex align-items-center" (click)="toggleUserMenu()">
+      <span class="fw-semibold">Hola, {{ nombreUsuario }}</span>
+      <div class="user-avatar ms-1">
+        {{ nombreUsuario.charAt(0) | uppercase }}
+      </div>
+    </div>
+
+  </div>
+
+</header>
+
+<!-- MENÚ DE PERFIL (FUERA DEL HEADER, DEBAJO) -->
+<div class="menu-perfil-wrapper" *ngIf="menuAbierto">
+  <app-perfilusu></app-perfilusu>
+</div>
+<div class="notif-dropdown-wrapper" *ngIf="notificacionesAbierto">
+  <app-noti></app-noti>
+</div>
+<app-sidebar [(abierto)]="sidebarAbierto"></app-sidebar>

@@ -1,303 +1,75 @@
-.dashboard-page {
-  min-height: calc(100vh - 73px);
-  background:
-    radial-gradient(circle at top left, rgba(13, 110, 253, 0.08), transparent 30%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
-}
-
-.brand-logo {
-  font-size: 1.8rem;
-  letter-spacing: -0.5px;
-}
-
-.usuario-badge {
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
-  background: #f3f6fb;
-  color: #1f2a37;
-  font-weight: 600;
-  border: 1px solid #e3e8ef;
-}
-
-.btn-accion {
-  font-weight: 600;
-}
-
-.hero-dashboard {
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(227, 232, 239, 0.9);
-  border-radius: 24px;
-  padding: 2rem;
-  backdrop-filter: blur(8px);
-}
-
-.dashboard-chip {
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(13, 110, 253, 0.1);
-  color: #0d6efd;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.titulo-dashboard {
-  color: #14213d;
-  letter-spacing: -1px;
-}
-
-.subtitulo-dashboard {
-  max-width: 720px;
-}
-
-.resumen-card {
-  background: linear-gradient(135deg, #0d6efd 0%, #3d8bfd 100%);
-  color: white;
-  border-radius: 22px;
-  padding: 1.8rem;
-  height: 100%;
-}
-
-.resumen-label {
-  font-size: 0.95rem;
-  opacity: 0.9;
-}
-
-.resumen-valor {
-  font-size: 3rem;
-  line-height: 1;
-  font-weight: 800;
-  margin: 0.6rem 0;
-}
-
-.resumen-texto {
-  font-size: 0.95rem;
-  opacity: 0.95;
-}
-
-.estado-carga {
-  background: white;
-  border: 1px solid #e3e8ef;
-  border-radius: 18px;
-  padding: 1rem 1.25rem;
-  display: flex;
-  align-items: center;
-  color: #344054;
-  margin-bottom: 1.5rem;
-}
-
-.empty-state-dashboard {
-  background: white;
-  border: 1px solid #e3e8ef;
-  border-radius: 24px;
-  padding: 3rem 1.5rem;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.plantilla-card {
-  border-radius: 22px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.plantilla-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08) !important;
-}
-
-.plantilla-tag {
-  display: inline-block;
-  padding: 0.3rem 0.65rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  border-radius: 999px;
-  background: #eef4ff;
-  color: #0d6efd;
-}
-
-.icono-plantilla {
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f8ff;
-  font-size: 1.35rem;
-}
-
-.plantilla-stats {
+.dashboard-cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.9rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 20px;
 }
 
-.stat-item {
-  background: #f8fafc;
-  border: 1px solid #e9eef5;
-  border-radius: 16px;
-  padding: 0.9rem 1rem;
+/* CARD BASE */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.stat-label {
-  font-size: 0.82rem;
-  color: #667085;
-  font-weight: 600;
-}
-
-.stat-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #101828;
-}
-
-.btn-abrir {
-  font-weight: 600;
-  border-width: 1.5px;
-}
-
-/* HEADER */
-.dashboard-header {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e3e8ef;
-  padding-right: 2rem !important;
-  /* más aire a la derecha */
-}
-
-/* LOGO */
-.brand-logo-dashboard {
-  height: 54px;
-  transform: scale(1.85);
-  transform-origin: left center;
-  margin-top: -4px;
-  margin-bottom: -4px;
-}
-
-/* CAMPANA */
-.notif-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.notif-icon {
-  height: 26px;
-  width: auto;
-  object-fit: contain;
-  transition: 0.2s ease;
-  filter: brightness(0.2);
-  margin-right: 1.3rem !important;
-}
-
-.notif-btn:hover .notif-icon {
-  transform: scale(1.15);
-  filter: brightness(0);
-  margin-right: 1.2rem !important;
-}
-
-/* BLOQUE: Hola + nombre + avatar */
-.user-block {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  /* casi pegado */
-}
-
-/* Texto Hola + nombre */
-.user-block span {
-  margin: 0;
-  padding: 0;
-  color: #111 !important;
-}
-
-/* Avatar */
-.user-avatar {
-  width: 38px;
-  height: 38px;
-  background: #0d6efd;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  font-size: 17px;
-  text-transform: uppercase;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-  margin-left: 1 !important;
-  /* pegado al texto */
-}
-
-/* Ajuste general del bloque derecho */
-.header-right {
-  gap: 0 !important;
-  /* eliminamos separación automática */
-}
-
-/* BOTÓN MENÚ (HAMBURGER) — IGUAL QUE EL SIDEBAR PERO EN HORIZONTAL */
-.menu-btn {
-  width: 34px;
-  height: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
 }
 
-.menu-btn span {
-  display: block;
-  height: 4px;
-  width: 100%;
-  background: #111 !important;
-  border-radius: 4px;
-  transition: 0.3s ease;
+.card:hover {
+  transform: translateY(-3px);
 }
 
-.menu-perfil-wrapper {
-  position: absolute;
-  top: 72px; /* justo debajo del header */
-  right: 25px; /* alineado con el avatar */
-  z-index: 9999;
-}
-.notif-dropdown-wrapper {
-  position: absolute;
-  top: 72px; /* igual que el menú de usuario */
-  right: 85px; /* alineado con la campana */
-  z-index: 9999;
+/* TEXTO */
+.card-info h4 {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
 }
 
-@media (max-width: 991.98px) {
-  .hero-dashboard {
-    padding: 1.5rem;
-  }
-
-  .brand-logo {
-    font-size: 1.5rem;
-  }
+.value {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 6px 0;
 }
 
-@media (max-width: 767.98px) {
-  .plantilla-stats {
-    grid-template-columns: 1fr;
-  }
+.sub {
+  font-size: 12px;
+  color: #9ca3af;
+}
 
-  .usuario-badge {
-    display: none;
-  }
+/* COLORES */
+.green { color: #16a34a; }
+.red { color: #dc2626; }
+.purple { color: #7c3aed; }
+
+.up { color: #16a34a; }
+.down { color: #dc2626; }
+
+/* ICONO */
+.icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.icon.blue {
+  background: #e0f2fe;
+}
+
+.icon.green {
+  background: #dcfce7;
+}
+
+.icon.red {
+  background: #fee2e2;
+}
+
+.icon.purple {
+  background: #ede9fe;
 }
