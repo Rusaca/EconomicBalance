@@ -12,11 +12,13 @@ export class TemplatesService {
 
   createTemplate(
     nombre: string,
-    blocks: Plantilla['blocks'] = []
+    blocks: Plantilla['blocks'] = [],
+    graficas: Plantilla['graficas'] = []
   ): Observable<{ ok: boolean; mensaje: string; data: Plantilla }> {
     return this.http.post<{ ok: boolean; mensaje: string; data: Plantilla }>(this.apiUrl, {
       nombre,
-      blocks
+      blocks,
+      graficas
     });
   }
 
@@ -34,7 +36,8 @@ export class TemplatesService {
       `${this.apiUrl}/${id}`,
       {
         nombre: plantilla.nombre,
-        blocks: plantilla.blocks
+        blocks: plantilla.blocks,
+        graficas: plantilla.graficas || []
       }
     );
   }

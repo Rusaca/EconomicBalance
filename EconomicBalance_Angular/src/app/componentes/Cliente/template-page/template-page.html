@@ -16,6 +16,14 @@
     >
       {{ guardando ? 'Guardando...' : 'Guardar plantilla' }}
     </button>
+
+    <button
+      class="btn btn-outline-primary"
+      type="button"
+      (click)="abrirPopupGrafica()"
+    >
+      Generar grafica
+    </button>
   </div>
 
   <span class="mensaje" *ngIf="mensajeGuardado">
@@ -245,6 +253,64 @@
       <button class="btn btn-secondary" type="button" (click)="cerrarPopupMovimiento()">
         Cancelar
       </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="popupGraficaVisible">
+  <div class="popup popup-grafica" (click)="$event.stopPropagation()">
+    <h3>Generar grafica</h3>
+
+    <label>Bloque</label>
+    <select [(ngModel)]="bloqueGraficaId">
+      <option value="">Selecciona un bloque</option>
+      <option *ngFor="let bloque of template.blocks" [value]="bloque.id">
+        {{ bloque.titulo }}
+      </option>
+    </select>
+
+    <label>Tipo de grafica</label>
+    <select [(ngModel)]="tipoGrafica">
+      <option value="bar">Barras</option>
+      <option value="pie">Circular</option>
+      <option value="doughnut">Donut</option>
+      <option value="line">Linea</option>
+    </select>
+
+    <label>Titulo</label>
+    <input type="text" [(ngModel)]="tituloGrafica" placeholder="Ej. Gastos del mes" />
+
+    <div class="acciones">
+      <button class="btn btn-success" type="button" (click)="generarGrafica()">
+        Generar
+      </button>
+
+      <button class="btn btn-secondary" type="button" (click)="cerrarPopupGrafica()">
+        Cerrar
+      </button>
+    </div>
+
+    <div class="graficas-guardadas" *ngIf="template.graficas?.length">
+      <h4>Graficas guardadas</h4>
+
+      <div class="grafica-card" *ngFor="let grafica of template.graficas">
+        <div class="grafica-card-header">
+          <div>
+            <strong>{{ grafica.titulo }}</strong>
+            <span>{{ grafica.tipo }}</span>
+          </div>
+
+          <button class="btn btn-sm btn-outline-danger" type="button" (click)="eliminarGrafica(grafica.id)">
+            Eliminar
+          </button>
+        </div>
+
+        <img
+          *ngIf="generarUrlGrafica(grafica)"
+          [src]="generarUrlGrafica(grafica)"
+          alt="Grafica generada"
+        />
+      </div>
     </div>
   </div>
 </div>

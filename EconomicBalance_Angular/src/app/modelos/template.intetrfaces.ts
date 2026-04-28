@@ -23,11 +23,20 @@ export interface Bloque {
   campos: Campo[];
 }
 
+export interface GraficaPlantilla {
+  id: string;
+  bloqueId: string;
+  titulo: string;
+  tipo: 'bar' | 'pie' | 'doughnut' | 'line';
+  createdAt: string;
+}
+
 export interface Plantilla {
   id: string;
   nombre: string;
   userId: string;
   blocks: Bloque[];
+  graficas?: GraficaPlantilla[];
   createdAt?: string;
   updatedAt?: string;
 }

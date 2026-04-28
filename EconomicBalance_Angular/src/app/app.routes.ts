@@ -20,6 +20,10 @@ export const routes: Routes = [
   { path: 'registro', 
     component: Registro },
   {
+    path: 'templates/nueva',
+    component: TemplatePage
+  },
+  {
     path: 'templates/:id',
     component: TemplatePage
   },
@@ -34,10 +38,6 @@ export const routes: Routes = [
   {
     path: 'mis-plantillas',
     component: MisPlantillas
-  },
-   {
-    path: 'templates/nueva',
-    component: TemplatePage
   },
    {
     path: 'activar',

@@ -40,6 +40,17 @@ const BloqueSchema = new Schema(
   { _id: false }
 );
 
+const GraficaPlantillaSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    bloqueId: { type: String, required: true },
+    titulo: { type: String, required: true, trim: true },
+    tipo: { type: String, enum: ['bar', 'pie', 'doughnut', 'line'], required: true },
+    createdAt: { type: String, required: true }
+  },
+  { _id: false }
+);
+
 const PlantillaSchema = new Schema<IPlantilla>(
   {
     nombre: {
@@ -54,6 +65,10 @@ const PlantillaSchema = new Schema<IPlantilla>(
     },
     blocks: {
       type: [BloqueSchema],
+      default: []
+    },
+    graficas: {
+      type: [GraficaPlantillaSchema],
       default: []
     }
   },

@@ -89,12 +89,13 @@ export const clienteService = {
 };
 
 export const plantillaService = {
-  crearPlantilla: async ({ nombre, userId, blocks }: any) => {
+  crearPlantilla: async ({ nombre, userId, blocks, graficas }: any) => {
     try {
       const nuevaPlantilla = new Plantilla({
         nombre,
         userId,
-        blocks
+        blocks,
+        graficas: Array.isArray(graficas) ? graficas : []
       });
 
       const guardada = await nuevaPlantilla.save();
@@ -179,11 +180,11 @@ export const plantillaService = {
 
   actualizarPlantilla: async (id: string, data: any) => {
     try {
-      const { userId, nombre, blocks } = data;
+      const { userId, nombre, blocks, graficas } = data;
 
       const actualizada = await Plantilla.findOneAndUpdate(
         { _id: id, userId },
-        { nombre, blocks },
+        { nombre, blocks, graficas: Array.isArray(graficas) ? graficas : [] },
         { new: true }
       );
 

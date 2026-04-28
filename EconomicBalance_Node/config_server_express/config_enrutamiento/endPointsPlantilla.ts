@@ -6,7 +6,7 @@ const router = Router();
 
 router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const { nombre, blocks } = req.body;
+    const { nombre, blocks, graficas } = req.body;
     const userId = req.usuario?.id;
 
     if (!nombre) {
@@ -26,7 +26,8 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
     const respuesta = await plantillaService.crearPlantilla({
       nombre,
       userId,
-      blocks
+      blocks,
+      graficas
     });
 
     if (!respuesta.ok) {
@@ -110,7 +111,7 @@ router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const id = req.params.id as string;
-    const { nombre, blocks } = req.body;
+    const { nombre, blocks, graficas } = req.body;
     const userId = req.usuario?.id;
 
     if (!id) {
@@ -137,7 +138,8 @@ router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
     const respuesta = await plantillaService.actualizarPlantilla(id, {
       nombre,
       userId,
-      blocks
+      blocks,
+      graficas
     });
 
     if (!respuesta.ok) {

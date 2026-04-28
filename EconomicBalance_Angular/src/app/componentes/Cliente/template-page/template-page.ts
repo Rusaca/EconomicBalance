@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TemplatesService } from '../../../services/templates-service';
-import { Plantilla, Bloque, Campo } from '../../../modelos/template.intetrfaces';
+import { Plantilla, Bloque, Campo, GraficaPlantilla } from '../../../modelos/template.intetrfaces';
 
 @Component({
   selector: 'app-template-page',
@@ -18,7 +18,8 @@ export class TemplatePage implements OnInit {
     id: '',
     nombre: '',
     userId: '',
-    blocks: []
+    blocks: [],
+    graficas: []
   };
 
   esNuevaPlantilla = true;
@@ -55,6 +56,11 @@ export class TemplatePage implements OnInit {
     importe: 0,
   };
 
+  popupGraficaVisible = false;
+  bloqueGraficaId = '';
+  tipoGrafica: 'bar' | 'pie' | 'doughnut' | 'line' = 'bar';
+  tituloGrafica = '';
+
   guardando = false;
   mensajeGuardado = '';
 
@@ -89,7 +95,8 @@ ngOnInit(): void {
       this.template = {
         ...respuesta.data,
         id: respuesta.data.id || this.plantillaIdRuta || '',
-        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : [],
+        graficas: Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : []
       };
     },
     error: (err) => {
@@ -177,7 +184,9 @@ ngOnInit(): void {
         return acumulado;
       }
 
-      const importe = Math.abs(Number(campo.importe) || 0);
+      const importe = campo.categoria === 'variable'
+        ? Math.abs(this.calcularGastadoCampo(campo))
+        : Math.abs(Number(campo.importe) || 0);
 
       if (campo.tipo === 'gasto') {
         return acumulado - importe;
@@ -214,6 +223,7 @@ ngOnInit(): void {
 
   eliminarBloque(bloqueId: string): void {
     this.template.blocks = this.template.blocks.filter(b => b.id !== bloqueId);
+    this.template.graficas = (this.template.graficas || []).filter(grafica => grafica.bloqueId !== bloqueId);
     this.cerrarMenus();
   }
 
@@ -360,6 +370,106 @@ ngOnInit(): void {
     }, 0);
   }
 
+  abrirPopupGrafica(): void {
+    this.bloqueGraficaId = this.template.blocks[0]?.id || '';
+    this.tipoGrafica = 'bar';
+    this.tituloGrafica = this.template.blocks[0]?.titulo || '';
+    this.popupGraficaVisible = true;
+  }
+
+  cerrarPopupGrafica(): void {
+    this.popupGraficaVisible = false;
+  }
+
+  generarGrafica(): void {
+    const bloque = this.template.blocks.find(b => b.id === this.bloqueGraficaId);
+
+    if (!bloque) {
+      this.mensajeGuardado = 'Selecciona un bloque para generar la grafica';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    const campos = this.obtenerCamposGraficables(bloque);
+
+    if (campos.length === 0) {
+      this.mensajeGuardado = 'El bloque no tiene campos para graficar';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    const titulo = this.tituloGrafica.trim() || bloque.titulo;
+
+    this.template.graficas = this.template.graficas || [];
+    this.template.graficas.push({
+      id: this.generarId(),
+      bloqueId: bloque.id,
+      titulo,
+      tipo: this.tipoGrafica,
+      createdAt: new Date().toISOString(),
+    });
+
+    this.mensajeGuardado = 'Grafica generada correctamente';
+    this.limpiarMensajeGuardado();
+  }
+
+  eliminarGrafica(graficaId: string): void {
+    this.template.graficas = (this.template.graficas || []).filter(grafica => grafica.id !== graficaId);
+  }
+
+  generarUrlGrafica(grafica: GraficaPlantilla): string {
+    const bloque = this.template.blocks.find(b => b.id === grafica.bloqueId);
+
+    if (!bloque) {
+      return '';
+    }
+
+    const campos = this.obtenerCamposGraficables(bloque);
+    const labels = campos.map(campo => campo.concepto);
+    const data = campos.map(campo => this.obtenerImporteGrafica(campo));
+    const colores = ['#0d6efd', '#16a34a', '#dc2626', '#f59e0b', '#7c3aed', '#0891b2', '#be123c', '#4b5563'];
+
+    const chartConfig = {
+      type: grafica.tipo,
+      data: {
+        labels,
+        datasets: [
+          {
+            label: grafica.titulo,
+            data,
+            backgroundColor: colores,
+            borderColor: grafica.tipo === 'line' ? '#0d6efd' : '#ffffff',
+            borderWidth: 2,
+            fill: grafica.tipo !== 'line',
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: grafica.tipo === 'pie' || grafica.tipo === 'doughnut'
+          },
+          title: {
+            display: true,
+            text: grafica.titulo
+          }
+        }
+      }
+    };
+
+    return `https://quickchart.io/chart?width=650&height=380&version=4&chart=${encodeURIComponent(JSON.stringify(chartConfig))}`;
+  }
+
+  private obtenerCamposGraficables(bloque: Bloque): Campo[] {
+    return bloque.campos.filter(campo => campo.tipo !== 'total');
+  }
+
+  private obtenerImporteGrafica(campo: Campo): number {
+    return campo.categoria === 'variable'
+      ? this.calcularGastadoCampo(campo)
+      : Number(campo.importe) || 0;
+  }
+
   eliminarCampo(bloque: Bloque, campoId: string): void {
     bloque.campos = bloque.campos.filter(campo => campo.id !== campoId);
   }
@@ -451,7 +561,8 @@ ngOnInit(): void {
       this.template = {
         ...respuesta.data,
         id: respuesta.data.id || idPlantilla,
-        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : [],
+        graficas: Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : []
       };
 
       this.plantillaIdRuta = this.template.id;
@@ -481,7 +592,7 @@ ngOnInit(): void {
     this.guardando = true;
     this.mensajeGuardado = '';
 
-    this.templateService.createTemplate(nombre, this.template.blocks || []).subscribe({
+    this.templateService.createTemplate(nombre, this.template.blocks || [], this.template.graficas || []).subscribe({
       next: (respuesta) => {
         this.guardando = false;
 
@@ -491,18 +602,30 @@ ngOnInit(): void {
           return;
         }
 
+        const idCreado = respuesta.data.id || (respuesta.data as any)._id || '';
+
+        if (!idCreado) {
+          this.mensajeGuardado = 'La plantilla se ha creado, pero no se ha recibido su id';
+          this.limpiarMensajeGuardado();
+          return;
+        }
+
         this.template = {
           ...respuesta.data,
-          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []
+          id: idCreado,
+          nombre,
+          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : [],
+          graficas: Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : []
         };
 
+        this.plantillaIdRuta = idCreado;
         this.esNuevaPlantilla = false;
         this.popupNombrePlantillaVisible = false;
         this.nombrePlantillaTemporal = '';
         this.mensajeGuardado = 'Plantilla guardada correctamente';
         this.limpiarMensajeGuardado();
 
-        this.router.navigate(['/templates', this.template.id]);
+        this.router.navigate(['/templates', idCreado], { replaceUrl: true });
       },
       error: (error) => {
         console.error('Error creando plantilla', error);

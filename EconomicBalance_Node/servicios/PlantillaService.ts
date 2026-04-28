@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import PlantillaModel from '../modelos/modelos/PlantillaModel';
 
 export default class PlantillaService {
-  public async crearPlantilla(data: { nombre: string; userId: string; blocks?: any[] }) {
-    const { nombre, userId, blocks = [] } = data;
+  public async crearPlantilla(data: { nombre: string; userId: string; blocks?: any[]; graficas?: any[] }) {
+    const { nombre, userId, blocks = [], graficas = [] } = data;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return {
@@ -15,7 +15,8 @@ export default class PlantillaService {
     const nuevaPlantilla = new PlantillaModel({
       nombre,
       userId,
-      blocks: Array.isArray(blocks) ? blocks : []
+      blocks: Array.isArray(blocks) ? blocks : [],
+      graficas: Array.isArray(graficas) ? graficas : []
     });
 
     const guardada = await nuevaPlantilla.save();
@@ -64,9 +65,10 @@ export default class PlantillaService {
       nombre: string;
       userId: string;
       blocks: any[];
+      graficas?: any[];
     }
   ) {
-    const { nombre, userId, blocks } = data;
+    const { nombre, userId, blocks, graficas = [] } = data;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return {
@@ -93,6 +95,7 @@ export default class PlantillaService {
 
     plantilla.nombre = nombre.trim();
     plantilla.blocks = Array.isArray(blocks) ? blocks : [];
+    plantilla.graficas = Array.isArray(graficas) ? graficas : [];
 
     const actualizada = await plantilla.save();
 
@@ -134,6 +137,7 @@ export default class PlantillaService {
       nombre: plantilla.nombre,
       userId: plantilla.userId.toString(),
       blocks: plantilla.blocks || [],
+      graficas: plantilla.graficas || [],
       createdAt: plantilla.createdAt,
       updatedAt: plantilla.updatedAt
     };

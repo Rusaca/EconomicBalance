@@ -27,10 +27,19 @@ export interface IBloque {
   campos: ICampo[];
 }
 
+export interface IGraficaPlantilla {
+  id: string;
+  bloqueId: string;
+  titulo: string;
+  tipo: 'bar' | 'pie' | 'doughnut' | 'line';
+  createdAt: string;
+}
+
 export interface IPlantilla extends Document {
   nombre: string;
   userId: Types.ObjectId;
   blocks: IBloque[];
+  graficas?: IGraficaPlantilla[];
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -234,6 +234,53 @@
   padding: 6px 8px;
 }
 
+.popup-grafica {
+  width: min(780px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+}
+
+.graficas-guardadas {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.graficas-guardadas h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.grafica-card {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.grafica-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.grafica-card-header span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.grafica-card img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
 /* ====== BOTONES ====== */
 .acciones {
   display: flex;
