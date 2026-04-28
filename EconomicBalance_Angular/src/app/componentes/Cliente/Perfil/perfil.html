@@ -1,0 +1,187 @@
+<div class="container py-5 perfil-page">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      <div class="perfil-header mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+          <p class="perfil-tag mb-2">Panel de usuario</p>
+          <h1 class="fw-bold mb-2">Editar perfil</h1>
+          <p class="text-muted mb-0">
+            Aqui puedes revisar y modificar todos los datos de tu cuenta, ademas de preparar el cambio de contrasena.
+          </p>
+        </div>
+
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="volver()">
+          Volver
+        </button>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-12 col-lg-4">
+          <div class="card border-0 shadow-sm perfil-card h-100">
+            <div class="card-body p-4 text-center">
+              <div class="perfil-avatar mx-auto mb-3">
+                {{ perfil.nombre.charAt(0) || 'U' }}{{ perfil.apellidos.charAt(0) || '' }}
+              </div>
+
+              <h4 class="fw-bold mb-1">
+                {{ perfil.nombre || 'Usuario' }} {{ perfil.apellidos }}
+              </h4>
+
+              <p class="text-muted mb-4">{{ perfil.correo || 'Sin correo' }}</p>
+
+              <div class="perfil-resumen text-start">
+                <div class="resumen-item">
+                  <span>ID de usuario</span>
+                  <strong>{{ perfil.id || 'Pendiente' }}</strong>
+                </div>
+
+                <div class="resumen-item">
+                  <span>Estado</span>
+                  <strong>Activo</strong>
+                </div>
+
+                <div class="resumen-item">
+                  <span>Seguridad</span>
+                  <strong>Actualizable</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+          <div class="card border-0 shadow-sm perfil-card mb-4">
+            <div class="card-body p-4 p-md-5">
+              <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                  <p class="section-label mb-1">Informacion personal</p>
+                  <h3 class="fw-bold mb-0">Datos del usuario</h3>
+                </div>
+              </div>
+
+              <form (ngSubmit)="guardarPerfil()">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-semibold">ID de usuario</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [ngModel]="perfil.id"
+                      name="id"
+                      disabled
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-semibold">Correo electronico</label>
+                    <input
+                      type="email"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="perfil.correo"
+                      name="correo"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-semibold">Nombre</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="perfil.nombre"
+                      name="nombre"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-semibold">Apellidos</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="perfil.apellidos"
+                      name="apellidos"
+                    />
+                  </div>
+                </div>
+
+                <div *ngIf="errorPerfil" class="alert alert-danger mt-4 mb-0">
+                  {{ errorPerfil }}
+                </div>
+
+                <div *ngIf="mensajePerfil" class="alert alert-success mt-4 mb-0">
+                  {{ mensajePerfil }}
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                  <button type="submit" class="btn btn-success btn-lg px-4">
+                    Guardar cambios
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow-sm perfil-card">
+            <div class="card-body p-4 p-md-5">
+              <div class="mb-4">
+                <p class="section-label mb-1">Seguridad</p>
+                <h3 class="fw-bold mb-0">Cambiar contrasena</h3>
+              </div>
+
+              <form (ngSubmit)="cambiarPassword()">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Contrasena actual</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="passwordActual"
+                      name="passwordActual"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-semibold">Nueva contrasena</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="passwordNueva"
+                      name="passwordNueva"
+                    />
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-semibold">Confirmar nueva contrasena</label>
+                    <input
+                      type="password"
+                      class="form-control form-control-lg"
+                      [(ngModel)]="confirmarPasswordNueva"
+                      name="confirmarPasswordNueva"
+                    />
+                  </div>
+                </div>
+
+                <p class="text-muted small mt-3 mb-0">
+                  La nueva contrasena debe tener al menos 6 caracteres, una mayuscula y un numero.
+                </p>
+
+                <div *ngIf="errorPassword" class="alert alert-danger mt-4 mb-0">
+                  {{ errorPassword }}
+                </div>
+
+                <div *ngIf="mensajePassword" class="alert alert-success mt-4 mb-0">
+                  {{ mensajePassword }}
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                  <button type="submit" class="btn btn-dark btn-lg px-4">
+                    Actualizar contrasena
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
