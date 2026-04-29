@@ -23,7 +23,7 @@ export interface IRespuestaAuth {
 })
 export class AuthApiService {
 
-  constructor(private http: FetchNodeService) {}
+  constructor(private http: FetchNodeService) { }
 
   async registrarUsuario(payload: IRegistroPayload): Promise<IRespuestaAuth> {
     return await this.http.post('/cliente/registro', payload);
@@ -31,7 +31,7 @@ export class AuthApiService {
 
   async loginUsuario(payload: ILoginPayload): Promise<IRespuestaAuth> {
     const respuesta = await this.http.post('/cliente/login', {
-      correo: payload.correo,
+      identificador: payload.identificador,
       password: payload.password
     });
 
@@ -39,6 +39,8 @@ export class AuthApiService {
 
     return respuesta;
   }
+
+
 
   async obtenerUsuarios(): Promise<IRespuestaAuth> {
     return await this.http.get('/cliente/users');
@@ -146,5 +148,40 @@ export class AuthApiService {
 
     return data;
   }
+
+
+  async actualizarPerfil(data: {
+    id: string;
+    nombre: string;
+    apellidos: string;
+    correo: string;
+    telefono?: string;
+    prefijoTelefono?: string;
+    genero?: string;
+    fotoPerfil?: string;
+  }) {
+    const response = await fetch('http://localhost:3000/api/cliente/actualizar-perfil', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    return await response.json();
+  }
+
+  async subirFoto(file: File) {
+    const formData = new FormData();
+    formData.append('foto', file);
+
+    const response = await fetch('http://localhost:3000/api/cliente/subir-foto', {
+      method: 'POST',
+      body: formData
+    });
+
+    return await response.json();
+  }
+
 }
 

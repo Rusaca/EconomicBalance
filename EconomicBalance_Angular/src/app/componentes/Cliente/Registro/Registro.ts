@@ -19,6 +19,7 @@ declare global {
   }
 }
 
+
 @Component({
   selector: 'app-registro',
   standalone: true,
@@ -28,12 +29,12 @@ declare global {
 })
 
 
-
-
 export class Registro implements OnInit, AfterViewInit {
   nombre: string = '';
   apellidos: string = '';
   correo: string = '';
+  telefono: string = '';
+  prefijoTelefono: string = '+34';
   password: string = '';
   confirmPassword: string = '';
   mensajeError: string = '';
@@ -60,10 +61,17 @@ export class Registro implements OnInit, AfterViewInit {
     await this.loadGoogleScript();
 
     window.google.accounts.id.initialize({
-      client_id: environment.googleClientId, // <-- DEBE EXISTIR EN TU ENVIRONMENT
+      client_id: environment.googleClientId,
       callback: (response: any) => this.handleGoogleRegister(response)
     });
   }
+  mostrarPrefijos: boolean = false;
+
+  seleccionarPrefijo(prefijo: string): void {
+    this.prefijoTelefono = prefijo;
+    this.mostrarPrefijos = false;
+  }
+
   private loadGoogleScript(): Promise<void> {
     return new Promise((resolve) => {
       const script = document.createElement('script');
@@ -78,13 +86,26 @@ export class Registro implements OnInit, AfterViewInit {
   async register() {
     this.mensajeError = '';
 
-    if (!this.nombre || !this.apellidos || !this.correo || !this.password || !this.confirmPassword) {
+    if (
+      !this.nombre ||
+      !this.apellidos ||
+      !this.correo ||
+      !this.telefono ||
+      !this.prefijoTelefono ||
+      !this.password ||
+      !this.confirmPassword
+    ) {
       this.mensajeError = 'Faltan campos obligatorios';
       return;
     }
 
     if (!this.correo.includes('@')) {
       this.mensajeError = 'El correo debe contener @';
+      return;
+    }
+
+    if (!/^[0-9\s()-]{7,20}$/.test(this.telefono.trim())) {
+      this.mensajeError = 'Introduce un numero de telefono valido';
       return;
     }
 
@@ -101,9 +122,11 @@ export class Registro implements OnInit, AfterViewInit {
     }
 
     const payload = {
-      nombre: this.nombre,
-      apellidos: this.apellidos,
-      correo: this.correo,
+      nombre: this.nombre.trim(),
+      apellidos: this.apellidos.trim(),
+      correo: this.correo.trim(),
+      telefono: this.telefono.trim(),
+      prefijoTelefono: this.prefijoTelefono,
       password: this.password
     };
 
@@ -169,7 +192,6 @@ export class Registro implements OnInit, AfterViewInit {
         this.router.navigate(['/login']);
         this.cdr.detectChanges();
       });
-
     } catch (error) {
       console.error('ERROR REGISTER GOOGLE:', error);
 
@@ -179,6 +201,4 @@ export class Registro implements OnInit, AfterViewInit {
       });
     }
   }
-
-
 }

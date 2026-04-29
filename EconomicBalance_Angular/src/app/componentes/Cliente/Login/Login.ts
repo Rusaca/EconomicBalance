@@ -10,7 +10,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
-import { AuthFormService } from '../../../servicios/auth-form.service';
 import { AuthApiService } from '../../../servicios/auth-api.service';
 import { environment } from '../../../environments/environment';
 
@@ -28,7 +27,7 @@ declare global {
   styleUrl: './Login.css',
 })
 export class Login implements OnInit, AfterViewInit {
-  correo: string = '';
+  identificador: string = '';
   password: string = '';
   remember: boolean = false;
   mensajeError: string = '';
@@ -39,12 +38,11 @@ export class Login implements OnInit, AfterViewInit {
   @ViewChild('videoElement', { static: true }) videoElement!: ElementRef<HTMLVideoElement>;
 
   constructor(
-    private authFormService: AuthFormService,
     private authApiService: AuthApiService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone
-  ) { }
+  ) {}
 
   async ngOnInit() {
     await this.inicializarGoogleAuth(true);
@@ -72,18 +70,16 @@ export class Login implements OnInit, AfterViewInit {
   async login() {
     this.mensajeError = '';
 
-    const payload = this.authFormService.collectLoginData({
-      correo: this.correo,
-      password: this.password,
-      remember: this.remember,
-    });
-
     try {
-      const respuesta = await this.authApiService.loginUsuario(payload);
+      const respuesta = await this.authApiService.loginUsuario({
+        identificador: this.identificador,
+        password: this.password,
+        remember: this.remember
+      });
 
       this.ngZone.run(() => {
         if (!respuesta?.ok) {
-          this.mensajeError = 'Correo o contrasena incorrectos';
+          this.mensajeError = 'Correo, telefono o contrasena incorrectos';
           this.cdr.detectChanges();
           return;
         }
@@ -102,7 +98,7 @@ export class Login implements OnInit, AfterViewInit {
     } catch (error: any) {
       this.ngZone.run(() => {
         if (error?.status === 401) {
-          this.mensajeError = 'Correo o contrasena incorrectos';
+          this.mensajeError = 'Correo, telefono o contrasena incorrectos';
         } else {
           this.mensajeError = 'Error conectando con el servidor';
         }
@@ -111,55 +107,53 @@ export class Login implements OnInit, AfterViewInit {
     }
   }
 
-async loginGoogle() {
-  this.mensajeError = '';
+  async loginGoogle() {
+    this.mensajeError = '';
 
-  try {
-    window.google.accounts.id.prompt();
-  } catch (error) {
-    console.error(error);
-    this.mensajeError = 'No se pudo iniciar sesión con Google';
-  }
-}
-
- async handleGoogleCredential(response: any) {
-  const googleToken = response?.credential;
-
-  if (!googleToken) {
-    this.mensajeError = 'No se pudo obtener el token';
-    return;
+    try {
+      window.google.accounts.id.prompt();
+    } catch (error) {
+      console.error(error);
+      this.mensajeError = 'No se pudo iniciar sesión con Google';
+    }
   }
 
-  try {
-    const respuesta = await this.authApiService.loginGoogle({ token: googleToken });
+  async handleGoogleCredential(response: any) {
+    const googleToken = response?.credential;
 
-    if (
-      !respuesta ||
-      !respuesta.ok ||
-      !respuesta.data ||
-      !respuesta.data.token ||
-      !respuesta.data.usuario
-    ) {
-      this.mensajeError = 'Respuesta inválida del servidor';
+    if (!googleToken) {
+      this.mensajeError = 'No se pudo obtener el token';
       return;
     }
 
-    const token = respuesta.data.token;
-    const usuario = respuesta.data.usuario;
+    try {
+      const respuesta = await this.authApiService.loginGoogle({ token: googleToken });
 
-    localStorage.setItem('token', token);
-    localStorage.setItem('usuario', JSON.stringify(usuario));
+      if (
+        !respuesta ||
+        !respuesta.ok ||
+        !respuesta.data ||
+        !respuesta.data.token ||
+        !respuesta.data.usuario
+      ) {
+        this.mensajeError = 'Respuesta inválida del servidor';
+        return;
+      }
 
-    this.ngZone.run(() => {
-      this.router.navigate(['/dashboard']);
-    });
+      const token = respuesta.data.token;
+      const usuario = respuesta.data.usuario;
 
-  } catch (error) {
-    console.error('ERROR LOGIN GOOGLE:', error);
-    this.mensajeError = 'Error conectando con Google';
+      localStorage.setItem('token', token);
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+
+      this.ngZone.run(() => {
+        this.router.navigate(['/dashboard']);
+      });
+    } catch (error) {
+      console.error('ERROR LOGIN GOOGLE:', error);
+      this.mensajeError = 'Error conectando con Google';
+    }
   }
-}
-
 
   private async inicializarGoogleAuth(mostrarError: boolean): Promise<boolean> {
     if (this.googleReady) {

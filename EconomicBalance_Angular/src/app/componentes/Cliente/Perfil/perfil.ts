@@ -1,122 +1,177 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthApiService } from '../../../servicios/auth-api.service';
 
 interface PerfilUsuarioForm {
-    id: string;
-    nombre: string;
-    apellidos: string;
-    correo: string;
+  id: string;
+  nombre: string;
+  apellidos: string;
+  correo: string;
+  telefono: string;
+  prefijoTelefono: string;
+  fotoPerfil: string;
+  genero: string;
 }
 
 @Component({
-    selector: 'app-perfil',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    templateUrl: './perfil.html',
-    styleUrl: './perfil.css',
+  selector: 'app-perfil',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './perfil.html',
+  styleUrl: './perfil.css',
 })
 export class PerfilComponent implements OnInit {
-    perfil: PerfilUsuarioForm = {
-        id: '',
-        nombre: '',
-        apellidos: '',
-        correo: '',
+  perfil: PerfilUsuarioForm = {
+    id: '',
+    nombre: '',
+    apellidos: '',
+    correo: '',
+    telefono: '',
+    prefijoTelefono: '+34',
+    fotoPerfil: '',
+    genero: '',
+  };
+
+  mensajePerfil: string = '';
+  errorPerfil: string = '';
+  mostrarPrefijos: boolean = false;
+
+  constructor(
+    private router: Router,
+    private authApiService: AuthApiService
+  ) {}
+
+  ngOnInit(): void {
+    const usuarioGuardado = localStorage.getItem('usuario');
+
+    if (!usuarioGuardado) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const usuario = JSON.parse(usuarioGuardado);
+
+    this.perfil = {
+      id: usuario.id || '',
+      nombre: usuario.nombre || '',
+      apellidos: usuario.apellidos || '',
+      correo: usuario.correo || '',
+      telefono: usuario.telefono || '',
+      prefijoTelefono: usuario.prefijoTelefono || '+34',
+      fotoPerfil: usuario.fotoPerfil || '',
+      genero: usuario.genero || '',
     };
+  }
 
-    passwordActual: string = '';
-    passwordNueva: string = '';
-    confirmarPasswordNueva: string = '';
+  async guardarPerfil(): Promise<void> {
+    this.mensajePerfil = '';
+    this.errorPerfil = '';
 
-    mensajePerfil: string = '';
-    errorPerfil: string = '';
-    mensajePassword: string = '';
-    errorPassword: string = '';
+    if (
+      !this.perfil.nombre.trim() ||
+      !this.perfil.apellidos.trim() ||
+      !this.perfil.correo.trim()
+    ) {
+      this.errorPerfil = 'Completa nombre, apellidos y correo.';
+      return;
+    }
 
-    constructor(private router: Router) { }
+    if (!this.perfil.correo.includes('@')) {
+      this.errorPerfil = 'Introduce un correo valido.';
+      return;
+    }
 
-    ngOnInit(): void {
-        const usuarioGuardado = localStorage.getItem('usuario');
+    if (
+      this.perfil.telefono &&
+      !/^[0-9\s()-]{7,20}$/.test(this.perfil.telefono.trim())
+    ) {
+      this.errorPerfil = 'Introduce un numero de telefono valido.';
+      return;
+    }
 
-        if (!usuarioGuardado) {
-            this.router.navigate(['/login']);
-            return;
-        }
+    try {
+      const respuesta = await this.authApiService.actualizarPerfil({
+        id: this.perfil.id,
+        nombre: this.perfil.nombre.trim(),
+        apellidos: this.perfil.apellidos.trim(),
+        correo: this.perfil.correo.trim(),
+        telefono: this.perfil.telefono.trim(),
+        prefijoTelefono: this.perfil.prefijoTelefono,
+        fotoPerfil: this.perfil.fotoPerfil,
+        genero: this.perfil.genero,
+      });
 
-        const usuario = JSON.parse(usuarioGuardado);
+      if (!respuesta?.ok) {
+        this.errorPerfil = respuesta?.mensaje || 'No se pudo actualizar el perfil.';
+        return;
+      }
+
+      const usuarioActualizado = respuesta?.data?.usuario;
+
+      if (usuarioActualizado) {
+        localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
 
         this.perfil = {
-            id: usuario.id || '',
-            nombre: usuario.nombre || '',
-            apellidos: usuario.apellidos || '',
-            correo: usuario.correo || '',
+          id: usuarioActualizado.id || '',
+          nombre: usuarioActualizado.nombre || '',
+          apellidos: usuarioActualizado.apellidos || '',
+          correo: usuarioActualizado.correo || '',
+          telefono: usuarioActualizado.telefono || '',
+          prefijoTelefono: usuarioActualizado.prefijoTelefono || '+34',
+          fotoPerfil: usuarioActualizado.fotoPerfil || '',
+          genero: usuarioActualizado.genero || '',
         };
+      }
+
+      this.mensajePerfil = respuesta?.mensaje || 'Perfil actualizado correctamente.';
+    } catch (error) {
+      console.error('Error actualizando perfil:', error);
+      this.errorPerfil = 'Error al actualizar el perfil.';
+    }
+  }
+
+  seleccionarPrefijo(prefijo: string): void {
+    this.perfil.prefijoTelefono = prefijo;
+    this.mostrarPrefijos = false;
+  }
+
+  async onSeleccionarFoto(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || !input.files.length) {
+      return;
     }
 
-    guardarPerfil(): void {
-        this.mensajePerfil = '';
-        this.errorPerfil = '';
+    const archivo = input.files[0];
 
-        if (!this.perfil.nombre.trim() || !this.perfil.apellidos.trim() || !this.perfil.correo.trim()) {
-            this.errorPerfil = 'Completa nombre, apellidos y correo.';
-            return;
-        }
-
-        if (!this.perfil.correo.includes('@')) {
-            this.errorPerfil = 'Introduce un correo valido.';
-            return;
-        }
-
-        const usuarioGuardado = localStorage.getItem('usuario');
-        const usuarioActual = usuarioGuardado ? JSON.parse(usuarioGuardado) : {};
-
-        const usuarioActualizado = {
-            ...usuarioActual,
-            id: this.perfil.id,
-            nombre: this.perfil.nombre.trim(),
-            apellidos: this.perfil.apellidos.trim(),
-            correo: this.perfil.correo.trim(),
-        };
-
-        localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
-        this.mensajePerfil = 'Perfil actualizado correctamente.';
+    if (!archivo.type.startsWith('image/')) {
+      this.errorPerfil = 'Selecciona una imagen valida.';
+      return;
     }
 
-    cambiarPassword(): void {
-        this.mensajePassword = '';
-        this.errorPassword = '';
+    try {
+      const respuesta = await this.authApiService.subirFoto(archivo);
 
-        if (!this.passwordActual || !this.passwordNueva || !this.confirmarPasswordNueva) {
-            this.errorPassword = 'Completa todos los campos de la contrasena.';
-            return;
-        }
+      if (!respuesta?.ok) {
+        this.errorPerfil = respuesta?.mensaje || 'No se pudo subir la foto.';
+        return;
+      }
 
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
-
-        if (!passwordRegex.test(this.passwordNueva)) {
-            this.errorPassword = 'La nueva contrasena debe tener 6 caracteres o mas, una mayuscula y un numero.';
-            return;
-        }
-
-        if (this.passwordNueva !== this.confirmarPasswordNueva) {
-            this.errorPassword = 'La nueva contrasena y la confirmacion no coinciden.';
-            return;
-        }
-
-        if (this.passwordActual === this.passwordNueva) {
-            this.errorPassword = 'La nueva contrasena debe ser diferente a la actual.';
-            return;
-        }
-
-        this.passwordActual = '';
-        this.passwordNueva = '';
-        this.confirmarPasswordNueva = '';
-        this.mensajePassword = 'Formulario listo. Luego se conecta al backend para guardar la nueva contrasena.';
+      this.perfil.fotoPerfil = `http://localhost:3000${respuesta.data.fotoPerfil}`;
+    } catch (error) {
+      console.error('Error subiendo foto:', error);
+      this.errorPerfil = 'Error al subir la foto.';
     }
+  }
 
-    volver() {
-        this.router.navigate(['/dashboard']);
-    }
+  eliminarFoto(): void {
+    this.perfil.fotoPerfil = '';
+  }
 
+  volver(): void {
+    this.router.navigate(['/dashboard']);
+  }
 }
+

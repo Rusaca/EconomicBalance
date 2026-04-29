@@ -43,6 +43,26 @@ const UserSchema = new Schema<IUsuario>(
     expiracionTokenRecuperacion: {
       type: Date,
       required: false
+    },
+
+    telefono: {
+      type: String,
+      default: ''
+    },
+    prefijoTelefono: {
+      type: String,
+      default: '+34'
+    },
+
+
+    genero: {
+      type: String,
+      default: ''
+    },
+
+    fotoPerfil: {
+      type: String,
+      default: ''
     }
   },
   {

@@ -90,6 +90,54 @@
   }
 }
 
+.phone-group {
+  position: relative;
+}
+
+.prefijo-dropdown {
+  position: relative;
+}
+
+.prefijo-btn {
+  min-width: 90px;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-right: 0;
+  border-radius: 0.375rem 0 0 0.375rem;
+  color: #212529;
+}
+
+.prefijo-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 90px;
+  max-height: 120px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+}
+
+.prefijo-item {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: #fff;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.prefijo-item:hover {
+  background: #f1f3f5;
+}
+
+
+
 /* Móviles pequeños */
 @media (max-width: 480px) {
   .logo-registro {
