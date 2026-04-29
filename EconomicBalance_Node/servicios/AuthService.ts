@@ -1,5 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import UserModel from '../modelos/modelos/UsuarioModel';
@@ -515,6 +517,33 @@ async subirFoto(file: File) {
   });
 
   return await response.json();
+
 }
+public async eliminarFoto(id: string) {
+  try {
+    const usuario = await UserModel.findById(id);
+
+    if (!usuario) {
+      return { ok: false, mensaje: 'Usuario no encontrado' };
+    }
+
+    const foto = usuario.fotoPerfil;
+
+    if (foto) {
+      const ruta = path.join(process.cwd(), 'uploads', foto.replace('/uploads/', ''));
+      if (fs.existsSync(ruta)) fs.unlinkSync(ruta);
+    }
+
+    usuario.fotoPerfil = '';
+    await usuario.save();
+
+    return { ok: true };
+
+  } catch (error) {
+    console.error('Error eliminando foto:', error);
+    return { ok: false, mensaje: 'Error eliminando foto' };
+  }
+}
+
 
 }

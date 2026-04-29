@@ -24,33 +24,30 @@
       <div class="col-12 col-lg-4 col-xl-3">
         <div class="card border-0 shadow-sm perfil-card perfil-card-left h-100">
           <div class="card-body p-4 text-center">
-            <div class="perfil-avatar-wrapper mx-auto mb-3">
-              <img *ngIf="perfil.fotoPerfil" [src]="perfil.fotoPerfil" alt="Foto de perfil" class="perfil-foto" />
 
-              <div *ngIf="!perfil.fotoPerfil" class="perfil-avatar mx-auto">
+            <!-- AVATAR PRINCIPAL -->
+            <div class="perfil-avatar-wrapper mx-auto mb-3">
+
+              <!-- FOTO (TEMPORAL O REAL) -->
+              <img *ngIf="fotoTemporal || perfil.fotoPerfil" [src]="fotoTemporal || perfil.fotoPerfil"
+                alt="Foto de perfil" class="perfil-foto" />
+
+              <!-- INICIALES SI NO HAY FOTO -->
+              <div *ngIf="!fotoTemporal && !perfil.fotoPerfil" class="perfil-avatar mx-auto">
                 {{ perfil.nombre.charAt(0) || 'U' }}{{ perfil.apellidos.charAt(0) || '' }}
               </div>
+
             </div>
+
 
             <div class="mb-3">
-              <label for="fotoPerfilInput" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+              <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3" (click)="abrirModalFoto()">
                 Subir foto
-              </label>
-              <input
-                id="fotoPerfilInput"
-                type="file"
-                accept="image/*"
-                class="d-none"
-                (change)="onSeleccionarFoto($event)"
-              />
+              </button>
             </div>
 
-            <button
-              *ngIf="perfil.fotoPerfil"
-              type="button"
-              class="btn btn-link text-danger p-0 mb-3"
-              (click)="eliminarFoto()"
-            >
+            <button *ngIf="perfil.fotoPerfil" type="button" class="btn btn-link text-danger p-0 mb-3"
+              (click)="eliminarFoto()">
               Quitar foto
             </button>
 
@@ -80,6 +77,7 @@
                 <strong>Actualizable</strong>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -87,6 +85,7 @@
       <div class="col-12 col-lg-8 col-xl-9">
         <div class="card border-0 shadow-sm perfil-card mb-4">
           <div class="card-body p-4 p-md-5">
+
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
               <div>
                 <p class="section-label mb-1">Informacion personal</p>
@@ -96,45 +95,26 @@
 
             <form (ngSubmit)="guardarPerfil()">
               <div class="row g-3">
+
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">ID de usuario</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [ngModel]="perfil.id"
-                    name="id"
-                    disabled
-                  />
+                  <input type="text" class="form-control form-control-lg" [ngModel]="perfil.id" name="id" disabled />
                 </div>
 
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">Correo electronico</label>
-                  <input
-                    type="email"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="perfil.correo"
-                    name="correo"
-                  />
+                  <input type="email" class="form-control form-control-lg" [(ngModel)]="perfil.correo" name="correo" />
                 </div>
 
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">Nombre</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="perfil.nombre"
-                    name="nombre"
-                  />
+                  <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.nombre" name="nombre" />
                 </div>
 
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">Apellidos</label>
-                  <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    [(ngModel)]="perfil.apellidos"
-                    name="apellidos"
-                  />
+                  <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.apellidos"
+                    name="apellidos" />
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -142,11 +122,8 @@
 
                   <div class="input-group input-group-lg phone-group">
                     <div class="prefijo-dropdown">
-                      <button
-                        type="button"
-                        class="btn prefijo-btn dropdown-toggle"
-                        (click)="mostrarPrefijos = !mostrarPrefijos"
-                      >
+                      <button type="button" class="btn prefijo-btn dropdown-toggle"
+                        (click)="mostrarPrefijos = !mostrarPrefijos">
                         {{ perfil.prefijoTelefono || '+34' }}
                       </button>
 
@@ -174,16 +151,9 @@
                       </div>
                     </div>
 
-                    <input
-                      type="text"
-                      class="form-control"
-                      [(ngModel)]="perfil.telefono"
-                      name="telefono"
-                      placeholder="Introduce tu telefono"
-                      inputmode="numeric"
-                      pattern="[0-9]*"
-                      (input)="perfil.telefono = perfil.telefono.replace(/[^0-9]/g, '')"
-                    />
+                    <input type="text" class="form-control" [(ngModel)]="perfil.telefono" name="telefono"
+                      placeholder="Introduce tu telefono" inputmode="numeric" pattern="[0-9]*"
+                      (input)="perfil.telefono = perfil.telefono.replace(/[^0-9]/g, '')" />
                   </div>
                 </div>
 
@@ -197,6 +167,7 @@
                     <option value="Prefiero no decirlo">Prefiero no decirlo</option>
                   </select>
                 </div>
+
               </div>
 
               <div *ngIf="errorPerfil" class="alert alert-danger mt-4 mb-0">
@@ -212,6 +183,7 @@
                   Guardar cambios
                 </button>
               </div>
+
             </form>
           </div>
         </div>
@@ -219,6 +191,7 @@
         <div class="card border-0 shadow-sm perfil-card security-card overflow-hidden">
           <div class="card-body p-0">
             <div class="row g-0 align-items-stretch">
+
               <div class="col-12 col-md-7">
                 <div class="p-4 p-md-5 h-100 d-flex flex-column justify-content-center">
                   <p class="section-label mb-2">Seguridad</p>
@@ -265,8 +238,10 @@
                       Entra directamente a la pantalla de actualizacion de contrasena.
                     </p>
                   </div>
+
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -278,7 +253,52 @@
             © 2026 EconomicBalance. Todos los derechos reservados.
           </p>
         </footer>
+
       </div>
     </div>
   </div>
+
+  <<!-- MODAL FOTO -->
+    <div class="modal-foto-backdrop" *ngIf="mostrarModalFoto">
+      <div class="modal-foto">
+
+        <h4 class="fw-bold mb-3 text-center">Cargar foto de perfil</h4>
+
+        <!-- PREVIEW -->
+        <div *ngIf="fotoTemporal" class="preview-wrapper mb-3">
+          <img [src]="fotoTemporal" class="preview-img" alt="Preview" />
+        </div>
+
+        <!-- TEXTO CARGAR FOTO -->
+        <div *ngIf="fotoTemporal" class="preview-text">
+          Cargar foto
+        </div>
+
+        <!-- DROP AREA -->
+        <div class="drop-area" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+
+          <p class="fw-semibold mb-1">Arrastra tu foto aquí</p>
+          <p class="text-muted small">o haz clic para seleccionar</p>
+
+          <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)">
+        </div>
+
+        <!-- BOTONES -->
+        <div class="d-flex justify-content-between mt-4">
+
+          <button class="btn btn-danger" *ngIf="perfil.fotoPerfil" (click)="eliminarFoto()">
+            Eliminar
+          </button>
+
+          <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-secondary" (click)="cerrarModalFoto()">Cancelar</button>
+            <button class="btn btn-success" (click)="aceptarFoto()">Aceptar</button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
 </div>

@@ -38,10 +38,14 @@ export class PerfilComponent implements OnInit {
   errorPerfil: string = '';
   mostrarPrefijos: boolean = false;
 
+  // === MODAL FOTO ===
+  mostrarModalFoto: boolean = false;
+  fotoTemporal: string | null = null;
+
   constructor(
     private router: Router,
     private authApiService: AuthApiService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const usuarioGuardado = localStorage.getItem('usuario');
@@ -137,41 +141,123 @@ export class PerfilComponent implements OnInit {
     this.mostrarPrefijos = false;
   }
 
-  async onSeleccionarFoto(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-
-    if (!input.files || !input.files.length) {
+  // === PROCESAR ARCHIVO TEMPORAL (PREVIEW) ===
+  procesarArchivoTemporal(archivo: File): void {
+    if (!archivo.type.startsWith('image/')) {
+      this.errorPerfil = 'Selecciona una imagen válida.';
       return;
     }
+
+    const lector = new FileReader();
+    lector.onload = () => {
+      this.fotoTemporal = lector.result as string;
+
+      // Mostrar la foto temporal en el círculo principal
+      this.perfil.fotoPerfil = this.fotoTemporal;
+    };
+    lector.readAsDataURL(archivo);
+  }
+
+  // === INPUT MANUAL ===
+  onSeleccionarFoto(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || !input.files.length) return;
 
     const archivo = input.files[0];
+    this.procesarArchivoTemporal(archivo);
+  }
 
-    if (!archivo.type.startsWith('image/')) {
-      this.errorPerfil = 'Selecciona una imagen valida.';
+  // === DRAG & DROP ===
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    if (!event.dataTransfer?.files?.length) return;
+
+    const archivo = event.dataTransfer.files[0];
+    this.procesarArchivoTemporal(archivo);
+  }
+
+  // === MODAL ===
+  abrirModalFoto(): void {
+    this.mostrarModalFoto = true;
+  }
+
+  cerrarModalFoto(): void {
+    this.mostrarModalFoto = false;
+    this.fotoTemporal = null;
+
+    // Restaurar foto real si se cancela
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuario') || '{}');
+    this.perfil.fotoPerfil = usuarioGuardado.fotoPerfil || '';
+  }
+
+  // === BASE64 → FILE ===
+  dataURLtoFile(dataUrl: string, filename: string): Promise<File> {
+    return fetch(dataUrl)
+      .then(res => res.arrayBuffer())
+      .then(buf => new File([buf], filename, { type: 'image/png' }));
+  }
+
+  async aceptarFoto(): Promise<void> {
+  if (!this.fotoTemporal) {
+    this.cerrarModalFoto();
+    return;
+  }
+
+  const archivo = await this.dataURLtoFile(this.fotoTemporal, 'fotoPerfil.png');
+
+  try {
+    const respuesta = await this.authApiService.subirFoto(archivo);
+
+    if (!respuesta?.ok) {
+      this.errorPerfil = respuesta?.mensaje || 'No se pudo subir la foto.';
       return;
     }
 
+    this.perfil.fotoPerfil = `http://localhost:3000${respuesta.data.fotoPerfil}`;
+
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuario') || '{}');
+    usuarioGuardado.fotoPerfil = this.perfil.fotoPerfil;
+    localStorage.setItem('usuario', JSON.stringify(usuarioGuardado));
+
+    this.mensajePerfil = 'Foto actualizada correctamente.';
+  } catch (error) {
+    console.error('Error subiendo foto:', error);
+    this.errorPerfil = 'Error al subir la foto.';
+  }
+
+  this.cerrarModalFoto();
+}
+
+  async eliminarFoto(): Promise<void> {
     try {
-      const respuesta = await this.authApiService.subirFoto(archivo);
+      const respuesta = await this.authApiService.eliminarFoto(this.perfil.id);
 
       if (!respuesta?.ok) {
-        this.errorPerfil = respuesta?.mensaje || 'No se pudo subir la foto.';
+        this.errorPerfil = respuesta?.mensaje || 'No se pudo eliminar la foto.';
         return;
       }
 
-      this.perfil.fotoPerfil = `http://localhost:3000${respuesta.data.fotoPerfil}`;
-    } catch (error) {
-      console.error('Error subiendo foto:', error);
-      this.errorPerfil = 'Error al subir la foto.';
-    }
-  }
+      // Borrar en frontend
+      this.perfil.fotoPerfil = '';
+      this.fotoTemporal = null;
 
-  eliminarFoto(): void {
-    this.perfil.fotoPerfil = '';
+      // Borrar en localStorage
+      const usuarioGuardado = JSON.parse(localStorage.getItem('usuario') || '{}');
+      usuarioGuardado.fotoPerfil = '';
+      localStorage.setItem('usuario', JSON.stringify(usuarioGuardado));
+
+      this.mensajePerfil = 'Foto eliminada correctamente.';
+    } catch (error) {
+      console.error('Error eliminando foto:', error);
+      this.errorPerfil = 'Error al eliminar la foto.';
+    }
   }
 
   volver(): void {
     this.router.navigate(['/dashboard']);
   }
 }
-

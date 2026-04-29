@@ -182,6 +182,16 @@ export class AuthApiService {
 
     return await response.json();
   }
+  async eliminarFoto(id: string) {
+    const response = await fetch(`http://localhost:3000/api/cliente/eliminar-foto/${id}`, {
+      method: 'DELETE'
+    });
+
+    return await response.json();
+  }
+
+
+
 
 }
 
