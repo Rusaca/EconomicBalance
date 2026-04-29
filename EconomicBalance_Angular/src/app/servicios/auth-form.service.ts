@@ -15,7 +15,7 @@ export class AuthFormService {
 
   collectLoginData(data: ILoginFormData): ILoginPayload {
     const payload: ILoginPayload = {
-      correo: data.correo.trim(),
+      identificador: data.identificador.trim(),
       password: data.password,
       remember: data.remember,
     };
@@ -29,6 +29,8 @@ export class AuthFormService {
       nombre: data.nombre.trim(),
       apellidos: data.apellidos.trim(),
       correo: data.correo.trim().toLowerCase(),
+      telefono: data.telefono.trim(),
+      prefijoTelefono: data.prefijoTelefono,
       password: data.password,
     };
 

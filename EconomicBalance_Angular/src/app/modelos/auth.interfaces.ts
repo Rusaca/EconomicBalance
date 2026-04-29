@@ -1,5 +1,5 @@
 export interface ILoginFormData {
-  correo: string;
+  identificador: string;
   password: string;
   remember: boolean;
 }
@@ -8,13 +8,14 @@ export interface IRegistroFormData {
   nombre: string;
   apellidos: string;
   correo: string;
+  telefono: string;
+  prefijoTelefono: string;
   password: string;
   confirmPassword: string;
 }
 
-// Payloads pensados para enviar al backend cuando exista endpoint.
 export interface ILoginPayload {
-  correo: string;
+  identificador: string;
   password: string;
   remember: boolean;
 }
@@ -23,5 +24,8 @@ export interface IRegistroPayload {
   nombre: string;
   apellidos: string;
   correo: string;
+  telefono: string;
+  prefijoTelefono: string;
   password: string;
 }
+

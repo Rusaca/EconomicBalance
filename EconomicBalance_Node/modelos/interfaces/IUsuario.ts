@@ -8,4 +8,10 @@ export interface IUsuario {
   tokenActivacion?: string;
   tokenRecuperacion?: string;
   expiracionTokenRecuperacion?: Date;
+
+  telefono?: string;
+  prefijoTelefono?: string;
+  genero?: string;
+  fotoPerfil?: string;
 }
+

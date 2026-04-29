@@ -65,7 +65,8 @@ export const routes: Routes = [
   {
     path: 'ajustes',
     component: AjustesComponent
-  }
+  },
+  
 
 
 ];

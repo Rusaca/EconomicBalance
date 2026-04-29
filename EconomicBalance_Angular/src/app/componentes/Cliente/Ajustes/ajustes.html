@@ -1,157 +1,147 @@
-<div class="container py-5 ajustes-page">
-  <div class="row justify-content-center">
-    <div class="col-12 col-xl-10">
-      <div class="ajustes-header mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
+<div class="ajustes-page d-flex flex-column">
+
+  <!-- CONTENIDO -->
+  <div class="ajustes-content flex-grow-1">
+
+    <div class="container-fluid py-5 px-4 px-md-5">
+
+      <!-- HEADER -->
+      <div class="ajustes-header mb-5 d-flex justify-content-between align-items-start flex-wrap gap-3">
         <div>
-          <p class="ajustes-tag mb-2">Configuracion</p>
+          <p class="ajustes-tag mb-2">Configuración</p>
           <h1 class="fw-bold mb-2">Ajustes de la cuenta</h1>
           <p class="text-muted mb-0">
             Configura opciones generales de tu perfil, privacidad, idioma y notificaciones.
           </p>
         </div>
 
-        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="volver()">
+        <button type="button" class="btn btn-outline-secondary px-4" (click)="volver()">
           Volver
         </button>
       </div>
 
+      <!-- GRID -->
       <div class="row g-4">
+
+        <!-- RESUMEN -->
         <div class="col-12 col-lg-4">
-          <div class="card border-0 shadow-sm ajustes-card h-100">
+          <div class="card ajustes-card h-100">
             <div class="card-body p-4">
-              <h4 class="fw-bold mb-3">Resumen</h4>
+              <h4 class="fw-bold mb-4">Resumen</h4>
 
               <div class="resumen-item">
-                <span>Notificaciones por email</span>
+                <span>Email</span>
                 <strong>{{ notificacionesEmail ? 'Activadas' : 'Desactivadas' }}</strong>
               </div>
 
               <div class="resumen-item">
                 <span>Idioma</span>
-                <strong>{{ idioma === 'es' ? 'Espanol' : 'English' }}</strong>
+                <strong>{{ idioma === 'es' ? 'Español' : 'English' }}</strong>
               </div>
 
               <div class="resumen-item">
-                <span>Perfil publico</span>
+                <span>Perfil</span>
                 <strong>{{ perfilPublico ? 'Visible' : 'Privado' }}</strong>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- FORM -->
         <div class="col-12 col-lg-8">
-          <div class="card border-0 shadow-sm ajustes-card">
+          <div class="card ajustes-card">
             <div class="card-body p-4 p-md-5">
+
               <form (ngSubmit)="guardarAjustes()">
+
                 <div class="mb-4">
                   <p class="section-label mb-1">Preferencias</p>
-                  <h3 class="fw-bold mb-0">Opciones generales</h3>
+                  <h3 class="fw-bold">Opciones generales</h3>
+                </div>
+
+                <!-- OPCIONES -->
+                <div class="opcion-row">
+                  <div>
+                    <h6>Notificaciones por email</h6>
+                    <p class="text-muted mb-0">Recibe avisos importantes.</p>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="notificacionesEmail" name="notificacionesEmail" class="form-check-input">
                 </div>
 
                 <div class="opcion-row">
                   <div>
-                    <h6 class="mb-1">Notificaciones por email</h6>
-                    <p class="text-muted mb-0">Recibe avisos importantes en tu correo.</p>
+                    <h6>Notificaciones en app</h6>
+                    <p class="text-muted mb-0">Avisos dentro de la plataforma.</p>
                   </div>
-                  <div class="form-check form-switch">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [(ngModel)]="notificacionesEmail"
-                      name="notificacionesEmail"
-                    />
-                  </div>
+                  <input type="checkbox" [(ngModel)]="notificacionesApp" name="notificacionesApp" class="form-check-input">
                 </div>
 
                 <div class="opcion-row">
                   <div>
-                    <h6 class="mb-1">Notificaciones en la app</h6>
-                    <p class="text-muted mb-0">Muestra avisos internos dentro de la plataforma.</p>
+                    <h6>Modo oscuro</h6>
+                    <p class="text-muted mb-0">Ajuste visual.</p>
                   </div>
-                  <div class="form-check form-switch">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [(ngModel)]="notificacionesApp"
-                      name="notificacionesApp"
-                    />
-                  </div>
+                  <input type="checkbox" [(ngModel)]="modoOscuro" name="modoOscuro" class="form-check-input">
                 </div>
 
-                <div class="opcion-row">
-                  <div>
-                    <h6 class="mb-1">Modo oscuro</h6>
-                    <p class="text-muted mb-0">Ejemplo visual para futuras opciones de apariencia.</p>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [(ngModel)]="modoOscuro"
-                      name="modoOscuro"
-                    />
-                  </div>
+                <!-- SELECT -->
+                <div class="mt-4">
+                  <label class="form-label fw-semibold">Idioma</label>
+                  <select class="form-select form-select-lg" [(ngModel)]="idioma" name="idioma">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                  </select>
                 </div>
 
-                <div class="row g-3 mt-2">
-                  <div class="col-12 col-md-6">
-                    <label class="form-label fw-semibold">Idioma</label>
-                    <select class="form-select form-select-lg" [(ngModel)]="idioma" name="idioma">
-                      <option value="es">Espanol</option>
-                      <option value="en">English</option>
-                    </select>
-                  </div>
-                </div>
-
+                <!-- PRIVACIDAD -->
                 <div class="mt-5">
                   <p class="section-label mb-1">Privacidad</p>
-                  <h3 class="fw-bold mb-0">Visibilidad</h3>
-                </div>
-
-                <div class="opcion-row mt-3">
-                  <div>
-                    <h6 class="mb-1">Perfil publico</h6>
-                    <p class="text-muted mb-0">Permite mostrar cierta informacion del perfil.</p>
-                  </div>
-                  <div class="form-check form-switch">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [(ngModel)]="perfilPublico"
-                      name="perfilPublico"
-                    />
-                  </div>
+                  <h3 class="fw-bold">Visibilidad</h3>
                 </div>
 
                 <div class="opcion-row">
                   <div>
-                    <h6 class="mb-1">Mostrar actividad</h6>
-                    <p class="text-muted mb-0">Ejemplo de ajuste para historial o trazabilidad.</p>
+                    <h6>Perfil público</h6>
+                    <p class="text-muted mb-0">Mostrar tu perfil.</p>
                   </div>
-                  <div class="form-check form-switch">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      [(ngModel)]="verActividad"
-                      name="verActividad"
-                    />
-                  </div>
+                  <input type="checkbox" [(ngModel)]="perfilPublico" name="perfilPublico" class="form-check-input">
                 </div>
 
-                <div *ngIf="mensaje" class="alert alert-success mt-4 mb-0">
+                <div class="opcion-row">
+                  <div>
+                    <h6>Mostrar actividad</h6>
+                    <p class="text-muted mb-0">Historial visible.</p>
+                  </div>
+                  <input type="checkbox" [(ngModel)]="verActividad" name="verActividad" class="form-check-input">
+                </div>
+
+                <!-- ALERT -->
+                <div *ngIf="mensaje" class="alert alert-success mt-4">
                   {{ mensaje }}
                 </div>
 
-                <div class="d-flex justify-content-end mt-4">
-                  <button type="submit" class="btn btn-success btn-lg px-4">
+                <!-- BOTÓN -->
+                <div class="text-end mt-4">
+                  <button type="submit" class="btn btn-success px-4">
                     Guardar ajustes
                   </button>
                 </div>
+
               </form>
+
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
+
+  <!-- FOOTER -->
+  <footer class="perfil-footer text-center py-4">
+    <img src="assets/Logo.png" class="perfil-footer-logo mb-2">
+    <p class="fw-semibold mb-1">EconomicBalance</p>
+    <p class="text-muted mb-0">© 2026 EconomicBalance</p>
+  </footer>
+
 </div>

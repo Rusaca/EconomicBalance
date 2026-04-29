@@ -12,27 +12,18 @@
 
     <form (ngSubmit)="login()">
       <div class="mb-3">
-        <label class="form-label">Correo electrónico</label>
-        <input
-          type="email"
-          class="form-control"
-          [(ngModel)]="correo"
-          name="correo"
-          (ngModelChange)="limpiarError()"
-          required
-        >
+        <label class="form-label">Correo o numero de telefono</label>
+        <input type="text" class="form-control" [(ngModel)]="identificador" name="identificador"
+          (ngModelChange)="limpiarError()" required >
       </div>
+
+
+
 
       <div class="mb-3">
         <label class="form-label">Contraseña</label>
-        <input
-          type="password"
-          class="form-control"
-          [(ngModel)]="password"
-          name="password"
-          (ngModelChange)="limpiarError()"
-          required
-        >
+        <input type="password" class="form-control" [(ngModel)]="password" name="password"
+          (ngModelChange)="limpiarError()" required>
       </div>
 
       <div class="form-check mb-3">
@@ -51,16 +42,9 @@
 
     <div class="text-center mb-3">o continuar con</div>
 
-    <button
-      type="button"
-      class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
-      (click)="loginGoogle()"
-    >
-      <img
-        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-        width="20"
-        class="me-2"
-      >
+    <button type="button" class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
+      (click)="loginGoogle()">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" class="me-2">
       Continuar con Google
     </button>
 

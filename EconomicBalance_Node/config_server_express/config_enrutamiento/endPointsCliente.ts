@@ -1,12 +1,16 @@
 import { Router, Request, Response } from 'express';
 import AuthService from '../../servicios/AuthService';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const router = Router();
 const authService = new AuthService();
 
 router.post('/registro', async (req: Request, res: Response) => {
   try {
-    const { nombre, apellidos, correo, password } = req.body;
+    const { nombre, apellidos, correo, telefono, prefijoTelefono, password } = req.body;
+
 
     if (!nombre || !apellidos || !correo || !password) {
       return res.status(400).json({
@@ -15,7 +19,15 @@ router.post('/registro', async (req: Request, res: Response) => {
       });
     }
 
-    const respuesta = await authService.registrarUsuario({ nombre, apellidos, correo, password });
+    const respuesta = await authService.registrarUsuario({
+      nombre,
+      apellidos,
+      correo,
+      telefono,
+      prefijoTelefono,
+      password
+    });
+
 
     if (!respuesta.ok) {
       return res.status(400).json(respuesta);
@@ -36,16 +48,23 @@ router.post('/registro', async (req: Request, res: Response) => {
 
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { nombre, apellidos, correo, password } = req.body;
+    const { nombre, apellidos, correo, telefono, prefijoTelefono, password } = req.body;
 
-    if (!nombre || !apellidos || !correo || !password) {
+    if (!nombre || !apellidos || !correo || !telefono || !prefijoTelefono || !password) {
       return res.status(400).json({
         ok: false,
         mensaje: 'Faltan datos obligatorios'
       });
     }
 
-    const respuesta = await authService.registrarUsuario({ nombre, apellidos, correo, password });
+    const respuesta = await authService.registrarUsuario({
+      nombre,
+      apellidos,
+      correo,
+      telefono,
+      prefijoTelefono,
+      password
+    });
 
     return res.status(respuesta.ok ? 201 : 400).json(respuesta);
   } catch (error) {
@@ -57,19 +76,20 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
+
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const correo = req.body.correo ?? req.body.email;
+    const identificador = req.body.identificador ?? req.body.correo ?? req.body.email;
     const { password } = req.body;
 
-    if (!correo || !password) {
+    if (!identificador || !password) {
       return res.status(400).json({
         ok: false,
-        mensaje: 'Faltan correo o password'
+        mensaje: 'Faltan identificador o password'
       });
     }
 
-    const respuesta = await authService.loginUsuario({ correo, password });
+    const respuesta = await authService.loginUsuario({ identificador, password });
 
     if (!respuesta.ok) {
       return res.status(401).json(respuesta);
@@ -84,6 +104,7 @@ router.post('/login', async (req: Request, res: Response) => {
     });
   }
 });
+
 
 router.get('/users', async (_req: Request, res: Response) => {
   try {
@@ -216,6 +237,81 @@ router.post('/register-google', async (req: Request, res: Response) => {
 });
 
 
+router.put('/actualizar-perfil', async (req: Request, res: Response) => {
+  try {
+    const { id, nombre, apellidos, correo, telefono, prefijoTelefono, genero, fotoPerfil } = req.body;
 
+
+    if (!id || !nombre || !apellidos || !correo) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'Faltan datos obligatorios'
+      });
+    }
+
+    const respuesta = await authService.actualizarPerfil({
+      id,
+      nombre,
+      apellidos,
+      correo,
+      telefono,
+      prefijoTelefono,
+      genero,
+      fotoPerfil
+    });
+
+    return res.status(respuesta.ok ? 200 : 400).json(respuesta);
+  } catch (error) {
+    console.error('Error en PUT /api/cliente/actualizar-perfil:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error al actualizar el perfil'
+    });
+  }
+});
+const uploadsDir = path.join(process.cwd(), 'uploads');
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`;
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage });
+
+router.post('/subir-foto', upload.single('foto'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'No se ha enviado ninguna imagen'
+      });
+    }
+
+    const rutaFoto = `/uploads/${req.file.filename}`;
+
+    return res.status(200).json({
+      ok: true,
+      mensaje: 'Foto subida correctamente',
+      data: {
+        fotoPerfil: rutaFoto
+      }
+    });
+  } catch (error) {
+    console.error('Error subiendo foto:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error al subir la foto'
+    });
+  }
+});
 
 export default router;

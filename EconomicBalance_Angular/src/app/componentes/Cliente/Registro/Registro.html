@@ -23,31 +23,57 @@
 
       <div class="mb-3">
         <label class="form-label">Correo</label>
-        <input
-          type="email"
-          class="form-control"
-          [(ngModel)]="correo"
-          name="correo"
-          required
-          pattern=".*@.*"
-          #correoInput="ngModel"
-        >
+        <input type="email" class="form-control" [(ngModel)]="correo" name="correo" required pattern=".*@.*"
+          #correoInput="ngModel">
         <div class="text-danger mt-1" *ngIf="correoInput.invalid && correoInput.touched">
           El correo debe contener @.
         </div>
       </div>
 
       <div class="mb-3">
+        <label class="form-label">Numero de telefono</label>
+
+        <div class="input-group phone-group">
+          <div class="prefijo-dropdown">
+            <button type="button" class="btn prefijo-btn dropdown-toggle" (click)="mostrarPrefijos = !mostrarPrefijos">
+              {{ prefijoTelefono }}
+            </button>
+
+            <div class="prefijo-menu" *ngIf="mostrarPrefijos">
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+1')">+1</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+7')">+7</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+20')">+20</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+27')">+27</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+30')">+30</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+31')">+31</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+32')">+32</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+33')">+33</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+34')">+34</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+36')">+36</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+39')">+39</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+40')">+40</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+41')">+41</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+43')">+43</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+44')">+44</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+45')">+45</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+46')">+46</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+47')">+47</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+48')">+48</button>
+              <button type="button" class="prefijo-item" (click)="seleccionarPrefijo('+49')">+49</button>
+            </div>
+          </div>
+
+          <input type="text" class="form-control" [(ngModel)]="telefono" name="telefono" required>
+        </div>
+      </div>
+
+
+
+
+      <div class="mb-3">
         <label class="form-label">Contraseña</label>
-        <input
-          type="password"
-          class="form-control"
-          [(ngModel)]="password"
-          name="password"
-          required
-          pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
-          #passwordInput="ngModel"
-        >
+        <input type="password" class="form-control" [(ngModel)]="password" name="password" required
+          pattern="^(?=.*[A-Z])(?=.*\d).{6,}$" #passwordInput="ngModel">
         <div class="text-danger mt-1" *ngIf="passwordInput.invalid && passwordInput.touched">
           La contraseña debe tener 6 caracteres o más, una mayúscula y un número.
         </div>
@@ -69,13 +95,11 @@
       o registrarse con
     </div>
 
-   <button
-  class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
-  (click)="registroGoogle()"
->
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" class="me-2">
-  Registro con Google
-</button>
+    <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center"
+      (click)="registroGoogle()">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" class="me-2">
+      Registro con Google
+    </button>
 
     <div class="text-center mt-3">
       ¿Ya tienes cuenta?

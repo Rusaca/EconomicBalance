@@ -1,69 +1,58 @@
 :host {
   display: block;
+  height: 100%;
 }
 
+/* PAGE FULL */
 .ajustes-page {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background:
     radial-gradient(circle at top left, rgba(25, 135, 84, 0.12), transparent 30%),
     linear-gradient(135deg, #f8fafc 0%, #eef5f1 100%);
 }
 
-.ajustes-tag {
-  display: inline-block;
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(25, 135, 84, 0.12);
-  color: #198754;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+/* CONTENIDO */
+.ajustes-content {
+  flex: 1;
 }
 
+/* HEADER MÁS LIMPIO */
+.ajustes-header h1 {
+  font-size: 2rem;
+}
+
+/* CARDS PRO */
 .ajustes-card {
-  border-radius: 1.25rem;
-  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border: none;
 }
 
-.section-label {
-  color: #198754;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
+/* RESUMEN */
 .resumen-item {
-  padding: 0.95rem 1rem;
-  border-radius: 1rem;
-  background: #f8fafc;
-  border: 1px solid #e9ecef;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
   margin-bottom: 1rem;
 }
 
-.resumen-item span {
-  display: block;
-  color: #6b7280;
-  font-size: 0.82rem;
-  margin-bottom: 0.2rem;
-}
-
-.resumen-item strong {
-  color: #111827;
-}
-
+/* OPCIONES */
 .opcion-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
   padding: 1rem 0;
   border-bottom: 1px solid #edf2f7;
 }
 
-.form-select,
+/* INPUT SWITCH */
 .form-check-input {
+  width: 2.5rem;
+  height: 1.4rem;
   cursor: pointer;
 }
 
@@ -72,16 +61,25 @@
   border-color: #198754;
 }
 
+/* BOTONES */
 .btn {
   border-radius: 999px;
   font-weight: 600;
 }
 
-.alert {
-  border-radius: 1rem;
+/* FOOTER */
+.perfil-footer {
+  background: transparent;
+  margin-top: auto;
 }
 
-@media (max-width: 767.98px) {
+.perfil-footer-logo {
+  height: 40px;
+  opacity: 0.8;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
   .opcion-row {
     flex-direction: column;
     align-items: flex-start;
