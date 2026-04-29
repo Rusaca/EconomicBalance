@@ -13,13 +13,19 @@ import { NotiComponent } from '../notificacion/noti';
   styleUrl: './HeaderAutenticado.css',
 })
 export class HeaderAutenticado implements OnInit {
+
   nombreUsuario = '';
+  fotoUsuario: string | null = null;
+
   sidebarAbierto = false;
   menuAbierto = false;
   notificacionesAbierto = false;
 
   ngOnInit(): void {
-    this.cargarNombreUsuario();
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+
+    this.nombreUsuario = usuario.nombre || 'Usuario';
+    this.fotoUsuario = usuario.fotoPerfil || null;
   }
 
   toggleSidebar() {
@@ -28,26 +34,11 @@ export class HeaderAutenticado implements OnInit {
 
   toggleUserMenu() {
     this.menuAbierto = !this.menuAbierto;
+    this.notificacionesAbierto = false;
   }
 
   toggleNotificaciones() {
     this.notificacionesAbierto = !this.notificacionesAbierto;
-    this.menuAbierto = false; 
-  }
-
-  private cargarNombreUsuario(): void {
-    const usuarioRaw = localStorage.getItem('usuario');
-
-    if (!usuarioRaw || usuarioRaw === 'undefined') {
-      this.nombreUsuario = '';
-      return;
-    }
-
-    try {
-      const usuario = JSON.parse(usuarioRaw);
-      this.nombreUsuario = usuario?.nombre ?? '';
-    } catch {
-      this.nombreUsuario = '';
-    }
+    this.menuAbierto = false;
   }
 }

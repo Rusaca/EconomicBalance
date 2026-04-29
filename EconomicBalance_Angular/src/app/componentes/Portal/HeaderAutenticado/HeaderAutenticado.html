@@ -28,11 +28,20 @@
 
     <!-- BLOQUE: Hola + avatar (clic abre menú) -->
     <div class="user-block d-flex align-items-center" (click)="toggleUserMenu()">
+
       <span class="fw-semibold">Hola, {{ nombreUsuario }}</span>
-      <div class="user-avatar ms-1">
+
+      <!-- FOTO SI EXISTE -->
+      <img *ngIf="fotoUsuario" [src]="fotoUsuario" class="user-avatar-img ms-2" alt="Foto usuario" />
+
+      <!-- INICIAL SI NO HAY FOTO -->
+      <div *ngIf="!fotoUsuario" class="user-avatar ms-2">
         {{ nombreUsuario.charAt(0) | uppercase }}
       </div>
+
     </div>
+
+
 
   </div>
 

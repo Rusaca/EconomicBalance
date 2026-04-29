@@ -313,5 +313,23 @@ router.post('/subir-foto', upload.single('foto'), async (req: Request, res: Resp
     });
   }
 });
+router.delete('/eliminar-foto/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const resultado = await authService.eliminarFoto(id);
+
+    if (!resultado.ok) {
+      return res.json({ ok: false, mensaje: resultado.mensaje });
+    }
+
+    res.json({ ok: true, mensaje: 'Foto eliminada correctamente' });
+
+  } catch (error) {
+    console.error('Error eliminando foto:', error);
+    res.json({ ok: false, mensaje: 'Error eliminando foto' });
+  }
+});
+
 
 export default router;
