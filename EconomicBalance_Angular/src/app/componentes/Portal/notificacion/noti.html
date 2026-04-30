@@ -1,3 +1,15 @@
 <div class="notif-dropdown">
-  <p class="notif-empty">No hay notificaciones</p>
+  <ng-container *ngIf="notificaciones.length > 0; else sinNotificaciones">
+    <div class="notif-item" *ngFor="let noti of notificaciones">
+      <div class="notif-header">
+        <p class="notif-title">{{ noti.titulo }}</p>
+        <button class="notif-delete" (click)="eliminarNotificacion(noti._id)">🗑</button>
+      </div>
+      <p class="notif-text">{{ noti.mensaje }}</p>
+    </div>
+  </ng-container>
+
+  <ng-template #sinNotificaciones>
+    <p class="notif-empty">No hay notificaciones</p>
+  </ng-template>
 </div>

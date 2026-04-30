@@ -2,10 +2,18 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import twilio from 'twilio';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import UserModel from '../modelos/modelos/UsuarioModel';
-import { enviarCorreoActivacion, enviarCorreoBienvenida, enviarCorreoRecuperacion } from './CorreoService';
+import NotificacionModel from '../modelos/modelos/NotificacionModel';
+
+
+import {
+  enviarCorreoActivacion,
+  enviarCorreoBienvenida,
+  enviarCorreoRecuperacion
+} from './CorreoService';
 
 function getGoogleClientId(): string {
   const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
@@ -16,8 +24,55 @@ function getGoogleClientId(): string {
 
   return googleClientId;
 }
-export default class AuthService {
 
+const twilioClient = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
+
+async function enviarSmsYGuardarNotificacion(data: {
+  usuarioId: string;
+  prefijoTelefono: string;
+  telefono: string;
+  titulo: string;
+  mensaje: string;
+}) {
+  const { usuarioId, prefijoTelefono, telefono, titulo, mensaje } = data;
+
+  console.log('Guardando notificacion para usuario:', usuarioId);
+  console.log('Titulo:', titulo);
+  console.log('Mensaje:', mensaje);
+
+  const notificacion = await NotificacionModel.create({
+    usuarioId,
+    titulo,
+    mensaje,
+    leida: false
+  });
+
+  console.log('Notificacion guardada en Mongo:', notificacion);
+
+  if (process.env.SMS_ENABLED !== 'true') {
+    console.log('SMS desactivado por variable de entorno');
+    return;
+  }
+
+  const telefonoLimpio = telefono.replace(/\D/g, '');
+  const destino = `${prefijoTelefono}${telefonoLimpio}`;
+
+  console.log('Intentando enviar SMS a:', destino);
+  console.log('Desde numero Twilio:', process.env.TWILIO_PHONE_NUMBER);
+
+  const respuestaSms = await twilioClient.messages.create({
+    body: mensaje,
+    from: process.env.TWILIO_PHONE_NUMBER,
+    to: destino
+  });
+
+  console.log('SMS enviado correctamente:', respuestaSms.sid);
+}
+
+export default class AuthService {
   // REGISTRO CON EMAIL
   public async registrarUsuario(data: {
     nombre: string;
@@ -54,9 +109,20 @@ export default class AuthService {
       tokenActivacion: token
     });
 
-
     await nuevoUsuario.save();
     await enviarCorreoActivacion(correo.toLowerCase(), token);
+
+    try {
+      await enviarSmsYGuardarNotificacion({
+        usuarioId: nuevoUsuario._id.toString(),
+        prefijoTelefono: prefijoTelefono || '+34',
+        telefono,
+        titulo: 'Bienvenido',
+        mensaje: 'Gracias por contar con nosotros. Economic Balance'
+      });
+    } catch (error) {
+      console.error('Error enviando SMS y guardando notificacion:', error);
+    }
 
     return {
       ok: true,
@@ -89,6 +155,7 @@ export default class AuthService {
         $unset: { tokenActivacion: '' }
       }
     );
+
     await enviarCorreoBienvenida(usuario.correo, usuario.nombre);
 
     return {
@@ -97,7 +164,6 @@ export default class AuthService {
       nombre: usuario.nombre
     };
   }
-
 
   // LOGIN
   public async loginUsuario(data: { identificador: string; password: string }) {
@@ -357,7 +423,6 @@ export default class AuthService {
           }
         }
       };
-
     } catch (error) {
       console.error('Error en loginGoogle:', error);
 
@@ -507,43 +572,40 @@ export default class AuthService {
     }
   }
 
-async subirFoto(file: File) {
-  const formData = new FormData();
-  formData.append('foto', file);
+  async subirFoto(file: File) {
+    const formData = new FormData();
+    formData.append('foto', file);
 
-  const response = await fetch('http://localhost:3000/api/cliente/subir-foto', {
-    method: 'POST',
-    body: formData
-  });
+    const response = await fetch('http://localhost:3000/api/cliente/subir-foto', {
+      method: 'POST',
+      body: formData
+    });
 
-  return await response.json();
-
-}
-public async eliminarFoto(id: string) {
-  try {
-    const usuario = await UserModel.findById(id);
-
-    if (!usuario) {
-      return { ok: false, mensaje: 'Usuario no encontrado' };
-    }
-
-    const foto = usuario.fotoPerfil;
-
-    if (foto) {
-      const ruta = path.join(process.cwd(), 'uploads', foto.replace('/uploads/', ''));
-      if (fs.existsSync(ruta)) fs.unlinkSync(ruta);
-    }
-
-    usuario.fotoPerfil = '';
-    await usuario.save();
-
-    return { ok: true };
-
-  } catch (error) {
-    console.error('Error eliminando foto:', error);
-    return { ok: false, mensaje: 'Error eliminando foto' };
+    return await response.json();
   }
-}
 
+  public async eliminarFoto(id: string) {
+    try {
+      const usuario = await UserModel.findById(id);
 
+      if (!usuario) {
+        return { ok: false, mensaje: 'Usuario no encontrado' };
+      }
+
+      const foto = usuario.fotoPerfil;
+
+      if (foto) {
+        const ruta = path.join(process.cwd(), 'uploads', foto.replace('/uploads/', ''));
+        if (fs.existsSync(ruta)) fs.unlinkSync(ruta);
+      }
+
+      usuario.fotoPerfil = '';
+      await usuario.save();
+
+      return { ok: true };
+    } catch (error) {
+      console.error('Error eliminando foto:', error);
+      return { ok: false, mensaje: 'Error eliminando foto' };
+    }
+  }
 }
