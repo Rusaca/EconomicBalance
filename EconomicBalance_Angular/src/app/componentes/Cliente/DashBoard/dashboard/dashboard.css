@@ -73,3 +73,78 @@
 .icon.purple {
   background: #ede9fe;
 }
+
+.dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-main {
+  flex: 1;
+}
+
+.grafica-card {
+  margin: 2rem 1.5rem 0;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.grafica-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.grafica-tag {
+  margin: 0 0 0.35rem;
+  color: #198754;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.grafica-header h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.grafica-wrapper {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}
+
+@media (max-width: 991.98px) {
+  .grafica-card {
+    margin: 1.5rem 1rem 0;
+    padding: 1.2rem;
+  }
+
+  .grafica-wrapper {
+    height: 300px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .grafica-card {
+    margin: 1rem 0.75rem 0;
+    padding: 1rem;
+    border-radius: 1.2rem;
+  }
+
+  .grafica-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .grafica-wrapper {
+    height: 240px;
+  }
+}

@@ -83,7 +83,6 @@
   height: 156px;
 }
 
-/* === AÑADIDO: Ajuste perfecto del círculo === */
 .perfil-foto,
 .perfil-avatar {
   width: 156px;
@@ -305,7 +304,6 @@
   transform: translateY(-1px);
 }
 
-/* === BACKDROP === */
 .modal-foto-backdrop {
   position: fixed;
   inset: 0;
@@ -318,10 +316,9 @@
   animation: fadeBackdrop 0.25s ease-out;
 }
 
-/* === MODAL === */
 .modal-foto {
   width: 100%;
-  max-width: 420px;
+  max-width: 520px;
   background: #ffffff;
   border-radius: 1.6rem;
   padding: 2rem 2.2rem;
@@ -330,36 +327,6 @@
   border: 1px solid rgba(226, 232, 240, 0.9);
 }
 
-/* === PREVIEW (AÑADIDO) === */
-.preview-wrapper {
-  width: 100%;
-  height: 220px;
-  border-radius: 1.2rem;
-  overflow: hidden;
-  background: #f3f4f6;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid rgba(0,0,0,0.05);
-}
-
-.preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 1.2rem;
-}
-
-/* === TEXTO CARGAR FOTO (AÑADIDO) === */
-.preview-text {
-  text-align: center;
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-top: 0.5rem;
-}
-
-/* === DROP AREA === */
 .drop-area {
   border: 2px dashed #9ca3af;
   border-radius: 1.2rem;
@@ -378,29 +345,51 @@
 .file-hidden {
   display: none;
 }
-/* === PREVIEW REDONDO === */
-.preview-wrapper-circle {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #f3f4f6;
+
+.editor-foto {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin: 0 auto;
-  border: 4px solid #ffffff;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
 }
 
-.preview-img-circle {
+.editor-circulo {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border: 5px solid #ffffff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+}
+
+.editor-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
+  transform-origin: center;
 }
 
-/* === ANIMACIONES === */
+.editor-controles {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.editor-controles .form-label {
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.editor-controles .form-range {
+  margin-bottom: 0.35rem;
+}
+
 @keyframes fadeBackdrop {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -467,5 +456,15 @@
 
   .perfil-btn-volver {
     min-width: 180px;
+  }
+
+  .modal-foto {
+    width: calc(100% - 1.5rem);
+    padding: 1.4rem;
+  }
+
+  .editor-circulo {
+    width: 220px;
+    height: 220px;
   }
 }

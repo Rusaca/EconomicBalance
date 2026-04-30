@@ -191,6 +191,23 @@ export class AuthApiService {
   }
 
 
+  async obtenerNotificaciones(usuarioId: string) {
+    const response = await fetch(`http://localhost:3000/api/cliente/notificaciones/${usuarioId}`, {
+      method: 'GET'
+    });
+
+    return await response.json();
+  }
+
+  async eliminarNotificacion(id: string) {
+    const response = await fetch(`http://localhost:3000/api/cliente/notificaciones/${id}`, {
+      method: 'DELETE'
+    });
+
+    return await response.json();
+  }
+
+
 
 
 }

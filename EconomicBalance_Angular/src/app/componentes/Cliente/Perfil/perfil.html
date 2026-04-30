@@ -24,21 +24,14 @@
       <div class="col-12 col-lg-4 col-xl-3">
         <div class="card border-0 shadow-sm perfil-card perfil-card-left h-100">
           <div class="card-body p-4 text-center">
-
-            <!-- AVATAR PRINCIPAL -->
             <div class="perfil-avatar-wrapper mx-auto mb-3">
-
-              <!-- FOTO (TEMPORAL O REAL) -->
               <img *ngIf="fotoTemporal || perfil.fotoPerfil" [src]="fotoTemporal || perfil.fotoPerfil"
                 alt="Foto de perfil" class="perfil-foto" />
 
-              <!-- INICIALES SI NO HAY FOTO -->
               <div *ngIf="!fotoTemporal && !perfil.fotoPerfil" class="perfil-avatar mx-auto">
                 {{ perfil.nombre.charAt(0) || 'U' }}{{ perfil.apellidos.charAt(0) || '' }}
               </div>
-
             </div>
-
 
             <div class="mb-3">
               <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3" (click)="abrirModalFoto()">
@@ -77,7 +70,6 @@
                 <strong>Actualizable</strong>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -85,7 +77,6 @@
       <div class="col-12 col-lg-8 col-xl-9">
         <div class="card border-0 shadow-sm perfil-card mb-4">
           <div class="card-body p-4 p-md-5">
-
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
               <div>
                 <p class="section-label mb-1">Informacion personal</p>
@@ -95,7 +86,6 @@
 
             <form (ngSubmit)="guardarPerfil()">
               <div class="row g-3">
-
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">ID de usuario</label>
                   <input type="text" class="form-control form-control-lg" [ngModel]="perfil.id" name="id" disabled />
@@ -103,7 +93,7 @@
 
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">Correo electronico</label>
-                  <input type="email" class="form-control form-control-lg" [(ngModel)]="perfil.correo" name="correo" />
+                  <input type="email" class="form-control form-control-lg" [(ngModel)]="perfil.correo" name="correo" disabled />
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -167,7 +157,6 @@
                     <option value="Prefiero no decirlo">Prefiero no decirlo</option>
                   </select>
                 </div>
-
               </div>
 
               <div *ngIf="errorPerfil" class="alert alert-danger mt-4 mb-0">
@@ -183,7 +172,6 @@
                   Guardar cambios
                 </button>
               </div>
-
             </form>
           </div>
         </div>
@@ -191,7 +179,6 @@
         <div class="card border-0 shadow-sm perfil-card security-card overflow-hidden">
           <div class="card-body p-0">
             <div class="row g-0 align-items-stretch">
-
               <div class="col-12 col-md-7">
                 <div class="p-4 p-md-5 h-100 d-flex flex-column justify-content-center">
                   <p class="section-label mb-2">Seguridad</p>
@@ -238,10 +225,8 @@
                       Entra directamente a la pantalla de actualizacion de contrasena.
                     </p>
                   </div>
-
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -253,52 +238,48 @@
             © 2026 EconomicBalance. Todos los derechos reservados.
           </p>
         </footer>
-
       </div>
     </div>
   </div>
 
-  <<!-- MODAL FOTO -->
-    <div class="modal-foto-backdrop" *ngIf="mostrarModalFoto">
-      <div class="modal-foto">
+  <div class="modal-foto-backdrop" *ngIf="mostrarModalFoto">
+    <div class="modal-foto">
+      <h4 class="fw-bold mb-3 text-center">Cargar foto de perfil</h4>
 
-        <h4 class="fw-bold mb-3 text-center">Cargar foto de perfil</h4>
+      <div class="editor-foto mb-3">
+        <div class="editor-circulo" [class.editor-circulo-activo]="!!fotoTemporal" (mousedown)="iniciarArrastre($event)"
+          (mousemove)="moverArrastre($event)" (mouseup)="finalizarArrastre()" (mouseleave)="finalizarArrastre()">
+          <img *ngIf="fotoTemporal" [src]="fotoTemporal" alt="Preview" class="editor-img"
+            [style.transform]="'translate(calc(-50% + ' + desplazamientoX + 'px), calc(-50% + ' + desplazamientoY + 'px)) scale(' + zoomFoto + ')'" />
 
-        <!-- PREVIEW -->
-        <div *ngIf="fotoTemporal" class="preview-wrapper mb-3">
-          <img [src]="fotoTemporal" class="preview-img" alt="Preview" />
-        </div>
-
-        <!-- TEXTO CARGAR FOTO -->
-        <div *ngIf="fotoTemporal" class="preview-text">
-          Cargar foto
-        </div>
-
-        <!-- DROP AREA -->
-        <div class="drop-area" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-
-          <p class="fw-semibold mb-1">Arrastra tu foto aquí</p>
-          <p class="text-muted small">o haz clic para seleccionar</p>
-
-          <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)">
-        </div>
-
-        <!-- BOTONES -->
-        <div class="d-flex justify-content-between mt-4">
-
-          <button class="btn btn-danger" *ngIf="perfil.fotoPerfil" (click)="eliminarFoto()">
-            Eliminar
-          </button>
-
-          <div class="ms-auto d-flex gap-2">
-            <button class="btn btn-secondary" (click)="cerrarModalFoto()">Cancelar</button>
-            <button class="btn btn-success" (click)="aceptarFoto()">Aceptar</button>
+          <div *ngIf="!fotoTemporal" class="editor-placeholder">
+            <p class="fw-semibold mb-1">Tu foto se vera aqui</p>
+            <p class="text-muted small mb-0">Selecciona una imagen para previsualizarla</p>
           </div>
-
         </div>
 
+        <p *ngIf="fotoTemporal" class="editor-ayuda">
+          Arrastra la imagen dentro del circulo para ajustarla
+        </p>
+      </div>
+
+      <div class="drop-area" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+        <p class="fw-semibold mb-1">Arrastra tu foto aqui</p>
+        <p class="text-muted small">o haz clic para seleccionar</p>
+        <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)">
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <button class="btn btn-danger" *ngIf="perfil.fotoPerfil" (click)="eliminarFoto()">
+          Eliminar
+        </button>
+
+        <div class="ms-auto d-flex gap-2">
+          <button class="btn btn-secondary" (click)="cerrarModalFoto()">Cancelar</button>
+          <button class="btn btn-success" (click)="aceptarFoto()">Aceptar</button>
+        </div>
       </div>
     </div>
-
+  </div>
 
 </div>

@@ -3,6 +3,7 @@ import AuthService from '../../servicios/AuthService';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import NotificacionModel from '../../modelos/modelos/NotificacionModel';
 
 const router = Router();
 const authService = new AuthService();
@@ -11,8 +12,7 @@ router.post('/registro', async (req: Request, res: Response) => {
   try {
     const { nombre, apellidos, correo, telefono, prefijoTelefono, password } = req.body;
 
-
-    if (!nombre || !apellidos || !correo || !password) {
+    if (!nombre || !apellidos || !correo || !telefono || !prefijoTelefono || !password) {
       return res.status(400).json({
         ok: false,
         mensaje: 'Faltan datos obligatorios'
@@ -27,7 +27,6 @@ router.post('/registro', async (req: Request, res: Response) => {
       prefijoTelefono,
       password
     });
-
 
     if (!respuesta.ok) {
       return res.status(400).json(respuesta);
@@ -45,6 +44,7 @@ router.post('/registro', async (req: Request, res: Response) => {
     });
   }
 });
+
 
 router.post('/register', async (req: Request, res: Response) => {
   try {
@@ -330,6 +330,45 @@ router.delete('/eliminar-foto/:id', async (req, res) => {
     res.json({ ok: false, mensaje: 'Error eliminando foto' });
   }
 });
+router.get('/notificaciones/:usuarioId', async (req: Request, res: Response) => {
+  try {
+    const { usuarioId } = req.params;
 
+    const notificaciones = await NotificacionModel
+      .find({ usuarioId })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      ok: true,
+      data: notificaciones
+    });
+  } catch (error) {
+    console.error('Error obteniendo notificaciones:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error obteniendo notificaciones'
+    });
+  }
+});
+
+
+router.delete('/notificaciones/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await NotificacionModel.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      ok: true,
+      mensaje: 'Notificacion eliminada correctamente'
+    });
+  } catch (error) {
+    console.error('Error eliminando notificacion:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error eliminando notificacion'
+    });
+  }
+});
 
 export default router;
