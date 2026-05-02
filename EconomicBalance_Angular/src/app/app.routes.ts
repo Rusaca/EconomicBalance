@@ -10,6 +10,7 @@ import { Contrasena } from './componentes/Cliente/Contraseña/Contrasena';
 import { RecuperarContra } from './componentes/Cliente/Recuperarcontra/RecuperarContra';
 import { PerfilComponent } from './componentes/Cliente/Perfil/perfil';
 import { AjustesComponent } from './componentes/Cliente/Ajustes/ajustes';
+import { CalendarioComponent } from './componentes/Cliente/Calendario/Calendario';
 
 
 export const routes: Routes = [
@@ -66,7 +67,9 @@ export const routes: Routes = [
     path: 'ajustes',
     component: AjustesComponent
   },
-  
-
+  {
+  path: 'calendario',
+  component: CalendarioComponent
+  }
 
 ];

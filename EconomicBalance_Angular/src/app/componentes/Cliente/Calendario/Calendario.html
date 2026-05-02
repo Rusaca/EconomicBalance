@@ -1,0 +1,91 @@
+
+<app-header-autenticado></app-header-autenticado>
+
+<div class="calendar-page">
+  <div class="calendar-shell">
+    <div class="calendar-header">
+      <div>
+        <p class="calendar-tag">Planificacion</p>
+        <h1>Calendario financiero</h1>
+        <p class="calendar-subtitle">
+          Consulta tus movimientos, recordatorios y fechas clave de un vistazo.
+        </p>
+      </div>
+
+      <div class="calendar-actions">
+        <button class="btn btn-outline-dark" (click)="mesAnterior()">‹</button>
+        <div class="calendar-month">
+          {{ nombreMesActual }} {{ anioActual }}
+        </div>
+        <button class="btn btn-outline-dark" (click)="mesSiguiente()">›</button>
+      </div>
+    </div>
+
+    <div class="calendar-card">
+      <div class="calendar-weekdays">
+        <div *ngFor="let dia of diasSemana" class="calendar-weekday">
+          {{ dia }}
+        </div>
+      </div>
+
+      <div class="calendar-grid">
+        <div
+          *ngFor="let dia of diasCalendario"
+          class="calendar-day"
+          [class.other-month]="!dia.esMesActual"
+          [class.today]="dia.esHoy"
+          [class.has-events]="dia.eventos.length > 0"
+          (click)="seleccionarDia(dia)"
+        >
+          <div class="calendar-day-number">{{ dia.numero }}</div>
+
+          <div class="calendar-events">
+            <div
+              *ngFor="let evento of dia.eventos.slice(0, 2)"
+              class="calendar-event"
+              [class.ingreso]="evento.tipo === 'ingreso'"
+              [class.gasto]="evento.tipo === 'gasto'"
+              [class.recordatorio]="evento.tipo === 'recordatorio'"
+            >
+              {{ evento.titulo }}
+            </div>
+
+            <div *ngIf="dia.eventos.length > 2" class="calendar-more">
+              +{{ dia.eventos.length - 2 }} mas
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calendar-detail" *ngIf="diaSeleccionado">
+      <div class="calendar-detail-header">
+        <div>
+          <p class="calendar-tag mb-1">Detalle del dia</p>
+          <h3>{{ diaSeleccionado.numero }} {{ nombreMesActual }} {{ anioActual }}</h3>
+        </div>
+      </div>
+
+      <div *ngIf="diaSeleccionado.eventos.length; else sinEventos" class="calendar-detail-list">
+        <div
+          *ngFor="let evento of diaSeleccionado.eventos"
+          class="calendar-detail-item"
+          [class.ingreso]="evento.tipo === 'ingreso'"
+          [class.gasto]="evento.tipo === 'gasto'"
+          [class.recordatorio]="evento.tipo === 'recordatorio'"
+        >
+          <div class="calendar-detail-top">
+            <strong>{{ evento.titulo }}</strong>
+            <span *ngIf="evento.cantidad">{{ evento.cantidad }}</span>
+          </div>
+          <p>{{ evento.descripcion }}</p>
+        </div>
+      </div>
+
+      <ng-template #sinEventos>
+        <p class="calendar-empty">No hay eventos para este dia.</p>
+      </ng-template>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
