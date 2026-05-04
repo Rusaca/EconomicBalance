@@ -9,7 +9,7 @@ console.log("CorreoService PASS:", process.env.EMAIL_PASS);
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, 
+    user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
   }
 });
@@ -270,6 +270,142 @@ export const enviarCorreoBienvenida = async (correo: string, nombre: string) => 
 
               </table>
 
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    `
+  });
+
+
+
+};
+export const enviarCorreoSoporte = async (
+  nombre: string,
+  correo: string,
+  asunto: string,
+  mensaje: string,
+  tokenSoporte: string
+) => {
+  await transporter.sendMail({
+    from: `Economic Balance Soporte <${process.env.EMAIL_USER}>`,
+    replyTo: correo,
+    to: process.env.EMAIL_USER,
+    subject: `Nuevo ticket de soporte - ${asunto}`,
+    html: `
+    <!DOCTYPE html>
+    <html lang="es">
+      <body style="margin:0; padding:0; background:#f5f7fa; font-family:Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+          <tr>
+            <td align="center">
+              <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; padding:40px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+                <tr>
+                  <td align="center" style="padding-bottom:25px;">
+                    <img src="https://raw.githubusercontent.com/Rusaca/EconomicBalance/master/EconomicBalance_Angular/public/Logo.png"
+                         alt="Economic Balance"
+                         width="140"
+                         style="display:block; margin:auto;">
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size:22px; font-weight:bold; color:#333; text-align:center; padding-bottom:10px;">
+                    Nueva solicitud de soporte
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size:15px; color:#555; line-height:1.7;">
+                    <p><strong>Token de soporte:</strong> ${tokenSoporte}</p>
+                    <p><strong>Nombre:</strong> ${nombre}</p>
+                    <p><strong>Correo:</strong> ${correo}</p>
+                    <p><strong>Asunto:</strong> ${asunto}</p>
+                    <p><strong>Mensaje:</strong></p>
+                    <p>${mensaje}</p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding-top:35px; font-size:12px; color:#aaa; text-align:center;">
+                    © ${new Date().getFullYear()} Economic Balance. Todos los derechos reservados.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    `
+  });
+
+
+};
+export const enviarConfirmacionSoporteUsuario = async (
+  correo: string,
+  nombre: string,
+  asunto: string,
+  tokenSoporte: string
+) => {
+  await transporter.sendMail({
+    from: `Economic Balance Soporte <${process.env.EMAIL_USER}>`,
+    to: correo,
+    subject: 'Hemos recibido tu solicitud de soporte',
+    html: `
+    <!DOCTYPE html>
+    <html lang="es">
+      <body style="margin:0; padding:0; background:#f5f7fa; font-family:Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+          <tr>
+            <td align="center">
+              <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; padding:40px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+
+                <tr>
+                  <td align="center" style="padding-bottom:25px;">
+                    <img src="https://raw.githubusercontent.com/Rusaca/EconomicBalance/master/EconomicBalance_Angular/public/Logo.png"
+                         alt="Economic Balance"
+                         width="140"
+                         style="display:block; margin:auto;">
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size:22px; font-weight:bold; color:#333; text-align:center; padding-bottom:10px;">
+                    Solicitud recibida correctamente
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size:15px; color:#555; line-height:1.7; text-align:center; padding-bottom:20px;">
+                    Hola ${nombre}, hemos recibido tu solicitud de soporte sobre:
+                    <strong>${asunto}</strong>.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size:15px; color:#555; line-height:1.7; text-align:center; padding-bottom:20px;">
+                    Tu token de soporte es:
+                    <br>
+                    <strong style="font-size:18px; color:#111;">${tokenSoporte}</strong>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="font-size:14px; color:#666; line-height:1.6; text-align:center;">
+                    Guarda este token para futuras consultas relacionadas con tu solicitud.
+                    Nuestro equipo revisara tu mensaje lo antes posible.
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding-top:35px; font-size:12px; color:#aaa; text-align:center;">
+                    © ${new Date().getFullYear()} Economic Balance. Todos los derechos reservados.
+                  </td>
+                </tr>
+
+              </table>
             </td>
           </tr>
         </table>

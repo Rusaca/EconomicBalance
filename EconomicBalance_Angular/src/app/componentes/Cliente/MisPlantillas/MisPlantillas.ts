@@ -5,91 +5,90 @@ import { TemplatesService } from '../../../services/templates-service';
 import { Plantilla } from '../../../modelos/template.intetrfaces';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 
-
 type PlantillaDashboard = Plantilla & {
-	_id?: string;
+  _id?: string;
 };
 
 @Component({
-	selector: 'app-mis-plantillas',
-	standalone: true,
-	imports: [CommonModule, HeaderAutenticado],
-	templateUrl: './MisPlantillas.html',
-	styleUrl: './MisPlantillas.css'
+  selector: 'app-mis-plantillas',
+  standalone: true,
+  imports: [CommonModule, HeaderAutenticado],
+  templateUrl: './MisPlantillas.html',
+  styleUrl: './MisPlantillas.css'
 })
 export class MisPlantillas implements OnInit {
-	plantillas: PlantillaDashboard[] = [];
-	cargandoPlantillas = false;
+  plantillas: PlantillaDashboard[] = [];
+  cargandoPlantillas = false;
 
-	constructor(
-		private router: Router,
-		private templateService: TemplatesService,
-		private cdr: ChangeDetectorRef
-	) { }
+  constructor(
+    private router: Router,
+    private templateService: TemplatesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-	ngOnInit(): void {
-		console.log('MisPlantillas cargado');
+  ngOnInit(): void {
+    console.log('MisPlantillas cargado');
 
-		if (!this.sesionIniciada) {
-			this.router.navigate(['/login']);
-			return;
-		}
+    if (!this.sesionIniciada) {
+      this.router.navigate(['/login']);
+      return;
+    }
 
-		this.cargarPlantillas();
-	}
+    this.cargarPlantillas();
+  }
 
-	get sesionIniciada(): boolean {
-		return !!localStorage.getItem('usuario') && !!localStorage.getItem('token');
-	}
+  get sesionIniciada(): boolean {
+    return !!localStorage.getItem('usuario') && !!localStorage.getItem('token');
+  }
 
-	nuevaPlantilla(): void {
-		this.router.navigate(['/templates/nueva']);
-	}
+  nuevaPlantilla(): void {
+    this.router.navigate(['/templates/nueva']);
+  }
 
-	abrirPlantilla(plantilla: PlantillaDashboard): void {
-		const id = plantilla.id || plantilla._id;
+  abrirPlantilla(plantilla: PlantillaDashboard): void {
+    const id = plantilla.id || plantilla._id;
 
-		if (!id) {
-			console.error('No se puede abrir la plantilla porque no tiene id:', plantilla);
-			return;
-		}
+    if (!id) {
+      console.error('No se puede abrir la plantilla porque no tiene id:', plantilla);
+      return;
+    }
 
-		this.router.navigate(['/templates', id]);
-	}
+    this.router.navigate(['/templates', id]);
+  }
 
-	cerrarSesion(): void {
-		localStorage.removeItem('usuario');
-		localStorage.removeItem('token');
-		this.router.navigate(['/']);
-	}
+  cerrarSesion(): void {
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
+  }
 
-	private cargarPlantillas(): void {
-		console.log('Entrando en cargarPlantillas');
-		this.cargandoPlantillas = true;
-		this.cdr.detectChanges();
+  private cargarPlantillas(): void {
+    console.log('Entrando en cargarPlantillas');
+    this.cargandoPlantillas = true;
+    this.cdr.detectChanges();
 
-		this.templateService.getMisPlantillas().subscribe({
-			next: (respuesta) => {
-				console.log('RESPUESTA COMPLETA:', respuesta);
+    this.templateService.getMisPlantillas().subscribe({
+      next: (respuesta) => {
+        console.log('RESPUESTA COMPLETA:', respuesta);
 
-				const plantillas = Array.isArray(respuesta?.data) ? respuesta.data : [];
+        const plantillas = Array.isArray(respuesta?.data) ? respuesta.data : [];
 
-				this.plantillas = plantillas.map((plantilla: any) => ({
-					...plantilla,
-					id: plantilla.id || plantilla._id || ''
-				}));
+        this.plantillas = plantillas.map((plantilla: any) => ({
+          ...plantilla,
+          id: plantilla.id || plantilla._id || ''
+        }));
 
-				this.cargandoPlantillas = false;
+        this.cargandoPlantillas = false;
 
-				console.log('Plantillas cargadas:', this.plantillas);
-				this.cdr.detectChanges();
-			},
-			error: (error) => {
-				console.error('Error cargando plantillas:', error);
-				this.plantillas = [];
-				this.cargandoPlantillas = false;
-				this.cdr.detectChanges();
-			}
-		});
-	}
+        console.log('Plantillas cargadas:', this.plantillas);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error cargando plantillas:', error);
+        this.plantillas = [];
+        this.cargandoPlantillas = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }

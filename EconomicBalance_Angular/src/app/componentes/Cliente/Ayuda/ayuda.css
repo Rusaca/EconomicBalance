@@ -1,0 +1,246 @@
+.ayuda-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f6f8fb 0%, #eef2f7 100%);
+  padding: 24px 0 48px;
+}
+
+.ayuda-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ayuda-hero-card,
+.ayuda-status-card,
+.ayuda-card,
+.ayuda-faq-card {
+  background: #ffffff;
+  border: 1px solid #e6eaf0;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.ayuda-hero-card,
+.ayuda-status-card {
+  padding: 28px;
+}
+
+.ayuda-card,
+.ayuda-faq-card {
+  padding: 24px;
+}
+
+.ayuda-kicker,
+.ayuda-mini {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4f46e5;
+  margin-bottom: 8px;
+}
+
+.ayuda-title {
+  font-size: 2.2rem;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.ayuda-text {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.ayuda-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ecfdf5;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.ayuda-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.ayuda-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ayuda-section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ayuda-badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ayuda-form .form-control {
+  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  padding: 12px 14px;
+  background: #f8fafc;
+}
+
+.ayuda-form .form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+  background: #ffffff;
+}
+
+.ayuda-form textarea.form-control {
+  resize: vertical;
+}
+
+.ayuda-submit {
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-weight: 700;
+}
+
+.ayuda-feedback p {
+  margin: 0;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.ayuda-token {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.ayuda-token p {
+  margin: 0;
+  color: #1e3a8a;
+}
+
+.ayuda-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ayuda-faq-item {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ayuda-faq-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ayuda-faq-item h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.ayuda-faq-item p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+.ayuda-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: ayudaFadeIn 0.3s ease;
+}
+
+.ayuda-overlay-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 28px;
+  width: min(90vw, 420px);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+  animation: ayudaPopIn 0.35s ease;
+}
+
+.ayuda-check {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.ayuda-overlay-card h2 {
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ayuda-overlay-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+@keyframes ayudaFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ayudaPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .ayuda-title {
+    font-size: 1.8rem;
+  }
+
+  .ayuda-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
@@ -11,4 +11,13 @@ import { RouterLink } from '@angular/router';
 })
 export class FooterComponent {
   currentYear = new Date().getFullYear();
+
+  constructor(private router: Router) {}
+
+  irAAyuda(tipo: string): void {
+    this.router.navigate(['/ayuda'], {
+      queryParams: { tipo }
+    });
+  }
 }
+

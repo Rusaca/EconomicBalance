@@ -22,14 +22,14 @@
         <div class="eb-footer-block">
           <h3 class="eb-footer-heading">Empresa</h3>
           <ul class="eb-footer-list">
-            <li><a routerLink="/sobre-nosotros">Sobre nosotros</a></li>
-            <li><a routerLink="/servicios">Servicios</a></li>
-            <li><a routerLink="/contacto">Contacto</a></li>
-            <li><a routerLink="/soporte">Soporte</a></li>
+            <li><a href="#" (click)="irAAyuda('sobre-nosotros'); $event.preventDefault()">Sobre nosotros</a></li>
+            <li><a href="#" (click)="irAAyuda('servicios'); $event.preventDefault()">Servicios</a></li>
+            <li><a href="#" (click)="irAAyuda('contacto'); $event.preventDefault()">Contacto</a></li>
+            <li><a href="#" (click)="irAAyuda('soporte'); $event.preventDefault()">Soporte</a></li>
           </ul>
+
         </div>
       </div>
-
       <div class="col-12 col-md-6 col-lg-3">
         <div class="eb-footer-block">
           <h3 class="eb-footer-heading">Compromiso profesional</h3>

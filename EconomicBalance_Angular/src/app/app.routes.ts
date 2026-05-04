@@ -11,6 +11,9 @@ import { RecuperarContra } from './componentes/Cliente/Recuperarcontra/Recuperar
 import { PerfilComponent } from './componentes/Cliente/Perfil/perfil';
 import { AjustesComponent } from './componentes/Cliente/Ajustes/ajustes';
 import { CalendarioComponent } from './componentes/Cliente/Calendario/Calendario';
+import { SoporteComponent } from './componentes/Cliente/Soporte/soporte';
+import { AyudaComponent } from './componentes/Cliente/Ayuda/ayuda';
+
 
 
 export const routes: Routes = [
@@ -70,6 +73,15 @@ export const routes: Routes = [
   {
   path: 'calendario',
   component: CalendarioComponent
-  }
+  },
+  {
+  path: 'soporte',
+  component: SoporteComponent
+  },
+
+{
+  path: 'ayuda',
+  component: AyudaComponent
+}
 
 ];

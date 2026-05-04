@@ -207,7 +207,9 @@ export class AuthApiService {
     return await response.json();
   }
 
-
+  async enviarMensajeChat(message: string): Promise<{ reply: string }> {
+    return await this.http.post('/tienda/chat', { message });
+  }
 
 
 }
