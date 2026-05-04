@@ -99,7 +99,6 @@ economic-balance/
 * Exportación de datos (PDF/Excel)
 * Modo oscuro
 * Sincronización en tiempo real
-* App móvil
 
 ## 📌 Público Objetivo
 
@@ -107,6 +106,14 @@ economic-balance/
 * Estudiantes
 * Usuarios que buscan una gestión económica simple
 * Personas que desean visualizar su presupuesto de forma clara
+  
+## Servicios implementados
+
+* NodeMailer
+* JWT
+* Google Auth
+* Twilio
+* OpenIA
 
 <br>
 
