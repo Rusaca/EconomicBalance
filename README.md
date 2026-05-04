@@ -107,7 +107,7 @@ economic-balance/
 * Usuarios que buscan una gestión económica simple
 * Personas que desean visualizar su presupuesto de forma clara
   
-## Servicios implementados
+## 🧩 Servicios implementados
 
 * NodeMailer
 * JWT
