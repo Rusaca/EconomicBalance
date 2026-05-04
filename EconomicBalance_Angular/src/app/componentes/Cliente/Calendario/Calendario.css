@@ -1,10 +1,14 @@
 :host {
   display: block;
+  flex: 1 0 auto;
 }
 
 .calendar-page {
-  min-height: 100vh;
-  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  min-height: 100%;
+  padding: 1.5rem 0 2rem;
   background:
     radial-gradient(circle at top left, rgba(25, 135, 84, 0.12), transparent 24%),
     radial-gradient(circle at bottom right, rgba(13, 110, 253, 0.10), transparent 26%),
@@ -16,39 +20,44 @@
   max-width: 1550px;
   margin: 0 auto;
   padding: 0 1rem;
+  flex: 1 0 auto;
 }
+
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1.5rem 1.75rem;
-  border-radius: 1.6rem;
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(12px);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
 .calendar-header h1 {
   margin: 0 0 0.35rem;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-size: clamp(1.7rem, 2.4vw, 2.4rem);
   color: #1f2937;
   font-weight: 800;
+  line-height: 1.1;
 }
 
 .calendar-subtitle {
   margin: 0;
   color: #6b7280;
+  max-width: 700px;
+  font-size: 0.96rem;
 }
 
 .calendar-tag {
   display: inline-block;
   margin: 0;
   color: #198754;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -57,13 +66,25 @@
 .calendar-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.calendar-actions .btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .calendar-month {
-  min-width: 190px;
+  min-width: 130px;
   text-align: center;
-  padding: 0.8rem 1rem;
+  padding: 0.65rem 0.9rem;
   border-radius: 999px;
   background: #ffffff;
   border: 1px solid #dbe3ea;
@@ -72,45 +93,46 @@
 }
 
 .calendar-card {
-  border-radius: 1.6rem;
+  border-radius: 1.4rem;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(226, 232, 240, 0.9);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
 .calendar-weekdays {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: #f8fafc;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   border-bottom: 1px solid #e5e7eb;
 }
 
 .calendar-weekday {
-  padding: 1rem 0.75rem;
+  padding: 0.85rem 0.5rem;
   text-align: center;
   font-weight: 700;
   color: #374151;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
 }
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 .calendar-day {
-  min-height: 145px;
-  padding: 0.8rem;
+  min-height: clamp(96px, 11vw, 130px);
+  padding: 0.55rem;
   border-right: 1px solid #eef2f7;
   border-bottom: 1px solid #eef2f7;
   background: #ffffff;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .calendar-day:hover {
   background: #f8fbff;
+  box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.08);
 }
 
 .calendar-day.other-month {
@@ -128,26 +150,29 @@
 }
 
 .calendar-day-number {
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.45rem;
   color: #4b5563;
 }
 
 .calendar-events {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 .calendar-event {
-  padding: 0.35rem 0.5rem;
-  border-radius: 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.25;
+  padding: 0.25rem 0.42rem;
+  border-radius: 0.55rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.2;
   color: #111827;
   background: #eef2f7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .calendar-event.ingreso {
@@ -166,16 +191,16 @@
 }
 
 .calendar-more {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   color: #6b7280;
   font-weight: 700;
 }
 
 .calendar-detail {
-  margin-top: 1.5rem;
-  padding: 1.4rem 1.5rem;
-  border-radius: 1.4rem;
-  background: rgba(255, 255, 255, 0.92);
+  margin-top: 1.25rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(226, 232, 240, 0.9);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
 }
@@ -183,19 +208,19 @@
 .calendar-detail-header h3 {
   margin: 0;
   color: #1f2937;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 800;
 }
 
 .calendar-detail-list {
   display: grid;
-  gap: 0.85rem;
-  margin-top: 1rem;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
 }
 
 .calendar-detail-item {
-  padding: 0.95rem 1rem;
-  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.95rem;
   background: #f8fafc;
   border-left: 4px solid #cbd5e1;
 }
@@ -231,11 +256,11 @@
 .calendar-detail-item p {
   margin: 0;
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .calendar-empty {
-  margin: 1rem 0 0;
+  margin: 0.85rem 0 0;
   color: #6b7280;
 }
 
@@ -250,8 +275,7 @@
   }
 
   .calendar-day {
-    min-height: 120px;
-    padding: 0.65rem;
+    min-height: 105px;
   }
 }
 
@@ -261,34 +285,34 @@
   }
 
   .calendar-header {
-    padding: 1.2rem;
-    border-radius: 1.3rem;
+    padding: 1rem;
+    border-radius: 1.1rem;
   }
 
   .calendar-weekday {
-    padding: 0.75rem 0.35rem;
-    font-size: 0.78rem;
+    padding: 0.7rem 0.3rem;
+    font-size: 0.74rem;
   }
 
   .calendar-day {
-    min-height: 95px;
-    padding: 0.45rem;
+    min-height: 88px;
+    padding: 0.4rem;
   }
 
   .calendar-event {
-    font-size: 0.66rem;
-    padding: 0.25rem 0.35rem;
+    font-size: 0.58rem;
+    padding: 0.2rem 0.3rem;
   }
 
   .calendar-month {
-    min-width: 150px;
-    padding: 0.7rem 0.85rem;
+    min-width: 140px;
+    padding: 0.6rem 0.8rem;
   }
 }
 
 @media (max-width: 575.98px) {
   .calendar-page {
-    padding: 1rem 0;
+    padding: 1rem 0 1.5rem;
   }
 
   .calendar-shell {
@@ -296,7 +320,7 @@
   }
 
   .calendar-day {
-    min-height: 82px;
+    min-height: 76px;
   }
 
   .calendar-event {
@@ -304,10 +328,15 @@
   }
 
   .calendar-more {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
   }
 
   .calendar-detail {
     padding: 1rem;
+  }
+
+  .calendar-detail-top {
+    flex-direction: column;
+    gap: 0.2rem;
   }
 }

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { HeaderAutenticado } from '../../../Portal/HeaderAutenticado/HeaderAutenticado';
-import { FooterComponent } from '../../../Portal/FooterAutenticado/footer';
 import { BaseChartDirective } from 'ng2-charts';
 import {
   ChartConfiguration,
@@ -10,7 +9,7 @@ import {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HeaderAutenticado, FooterComponent, BaseChartDirective],
+  imports: [HeaderAutenticado, BaseChartDirective],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

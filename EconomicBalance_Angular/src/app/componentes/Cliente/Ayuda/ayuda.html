@@ -1,0 +1,110 @@
+<app-header-autenticado></app-header-autenticado>
+
+<main class="ayuda-page">
+    <div class="container ayuda-shell">
+        <section class="ayuda-hero">
+            <div class="row g-4 align-items-center">
+                <div class="col-12 col-xl-7">
+                    <div class="ayuda-hero-card">
+                        <p class="ayuda-kicker">Centro de ayuda</p>
+                        <h1 class="ayuda-title">Estamos aqui para ayudarte</h1>
+                        <p class="ayuda-text mb-0">
+                            Envia tu consulta al equipo de soporte de Economic Balance y recibe un token
+                            para identificar tu solicitud.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-5">
+                    <div class="ayuda-status-card">
+                        <p class="ayuda-mini">Estado del servicio</p>
+                        <div class="ayuda-status-pill">
+                            <span class="ayuda-status-dot"></span>
+                            Soporte disponible
+                        </div>
+                        <p class="ayuda-text mb-0">
+                            Tu consulta se enviara directamente al correo de soporte.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ayuda-content">
+            <div class="row g-4">
+                <div class="col-12 col-xl-7">
+                    <div class="ayuda-card h-100">
+                        <div class="ayuda-card-header">
+                            <div>
+                                <p class="ayuda-mini mb-1">Formulario de soporte</p>
+                                <h2 class="ayuda-section-title mb-0">Enviar solicitud</h2>
+                            </div>
+                            <span class="ayuda-badge">Activo</span>
+                        </div>
+
+                        <form class="ayuda-form" (ngSubmit)="enviarSoporte()">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" [(ngModel)]="formulario.nombre" name="nombre"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Correo</label>
+                                <input type="email" class="form-control" [(ngModel)]="formulario.correo" name="correo"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Asunto</label>
+                                <input type="text" class="form-control" [(ngModel)]="formulario.asunto" name="asunto"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Mensaje</label>
+                                <textarea class="form-control" rows="6" [(ngModel)]="formulario.mensaje" name="mensaje"
+                                    required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark ayuda-submit" [disabled]="enviandoSoporte">
+                                {{ enviandoSoporte ? 'Enviando...' : 'Enviar solicitud' }}
+                            </button>
+
+                        </form>
+
+                        <div *ngIf="mensajeSoporte" class="ayuda-feedback mt-3">
+                            <p>{{ mensajeSoporte }}</p>
+                        </div>
+
+                        <div *ngIf="tokenGenerado" class="ayuda-token mt-2">
+                            <p><strong>Token de soporte:</strong> {{ tokenGenerado }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-5">
+                    <div class="ayuda-faq-card h-100">
+                        <p class="ayuda-mini mb-2">Preguntas frecuentes</p>
+                        <h2 class="ayuda-section-title">Antes de enviar</h2>
+
+                        <div class="ayuda-faq-list">
+                            <article class="ayuda-faq-item" *ngFor="let faq of preguntasFrecuentes">
+                                <h3>{{ faq.pregunta }}</h3>
+                                <p>{{ faq.respuesta }}</p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="ayuda-overlay" *ngIf="mostrarConfirmacion">
+        <div class="ayuda-overlay-card">
+            <div class="ayuda-check">✓</div>
+            <h2>Enviado</h2>
+            <p>Tu solicitud se ha enviado correctamente al correo de soporte.</p>
+        </div>
+    </div>
+</main>

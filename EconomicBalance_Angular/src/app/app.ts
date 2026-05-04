@@ -1,10 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Router, NavigationEnd } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { FooterComponent } from './componentes/Portal/FooterAutenticado/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, FooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -14,10 +15,9 @@ export class App {
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-
         const video = document.getElementById('bg-video') as HTMLVideoElement | null;
 
-        if (!video) return; // ← evita el error
+        if (!video) return;
 
         if (event.url === '/login' || event.url === '/registro') {
           video.style.display = 'block';
@@ -28,3 +28,4 @@ export class App {
     });
   }
 }
+

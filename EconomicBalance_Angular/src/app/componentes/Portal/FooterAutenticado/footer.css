@@ -1,7 +1,8 @@
 :host {
   display: block;
-  margin-top: auto;
   width: 100%;
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 .eb-footer {
@@ -12,27 +13,28 @@
     radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.08), transparent 18%),
     linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1rem;
 }
 
 .eb-footer-shell {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 1rem 1.1rem 0.5rem;
+  padding: 1.4rem 1.1rem 0.5rem;
 }
 
 .eb-footer-top {
-  padding-bottom: 0.65rem;
+  padding-bottom: 0.8rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .eb-footer-middle {
-  padding: 0.65rem 0;
+  padding: 0.8rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .eb-footer-bottom {
-  padding-top: 0.55rem;
+  padding-top: 0.7rem;
 }
 
 .eb-footer-brand {
@@ -192,8 +194,12 @@
 }
 
 @media (max-width: 991.98px) {
+  .eb-footer {
+    padding-top: 0.85rem;
+  }
+
   .eb-footer-shell {
-    padding: 0.9rem 0.9rem 0.45rem;
+    padding: 1.2rem 0.9rem 0.45rem;
   }
 
   .eb-footer-brand {
@@ -207,16 +213,20 @@
 }
 
 @media (max-width: 767.98px) {
+  .eb-footer {
+    padding-top: 0.75rem;
+  }
+
   .eb-footer-shell {
-    padding: 0.85rem 0.75rem 0.45rem;
+    padding: 1.05rem 0.75rem 0.45rem;
   }
 
   .eb-footer-top {
-    padding-bottom: 0.55rem;
+    padding-bottom: 0.65rem;
   }
 
   .eb-footer-middle {
-    padding: 0.55rem 0;
+    padding: 0.65rem 0;
   }
 
   .eb-footer-title {
@@ -231,8 +241,12 @@
 }
 
 @media (max-width: 575.98px) {
+  .eb-footer {
+    padding-top: 0.65rem;
+  }
+
   .eb-footer-shell {
-    padding: 0.8rem 0.65rem 0.4rem;
+    padding: 0.95rem 0.65rem 0.4rem;
   }
 
   .eb-footer-logo-wrap {
