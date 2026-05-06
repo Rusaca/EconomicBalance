@@ -92,6 +92,7 @@ export class Login implements OnInit, AfterViewInit {
 
         localStorage.setItem('token', respuesta.data.token);
         localStorage.setItem('usuario', JSON.stringify(respuesta.data.usuario));
+        
         this.router.navigate(['/dashboard']);
         this.cdr.detectChanges();
       });
@@ -145,7 +146,7 @@ export class Login implements OnInit, AfterViewInit {
 
       localStorage.setItem('token', token);
       localStorage.setItem('usuario', JSON.stringify(usuario));
-
+      
       this.ngZone.run(() => {
         this.router.navigate(['/dashboard']);
       });

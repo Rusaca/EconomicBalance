@@ -7,7 +7,8 @@ export class TranslateService {
 
     private translations: any = {
         es: {
-            header_hola: 'Hello',
+
+            header_hola: 'Hola',
             noti_vacio: 'No hay notificaciones',
 
             configuracion: 'Configuración',
@@ -156,10 +157,13 @@ export class TranslateService {
             perfil_modal_cancelar: 'Cancelar',
             perfil_modal_aceptar: 'Aceptar',
             perfil_modal_eliminar: 'Eliminar',
+            sidebar_metas_ahorro: "Metas de Ahorro"
 
         },
 
         en: {
+
+
             noti_vacio: 'No notifications',
 
             header_hola: 'Hello',
@@ -310,6 +314,7 @@ export class TranslateService {
             perfil_modal_cancelar: 'Cancel',
             perfil_modal_aceptar: 'Accept',
             perfil_modal_eliminar: 'Delete',
+            sidebar_metas_ahorro: "Savings Goals"
 
         }
     };

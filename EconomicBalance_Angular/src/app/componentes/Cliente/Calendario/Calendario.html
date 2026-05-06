@@ -1,11 +1,12 @@
-
 <app-header-autenticado></app-header-autenticado>
 
 <div class="calendar-page">
   <div class="calendar-shell">
+
+    <!-- ENCABEZADO -->
     <div class="calendar-header">
       <div>
-        <p class="calendar-tag">Planificacion</p>
+        <p class="calendar-tag">Planificación</p>
         <h1>Calendario financiero</h1>
         <p class="calendar-subtitle">
           Consulta tus movimientos, recordatorios y fechas clave de un vistazo.
@@ -21,13 +22,17 @@
       </div>
     </div>
 
+    <!-- TARJETA DEL CALENDARIO -->
     <div class="calendar-card">
+
+      <!-- DÍAS DE LA SEMANA -->
       <div class="calendar-weekdays">
         <div *ngFor="let dia of diasSemana" class="calendar-weekday">
           {{ dia }}
         </div>
       </div>
 
+      <!-- GRID DEL CALENDARIO -->
       <div class="calendar-grid">
         <div
           *ngFor="let dia of diasCalendario"
@@ -45,23 +50,23 @@
               class="calendar-event"
               [class.ingreso]="evento.tipo === 'ingreso'"
               [class.gasto]="evento.tipo === 'gasto'"
-              [class.recordatorio]="evento.tipo === 'recordatorio'"
             >
               {{ evento.titulo }}
             </div>
 
             <div *ngIf="dia.eventos.length > 2" class="calendar-more">
-              +{{ dia.eventos.length - 2 }} mas
+              +{{ dia.eventos.length - 2 }} más
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- PANEL DE DETALLE -->
     <div class="calendar-detail" *ngIf="diaSeleccionado">
       <div class="calendar-detail-header">
         <div>
-          <p class="calendar-tag mb-1">Detalle del dia</p>
+          <p class="calendar-tag mb-1">Detalle del día</p>
           <h3>{{ diaSeleccionado.numero }} {{ nombreMesActual }} {{ anioActual }}</h3>
         </div>
       </div>
@@ -72,7 +77,6 @@
           class="calendar-detail-item"
           [class.ingreso]="evento.tipo === 'ingreso'"
           [class.gasto]="evento.tipo === 'gasto'"
-          [class.recordatorio]="evento.tipo === 'recordatorio'"
         >
           <div class="calendar-detail-top">
             <strong>{{ evento.titulo }}</strong>
@@ -83,8 +87,9 @@
       </div>
 
       <ng-template #sinEventos>
-        <p class="calendar-empty">No hay eventos para este dia.</p>
+        <p class="calendar-empty">No hay eventos para este día.</p>
       </ng-template>
     </div>
+
   </div>
 </div>

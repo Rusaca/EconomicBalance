@@ -1,0 +1,77 @@
+.contenedor-metas {
+  padding: 20px;
+}
+
+.titulo {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.lista-metas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.meta-card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: 0.2s ease;
+}
+
+.meta-card:hover {
+  transform: translateY(-3px);
+}
+
+.meta-titulo {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.meta-info {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.barra-progreso {
+  width: 100%;
+  height: 10px;
+  background: #e5e5e5;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.progreso {
+  height: 100%;
+  background: #4caf50;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.porcentaje {
+  margin-top: 8px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.card {
+  border-radius: 14px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+}
+
+.progress {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: width 0.4s ease;
+}

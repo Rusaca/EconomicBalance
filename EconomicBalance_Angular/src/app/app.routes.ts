@@ -13,6 +13,7 @@ import { AjustesComponent } from './componentes/Cliente/Ajustes/ajustes';
 import { CalendarioComponent } from './componentes/Cliente/Calendario/Calendario';
 import { SoporteComponent } from './componentes/Cliente/Soporte/soporte';
 import { AyudaComponent } from './componentes/Cliente/Ayuda/ayuda';
+import { MetasComponent } from './componentes/Cliente/MetasAhorro/MetasAhorro';
 
 
 
@@ -82,6 +83,11 @@ export const routes: Routes = [
 {
   path: 'ayuda',
   component: AyudaComponent
+},
+{
+  path: 'metas',
+  component: MetasComponent
 }
+
 
 ];
