@@ -1,0 +1,52 @@
+<app-header-autenticado></app-header-autenticado>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Metas de Ahorro</h2>
+
+        <button class="btn btn-primary px-4">
+            + Nueva Meta
+        </button>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4" *ngFor="let meta of metas">
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title fw-semibold">{{ meta.titulo }}</h5>
+
+                    <p class="mb-1 text-muted">
+                        Objetivo: <strong>{{ meta.objetivo }} €</strong>
+                    </p>
+
+                    <p class="mb-1 text-muted">
+                        Ahorrado: <strong>{{ meta.actual }} €</strong>
+                    </p>
+
+                    <p class="mb-3 text-muted">
+                        Fecha límite: <strong>{{ meta.fechaLimite }}</strong>
+                    </p>
+
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-success"
+                             role="progressbar"
+                             [style.width.%]="calcularProgreso(meta)">
+                        </div>
+                    </div>
+
+                    <p class="text-end mt-2 fw-bold">
+                        {{ calcularProgreso(meta) }}%
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
