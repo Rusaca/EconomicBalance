@@ -4,11 +4,19 @@ import { RouterLink } from '@angular/router';
 import { SidebarComponent } from '../Sidebar/sidebar';
 import { PerfilUsuComponent } from '../perfilUsu/perfilusu';
 import { NotiComponent } from '../notificacion/noti';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-header-autenticado',
   standalone: true,
-  imports: [CommonModule, RouterLink, SidebarComponent, PerfilUsuComponent, NotiComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    SidebarComponent,
+    PerfilUsuComponent,
+    NotiComponent,
+    TranslatePipe
+  ],
   templateUrl: './HeaderAutenticado.html',
   styleUrl: './HeaderAutenticado.css',
 })

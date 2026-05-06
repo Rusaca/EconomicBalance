@@ -1,9 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css']
 })
@@ -52,4 +55,3 @@ export class SidebarComponent {
     this.router.navigate(['/login']);
   }
 }
-
