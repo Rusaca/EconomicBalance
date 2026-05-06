@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthApiService } from '../../../servicios/auth-api.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-noti',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './noti.html',
   styleUrls: ['./noti.css']
 })
@@ -30,12 +31,8 @@ export class NotiComponent implements OnInit {
 
     try {
       const respuesta = await this.authApi.obtenerNotificaciones(usuarioId);
-      console.log('respuesta notificaciones:', respuesta);
-
       this.notificaciones = respuesta.data || [];
       this.cdr.detectChanges();
-
-      console.log('notificaciones finales:', this.notificaciones);
     } catch (error) {
       console.error('Error cargando notificaciones:', error);
     }

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-perfilusu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './perfilusu.html',
   styleUrls: ['./perfilusu.css']
 })
@@ -34,9 +35,9 @@ export class PerfilUsuComponent {
   irAPerfil() {
     this.router.navigate(['/perfil']);
   }
+
   irAAjustes() {
     this.router.navigate(['/ajustes']);
   }
-
-
 }
+

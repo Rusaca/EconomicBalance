@@ -15,12 +15,29 @@
     <div class="sidebar-content">
         <ul class="list-group list-group-flush">
 
-            <li class="list-group-item sidebar-item" (click)="ir('dashboard')">Inicio</li>
-            <li class="list-group-item sidebar-item" (click)="ir('mis-plantillas')">Mis Plantillas</li>
-            <li class="list-group-item sidebar-item" (click)="ir('calendario')">Calendario</li>
-            <li class="list-group-item sidebar-item" (click)="ir('presupuestos')">Presupuestos</li>
-            <li class="list-group-item sidebar-item" (click)="ir('estadisticas')">Estadísticas</li>
-            <li class="list-group-item sidebar-item" (click)="ir('soporte')">Soporte</li>
+            <li class="list-group-item sidebar-item" (click)="ir('dashboard')">
+                {{ 'sidebar_inicio' | translate }}
+            </li>
+
+            <li class="list-group-item sidebar-item" (click)="ir('mis-plantillas')">
+                {{ 'sidebar_plantillas' | translate }}
+            </li>
+
+            <li class="list-group-item sidebar-item" (click)="ir('calendario')">
+                {{ 'sidebar_calendario' | translate }}
+            </li>
+
+            <li class="list-group-item sidebar-item" (click)="ir('presupuestos')">
+                {{ 'sidebar_presupuestos' | translate }}
+            </li>
+
+            <li class="list-group-item sidebar-item" (click)="ir('estadisticas')">
+                {{ 'sidebar_estadisticas' | translate }}
+            </li>
+
+            <li class="list-group-item sidebar-item" (click)="ir('soporte')">
+                {{ 'sidebar_soporte' | translate }}
+            </li>
 
         </ul>
     </div>
@@ -28,7 +45,7 @@
     <!-- BOTÓN ABAJO DEL TODO -->
     <div class="sidebar-bottom px-3 py-3">
         <button class="btn btn-outline-dark w-100 fw-semibold" (click)="toggleTheme()">
-            {{ temaOscuro ? 'Modo claro' : 'Modo oscuro' }}
+            {{ temaOscuro ? ('sidebar_modo_claro' | translate) : ('sidebar_modo_oscuro' | translate) }}
         </button>
     </div>
 

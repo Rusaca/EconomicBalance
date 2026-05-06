@@ -1,119 +1,150 @@
 <div class="container-fluid px-0 perfil-page">
   <div class="perfil-shell">
+
+    <!-- HEADER -->
     <div class="perfil-header mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
       <div class="perfil-brand">
         <img src="assets/Logo.png" alt="EconomicBalance" class="perfil-logo">
+
         <div>
-          <p class="perfil-tag mb-2">Panel de usuario</p>
-          <h1 class="fw-bold mb-2">Editar perfil</h1>
+          <p class="perfil-tag mb-2">{{ 'perfil_panel' | translate }}</p>
+
+          <h1 class="fw-bold mb-2">{{ 'perfil_editar_titulo' | translate }}</h1>
+
           <p class="text-muted mb-0">
-            Aqui puedes revisar y modificar todos los datos de tu cuenta, ademas de gestionar la seguridad desde una
-            pantalla dedicada.
+            {{ 'perfil_editar_desc' | translate }}
           </p>
         </div>
       </div>
 
       <div class="perfil-header-action">
         <button type="button" class="btn btn-outline-secondary perfil-btn-volver" (click)="volver()">
-          Volver
+          {{ 'perfil_volver' | translate }}
         </button>
       </div>
     </div>
 
     <div class="row g-4 m-0">
+
+      <!-- COLUMNA IZQUIERDA -->
       <div class="col-12 col-lg-4 col-xl-3">
         <div class="card border-0 shadow-sm perfil-card perfil-card-left h-100">
           <div class="card-body p-4 text-center">
+
+            <!-- FOTO -->
             <div class="perfil-avatar-wrapper mx-auto mb-3">
-              <img *ngIf="fotoTemporal || perfil.fotoPerfil" [src]="fotoTemporal || perfil.fotoPerfil"
-                alt="Foto de perfil" class="perfil-foto" />
+
+              <img *ngIf="fotoTemporal || perfil.fotoPerfil"
+                   [src]="fotoTemporal || perfil.fotoPerfil"
+                   alt="Foto de perfil"
+                   class="perfil-foto" />
 
               <div *ngIf="!fotoTemporal && !perfil.fotoPerfil" class="perfil-avatar mx-auto">
                 {{ perfil.nombre.charAt(0) || 'U' }}{{ perfil.apellidos.charAt(0) || '' }}
               </div>
             </div>
 
+            <!-- BOTÓN SUBIR FOTO -->
             <div class="mb-3">
               <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3" (click)="abrirModalFoto()">
-                Subir foto
+                {{ 'perfil_subir_foto' | translate }}
               </button>
             </div>
 
-            <button *ngIf="perfil.fotoPerfil" type="button" class="btn btn-link text-danger p-0 mb-3"
-              (click)="eliminarFoto()">
-              Quitar foto
+            <!-- QUITAR FOTO -->
+            <button *ngIf="perfil.fotoPerfil"
+                    type="button"
+                    class="btn btn-link text-danger p-0 mb-3"
+                    (click)="eliminarFoto()">
+              {{ 'perfil_quitar_foto' | translate }}
             </button>
 
+            <!-- DATOS -->
             <h4 class="fw-bold mb-1">
               {{ perfil.nombre || 'Usuario' }} {{ perfil.apellidos }}
             </h4>
 
-            <p class="text-muted mb-2">{{ perfil.correo || 'Sin correo' }}</p>
             <p class="text-muted mb-2">
-              {{ perfil.telefono ? (perfil.prefijoTelefono || '+34') + ' ' + perfil.telefono : 'Sin telefono' }}
+              {{ perfil.correo || ('perfil_sin_correo' | translate) }}
             </p>
-            <p class="text-muted mb-4">{{ perfil.genero || 'Genero no indicado' }}</p>
 
+            <p class="text-muted mb-2">
+              {{ perfil.telefono ? (perfil.prefijoTelefono || '+34') + ' ' + perfil.telefono : ('perfil_sin_telefono' | translate) }}
+            </p>
+
+            <p class="text-muted mb-4">
+              {{ perfil.genero || ('perfil_genero_no' | translate) }}
+            </p>
+
+            <!-- RESUMEN -->
             <div class="perfil-resumen text-start">
+
               <div class="resumen-item">
-                <span>ID de usuario</span>
+                <span>{{ 'perfil_id_usuario' | translate }}</span>
                 <strong>{{ perfil.id || 'Pendiente' }}</strong>
               </div>
 
               <div class="resumen-item">
-                <span>Estado</span>
-                <strong>Activo</strong>
+                <span>{{ 'perfil_estado' | translate }}</span>
+                <strong>{{ 'perfil_activo' | translate }}</strong>
               </div>
 
               <div class="resumen-item">
-                <span>Seguridad</span>
-                <strong>Actualizable</strong>
+                <span>{{ 'perfil_seguridad' | translate }}</span>
+                <strong>{{ 'perfil_actualizable' | translate }}</strong>
               </div>
+
             </div>
+
           </div>
         </div>
       </div>
 
+      <!-- COLUMNA DERECHA -->
       <div class="col-12 col-lg-8 col-xl-9">
+
+        <!-- CARD DATOS PERSONALES -->
         <div class="card border-0 shadow-sm perfil-card mb-4">
           <div class="card-body p-4 p-md-5">
+
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
               <div>
-                <p class="section-label mb-1">Informacion personal</p>
-                <h3 class="fw-bold mb-0">Datos del usuario</h3>
+                <p class="section-label mb-1">{{ 'perfil_info_personal' | translate }}</p>
+                <h3 class="fw-bold mb-0">{{ 'perfil_datos_usuario' | translate }}</h3>
               </div>
             </div>
 
             <form (ngSubmit)="guardarPerfil()">
               <div class="row g-3">
+
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">ID de usuario</label>
+                  <label class="form-label fw-semibold">{{ 'perfil_id_usuario' | translate }}</label>
                   <input type="text" class="form-control form-control-lg" [ngModel]="perfil.id" name="id" disabled />
                 </div>
 
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Correo electronico</label>
+                  <label class="form-label fw-semibold">{{ 'perfil_correo' | translate }}</label>
                   <input type="email" class="form-control form-control-lg" [(ngModel)]="perfil.correo" name="correo" disabled />
                 </div>
 
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Nombre</label>
+                  <label class="form-label fw-semibold">{{ 'perfil_nombre' | translate }}</label>
                   <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.nombre" name="nombre" />
                 </div>
 
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Apellidos</label>
-                  <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.apellidos"
-                    name="apellidos" />
+                  <label class="form-label fw-semibold">{{ 'perfil_apellidos' | translate }}</label>
+                  <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.apellidos" name="apellidos" />
                 </div>
 
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Numero de telefono</label>
+                  <label class="form-label fw-semibold">{{ 'perfil_numero_telefono' | translate }}</label>
 
                   <div class="input-group input-group-lg phone-group">
+
                     <div class="prefijo-dropdown">
                       <button type="button" class="btn prefijo-btn dropdown-toggle"
-                        (click)="mostrarPrefijos = !mostrarPrefijos">
+                              (click)="mostrarPrefijos = !mostrarPrefijos">
                         {{ perfil.prefijoTelefono || '+34' }}
                       </button>
 
@@ -141,24 +172,31 @@
                       </div>
                     </div>
 
-                    <input type="text" class="form-control" [(ngModel)]="perfil.telefono" name="telefono"
-                      placeholder="Introduce tu telefono" inputmode="numeric" pattern="[0-9]*"
-                      (input)="perfil.telefono = perfil.telefono.replace(/[^0-9]/g, '')" />
+                    <input type="text"
+                           class="form-control"
+                           [(ngModel)]="perfil.telefono"
+                           name="telefono"
+                           placeholder="{{ 'perfil_numero_telefono' | translate }}"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           (input)="perfil.telefono = perfil.telefono.replace(/[^0-9]/g, '')" />
                   </div>
                 </div>
 
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Genero</label>
+                  <label class="form-label fw-semibold">{{ 'perfil_genero' | translate }}</label>
                   <select class="form-select form-select-lg" [(ngModel)]="perfil.genero" name="genero">
-                    <option value="">Selecciona una opcion</option>
+                    <option value="">{{ 'perfil_selecciona_opcion' | translate }}</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                     <option value="Otro">Otro</option>
                     <option value="Prefiero no decirlo">Prefiero no decirlo</option>
                   </select>
                 </div>
+
               </div>
 
+              <!-- ALERTAS -->
               <div *ngIf="errorPerfil" class="alert alert-danger mt-4 mb-0">
                 {{ errorPerfil }}
               </div>
@@ -167,118 +205,148 @@
                 {{ mensajePerfil }}
               </div>
 
+              <!-- BOTÓN GUARDAR -->
               <div class="d-flex justify-content-end mt-4">
                 <button type="submit" class="btn btn-success btn-lg px-4 rounded-pill">
-                  Guardar cambios
+                  {{ 'perfil_guardar' | translate }}
                 </button>
               </div>
+
             </form>
           </div>
         </div>
 
+        <!-- CARD SEGURIDAD -->
         <div class="card border-0 shadow-sm perfil-card security-card overflow-hidden">
           <div class="card-body p-0">
             <div class="row g-0 align-items-stretch">
+
               <div class="col-12 col-md-7">
                 <div class="p-4 p-md-5 h-100 d-flex flex-column justify-content-center">
-                  <p class="section-label mb-2">Seguridad</p>
-                  <h3 class="fw-bold mb-3">Actualizar contrasena</h3>
+
+                  <p class="section-label mb-2">{{ 'perfil_seguridad_titulo' | translate }}</p>
+
+                  <h3 class="fw-bold mb-3">{{ 'perfil_actualizar_contra' | translate }}</h3>
 
                   <p class="text-muted mb-4">
-                    Cambia tu contrasena desde una pagina independiente para hacerlo de forma mas clara, comoda y
-                    segura.
+                    {{ 'perfil_actualizar_contra_desc' | translate }}
                   </p>
 
                   <div class="d-flex flex-wrap gap-3 align-items-center">
                     <a routerLink="/recuperar-password" class="btn btn-dark btn-lg px-4 rounded-pill">
-                      Ir a actualizar contrasena
+                      {{ 'perfil_ir_actualizar' | translate }}
                     </a>
 
                     <span class="small text-muted">
-                      Accede a una vista especifica para gestionar tu acceso.
+                      {{ 'perfil_acceso_especifico' | translate }}
                     </span>
                   </div>
+
                 </div>
               </div>
 
               <div class="col-12 col-md-5">
                 <div class="security-side h-100 d-flex flex-column justify-content-center p-4 p-md-5">
-                  <div class="security-badge mb-3">Proteccion</div>
+
+                  <div class="security-badge mb-3">{{ 'perfil_proteccion' | translate }}</div>
 
                   <div class="security-point mb-3">
-                    <strong>Cambio seguro</strong>
+                    <strong>{{ 'perfil_cambio_seguro' | translate }}</strong>
                     <p class="mb-0 text-muted small">
-                      Separa la edicion del perfil de los datos sensibles.
+                      {{ 'perfil_cambio_seguro_desc' | translate }}
                     </p>
                   </div>
 
                   <div class="security-point mb-3">
-                    <strong>Mas claridad</strong>
+                    <strong>{{ 'perfil_mas_claridad' | translate }}</strong>
                     <p class="mb-0 text-muted small">
-                      Evita mezclar informacion personal con acciones de seguridad.
+                      {{ 'perfil_mas_claridad_desc' | translate }}
                     </p>
                   </div>
 
                   <div class="security-point">
-                    <strong>Acceso rapido</strong>
+                    <strong>{{ 'perfil_acceso_rapido' | translate }}</strong>
                     <p class="mb-0 text-muted small">
-                      Entra directamente a la pantalla de actualizacion de contrasena.
+                      {{ 'perfil_acceso_rapido_desc' | translate }}
                     </p>
                   </div>
+
                 </div>
               </div>
+
             </div>
           </div>
         </div>
 
-        <footer class="perfil-footer text-center mt-4 py-4">
-          <img src="assets/Logo.png" alt="EconomicBalance" class="perfil-footer-logo">
-          <p class="mb-1 fw-semibold">EconomicBalance</p>
-          <p class="text-muted mb-0">
-            © 2026 EconomicBalance. Todos los derechos reservados.
-          </p>
-        </footer>
+       
+
       </div>
     </div>
   </div>
 
+  <!-- MODAL FOTO -->
   <div class="modal-foto-backdrop" *ngIf="mostrarModalFoto">
     <div class="modal-foto">
-      <h4 class="fw-bold mb-3 text-center">Cargar foto de perfil</h4>
+
+      <h4 class="fw-bold mb-3 text-center">{{ 'perfil_modal_titulo' | translate }}</h4>
 
       <div class="editor-foto mb-3">
-        <div class="editor-circulo" [class.editor-circulo-activo]="!!fotoTemporal" (mousedown)="iniciarArrastre($event)"
-          (mousemove)="moverArrastre($event)" (mouseup)="finalizarArrastre()" (mouseleave)="finalizarArrastre()">
-          <img *ngIf="fotoTemporal" [src]="fotoTemporal" alt="Preview" class="editor-img"
-            [style.transform]="'translate(calc(-50% + ' + desplazamientoX + 'px), calc(-50% + ' + desplazamientoY + 'px)) scale(' + zoomFoto + ')'" />
+
+        <div class="editor-circulo"
+             [class.editor-circulo-activo]="!!fotoTemporal"
+             (mousedown)="iniciarArrastre($event)"
+             (mousemove)="moverArrastre($event)"
+             (mouseup)="finalizarArrastre()"
+             (mouseleave)="finalizarArrastre()">
+
+          <img *ngIf="fotoTemporal"
+               [src]="fotoTemporal"
+               alt="Preview"
+               class="editor-img"
+               [style.transform]="'translate(calc(-50% + ' + desplazamientoX + 'px), calc(-50% + ' + desplazamientoY + 'px)) scale(' + zoomFoto + ')'" />
 
           <div *ngIf="!fotoTemporal" class="editor-placeholder">
-            <p class="fw-semibold mb-1">Tu foto se vera aqui</p>
-            <p class="text-muted small mb-0">Selecciona una imagen para previsualizarla</p>
+            <p class="fw-semibold mb-1">{{ 'perfil_modal_preview' | translate }}</p>
+            <p class="text-muted small mb-0">{{ 'perfil_modal_preview_desc' | translate }}</p>
           </div>
+
         </div>
 
         <p *ngIf="fotoTemporal" class="editor-ayuda">
-          Arrastra la imagen dentro del circulo para ajustarla
+          Arrastra la imagen dentro del círculo para ajustarla
         </p>
+
       </div>
 
-      <div class="drop-area" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
-        <p class="fw-semibold mb-1">Arrastra tu foto aqui</p>
-        <p class="text-muted small">o haz clic para seleccionar</p>
+      <div class="drop-area"
+           (click)="fileInput.click()"
+           (dragover)="onDragOver($event)"
+           (drop)="onDrop($event)">
+
+        <p class="fw-semibold mb-1">{{ 'perfil_modal_arrastra' | translate }}</p>
+        <p class="text-muted small">{{ 'perfil_modal_o_click' | translate }}</p>
+
         <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)">
       </div>
 
       <div class="d-flex justify-content-between mt-4">
+
         <button class="btn btn-danger" *ngIf="perfil.fotoPerfil" (click)="eliminarFoto()">
-          Eliminar
+          {{ 'perfil_modal_eliminar' | translate }}
         </button>
 
         <div class="ms-auto d-flex gap-2">
-          <button class="btn btn-secondary" (click)="cerrarModalFoto()">Cancelar</button>
-          <button class="btn btn-success" (click)="aceptarFoto()">Aceptar</button>
+          <button class="btn btn-secondary" (click)="cerrarModalFoto()">
+            {{ 'perfil_modal_cancelar' | translate }}
+          </button>
+
+          <button class="btn btn-success" (click)="aceptarFoto()">
+            {{ 'perfil_modal_aceptar' | translate }}
+          </button>
         </div>
+
       </div>
+
     </div>
   </div>
 

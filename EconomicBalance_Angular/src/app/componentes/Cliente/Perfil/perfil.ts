@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../servicios/auth-api.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 interface PerfilUsuarioForm {
   id: string;
@@ -18,7 +19,7 @@ interface PerfilUsuarioForm {
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
