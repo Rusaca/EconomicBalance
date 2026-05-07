@@ -9,6 +9,7 @@ import configPipeline from './config_server_express/config_pipeline';
 import rutasCliente from './config_server_express/config_enrutamiento/endPointsCliente';
 import rutasPlantilla from './config_server_express/config_enrutamiento/endPointsPlantilla';
 import endPointsTienda from './config_server_express/config_enrutamiento/endPointsTienda';
+import endPointsCampoMaestro from './config_server_express/config_enrutamiento/endPointsCampoMaestro';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ configPipeline(app);
 app.use('/api/cliente', rutasCliente);
 app.use('/api/plantillas', rutasPlantilla);
 app.use('/api/tienda', endPointsTienda);
+app.use('/api/campos-maestros', endPointsCampoMaestro);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 mongoose

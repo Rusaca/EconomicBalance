@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { TemplatesService } from '../../../services/templates-service';
 import { Plantilla, Bloque, Campo, GraficaPlantilla } from '../../../modelos/template.intetrfaces';
+import { CampoMaestro, CamposMaestrosService } from '../../../services/campos-maestros.service';
 
 type ElementoMovible = {
   x: number;
@@ -52,6 +53,16 @@ export class TemplatePage implements OnInit {
   popupCampoVisible = false;
   bloqueSeleccionado: Bloque | null = null;
   campoEditandoId: string | null = null;
+  modoCampoManual = false;
+  camposMaestros: CampoMaestro[] = [];
+  campoMaestroSeleccionadoId = '';
+  guardandoCampoMaestro = false;
+
+  nuevoCampoMaestro = {
+    nombre: '',
+    tipo: 'gasto' as 'ingreso' | 'gasto',
+    categoria: 'fijo' as 'fijo' | 'variable'
+  };
 
   popupNombrePlantillaVisible = false;
   nombrePlantillaTemporal = '';
@@ -83,13 +94,16 @@ export class TemplatePage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private templateService: TemplatesService
+    private templateService: TemplatesService,
+    private camposMaestrosService: CamposMaestrosService
   ) {}
 ngOnInit(): void {
   if (!localStorage.getItem('token') || !localStorage.getItem('usuario')) {
     this.router.navigate(['/login']);
     return;
   }
+
+  this.cargarCamposMaestros();
 
   const id = this.route.snapshot.paramMap.get('id');
   this.plantillaIdRuta = id && id !== 'nueva' ? id : null;
@@ -264,6 +278,11 @@ ngOnInit(): void {
       concepto: '',
       importe: 0,
     };
+    this.modoCampoManual = this.camposMaestros.length === 0;
+    this.campoMaestroSeleccionadoId = this.camposMaestros[0]?._id || '';
+    if (!this.modoCampoManual) {
+      this.aplicarCampoMaestroSeleccionado();
+    }
 
     this.popupCampoVisible = true;
     this.cerrarMenus();
@@ -285,6 +304,7 @@ ngOnInit(): void {
       concepto: campo.concepto,
       importe: campo.importe,
     };
+    this.campoMaestroSeleccionadoId = '';
 
     this.popupCampoVisible = true;
   }
@@ -292,9 +312,27 @@ ngOnInit(): void {
  guardarCampo(): void {
   if (!this.bloqueSeleccionado) return;
 
-  const concepto = this.nuevoCampo.concepto.trim();
-  const categoria = this.nuevoCampo.categoria;
+  const campoMaestroSeleccionado = this.camposMaestros.find(
+    (campoMaestro) => campoMaestro._id === this.campoMaestroSeleccionadoId
+  );
+
+  const usaMaestroEnNuevoCampo = !this.campoEditandoId && !this.modoCampoManual && !!campoMaestroSeleccionado;
+  const tipo = usaMaestroEnNuevoCampo
+    ? (campoMaestroSeleccionado?.tipo || this.nuevoCampo.tipo)
+    : this.nuevoCampo.tipo;
+  const categoria = usaMaestroEnNuevoCampo
+    ? (campoMaestroSeleccionado?.categoria || this.nuevoCampo.categoria)
+    : this.nuevoCampo.categoria;
+  const concepto = usaMaestroEnNuevoCampo
+    ? (campoMaestroSeleccionado?.nombre?.trim() || '')
+    : this.nuevoCampo.concepto.trim();
   const importe = Number(this.nuevoCampo.importe);
+
+  if (!this.campoEditandoId && !this.modoCampoManual && !campoMaestroSeleccionado) {
+    this.mensajeGuardado = 'Selecciona un campo maestro o cambia a modo manual';
+    this.limpiarMensajeGuardado();
+    return;
+  }
 
   if (!concepto) {
     this.mensajeGuardado = 'El campo debe tener un concepto';
@@ -312,7 +350,7 @@ ngOnInit(): void {
     const campo = this.bloqueSeleccionado.campos.find(c => c.id === this.campoEditandoId);
 
     if (campo) {
-      campo.tipo = this.nuevoCampo.tipo;
+      campo.tipo = tipo;
       campo.categoria = categoria;
       campo.concepto = concepto;
       campo.importe = importe;
@@ -321,7 +359,7 @@ ngOnInit(): void {
   } else {
     this.bloqueSeleccionado.campos.push({
       id: this.generarId(),
-      tipo: this.nuevoCampo.tipo,
+      tipo,
       categoria,
       concepto,
       importe,
@@ -332,6 +370,7 @@ ngOnInit(): void {
   this.popupCampoVisible = false;
   this.bloqueSeleccionado = null;
   this.campoEditandoId = null;
+  this.resetEstadoCampoMaestro();
 }
 
 
@@ -514,6 +553,7 @@ ngOnInit(): void {
     this.popupCampoVisible = false;
     this.bloqueSeleccionado = null;
     this.campoEditandoId = null;
+    this.resetEstadoCampoMaestro();
   }
 
   startDrag(event: MouseEvent, bloque: Bloque): void {
@@ -739,6 +779,162 @@ ngOnInit(): void {
     setTimeout(() => {
       this.mensajeGuardado = '';
     }, 2500);
+  }
+
+  cargarCamposMaestros(): void {
+    this.camposMaestrosService.getCampos().subscribe({
+      next: (respuesta) => {
+        if (!respuesta.ok) {
+          this.camposMaestros = [];
+          return;
+        }
+
+        this.camposMaestros = Array.isArray(respuesta.data) ? respuesta.data : [];
+
+        if (!this.campoMaestroSeleccionadoId && this.camposMaestros.length) {
+          this.campoMaestroSeleccionadoId = this.camposMaestros[0]._id;
+        }
+      },
+      error: (error) => {
+        console.error('Error cargando campos maestros:', error);
+        this.camposMaestros = [];
+      }
+    });
+  }
+
+  aplicarCampoMaestroSeleccionado(): void {
+    if (this.modoCampoManual) {
+      return;
+    }
+
+    const campoMaestroSeleccionado = this.camposMaestros.find(
+      (campoMaestro) => campoMaestro._id === this.campoMaestroSeleccionadoId
+    );
+
+    if (!campoMaestroSeleccionado) {
+      return;
+    }
+
+    this.nuevoCampo.tipo = campoMaestroSeleccionado.tipo;
+    this.nuevoCampo.categoria = campoMaestroSeleccionado.categoria;
+    this.nuevoCampo.concepto = campoMaestroSeleccionado.nombre;
+  }
+
+  activarModoManual(): void {
+    this.modoCampoManual = true;
+  }
+
+  activarModoMaestro(): void {
+    if (!this.camposMaestros.length) {
+      this.modoCampoManual = true;
+      return;
+    }
+
+    this.modoCampoManual = false;
+    if (!this.campoMaestroSeleccionadoId) {
+      this.campoMaestroSeleccionadoId = this.camposMaestros[0]._id;
+    }
+    this.aplicarCampoMaestroSeleccionado();
+  }
+
+  crearCampoMaestroUsuario(): void {
+    const nombre = this.nuevoCampoMaestro.nombre.trim();
+
+    if (!nombre) {
+      this.mensajeGuardado = 'El nombre del campo maestro es obligatorio';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    this.guardandoCampoMaestro = true;
+
+    this.camposMaestrosService
+      .crearCampo({
+        nombre,
+        tipo: this.nuevoCampoMaestro.tipo,
+        categoria: this.nuevoCampoMaestro.categoria
+      })
+      .subscribe({
+        next: (respuesta) => {
+          this.guardandoCampoMaestro = false;
+
+          if (!respuesta.ok || !respuesta.data) {
+            this.mensajeGuardado = respuesta.mensaje || 'No se pudo crear el campo maestro';
+            this.limpiarMensajeGuardado();
+            return;
+          }
+
+          this.camposMaestros.push(respuesta.data);
+          this.camposMaestros.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+          this.campoMaestroSeleccionadoId = respuesta.data._id;
+          this.aplicarCampoMaestroSeleccionado();
+          this.nuevoCampoMaestro = {
+            nombre: '',
+            tipo: 'gasto',
+            categoria: 'fijo'
+          };
+          this.mensajeGuardado = 'Campo maestro creado correctamente';
+          this.limpiarMensajeGuardado();
+        },
+        error: (error) => {
+          console.error('Error creando campo maestro:', error);
+          this.guardandoCampoMaestro = false;
+          this.mensajeGuardado = 'Error creando el campo maestro';
+          this.limpiarMensajeGuardado();
+        }
+      });
+  }
+
+  eliminarCampoMaestroUsuario(campoMaestro: CampoMaestro): void {
+    if (campoMaestro.scope !== 'user') {
+      return;
+    }
+
+    this.camposMaestrosService.eliminarCampo(campoMaestro._id).subscribe({
+      next: (respuesta) => {
+        if (!respuesta.ok) {
+          this.mensajeGuardado = respuesta.mensaje || 'No se pudo eliminar el campo maestro';
+          this.limpiarMensajeGuardado();
+          return;
+        }
+
+        this.camposMaestros = this.camposMaestros.filter((item) => item._id !== campoMaestro._id);
+
+        if (this.campoMaestroSeleccionadoId === campoMaestro._id) {
+          this.campoMaestroSeleccionadoId = this.camposMaestros[0]?._id || '';
+          this.aplicarCampoMaestroSeleccionado();
+        }
+
+        this.mensajeGuardado = 'Campo maestro eliminado';
+        this.limpiarMensajeGuardado();
+      },
+      error: (error) => {
+        console.error('Error eliminando campo maestro:', error);
+        this.mensajeGuardado = 'Error eliminando el campo maestro';
+        this.limpiarMensajeGuardado();
+      }
+    });
+  }
+
+  seleccionarCampoMaestro(campoMaestro: CampoMaestro): void {
+    this.campoMaestroSeleccionadoId = campoMaestro._id;
+    this.aplicarCampoMaestroSeleccionado();
+  }
+
+  private resetEstadoCampoMaestro(): void {
+    this.modoCampoManual = false;
+    this.campoMaestroSeleccionadoId = this.camposMaestros[0]?._id || '';
+    this.nuevoCampoMaestro = {
+      nombre: '',
+      tipo: 'gasto',
+      categoria: 'fijo'
+    };
+  }
+
+  get campoMaestroSeleccionado(): CampoMaestro | null {
+    return this.camposMaestros.find(
+      (campoMaestro) => campoMaestro._id === this.campoMaestroSeleccionadoId
+    ) || null;
   }
 
   private normalizarGraficas(graficas: GraficaPlantilla[]): GraficaPlantilla[] {

@@ -273,26 +273,161 @@
 </div>
 
 <div class="overlay" *ngIf="popupCampoVisible">
-  <div class="popup" (click)="$event.stopPropagation()">
+  <div class="popup popup-campo" (click)="$event.stopPropagation()">
     <h3>{{ campoEditandoId ? 'Editar campo' : 'Nuevo campo' }}</h3>
 
-    <label>Tipo</label>
-    <select [(ngModel)]="nuevoCampo.tipo">
-      <option value="ingreso">Ingreso</option>
-      <option value="gasto">Gasto</option>
-    </select>
+    <div class="popup-campo-layout" *ngIf="!campoEditandoId; else modoEditarCampo">
+      <section class="col-campo-form">
+        <div class="modo-campo-switch">
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="!modoCampoManual"
+            [class.btn-outline-primary]="modoCampoManual"
+            (click)="activarModoMaestro()"
+          >
+            Desde maestro
+          </button>
 
-    <label>Categoria</label>
-    <select [(ngModel)]="nuevoCampo.categoria">
-      <option value="fijo">Fijo</option>
-      <option value="variable">Variable</option>
-    </select>
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="modoCampoManual"
+            [class.btn-outline-primary]="!modoCampoManual"
+            (click)="activarModoManual()"
+          >
+            Manual
+          </button>
+        </div>
 
-    <label>Concepto</label>
-    <input type="text" [(ngModel)]="nuevoCampo.concepto" />
+        <ng-container *ngIf="!modoCampoManual; else formularioManualNuevoCampo">
+          <label>Tipo</label>
+          <input
+            type="text"
+            [value]="campoMaestroSeleccionado?.tipo || ''"
+            readonly
+          />
 
-    <label>Importe</label>
-    <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.importe" />
+          <label>Categoria</label>
+          <input
+            type="text"
+            [value]="campoMaestroSeleccionado?.categoria || ''"
+            readonly
+          />
+
+          <label>Concepto</label>
+          <input
+            type="text"
+            [value]="campoMaestroSeleccionado?.nombre || ''"
+            readonly
+          />
+        </ng-container>
+
+        <ng-template #formularioManualNuevoCampo>
+          <label>Tipo</label>
+          <select [(ngModel)]="nuevoCampo.tipo">
+            <option value="ingreso">Ingreso</option>
+            <option value="gasto">Gasto</option>
+          </select>
+
+          <label>Categoria</label>
+          <select [(ngModel)]="nuevoCampo.categoria">
+            <option value="fijo">Fijo</option>
+            <option value="variable">Variable</option>
+          </select>
+
+          <label>Concepto</label>
+          <input type="text" [(ngModel)]="nuevoCampo.concepto" />
+        </ng-template>
+
+        <label>Importe / Presupuesto</label>
+        <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.importe" />
+      </section>
+
+      <aside class="col-campo-maestros">
+        <div class="bloque-maestros-usuario">
+          <h4>Mis campos maestros</h4>
+
+          <div class="lista-maestros-usuario" *ngIf="camposMaestros.length">
+            <div
+              class="item-maestro-usuario"
+              *ngFor="let campoMaestro of camposMaestros"
+              [class.item-maestro-system]="campoMaestro.scope === 'system'"
+              [class.item-maestro-seleccionado]="campoMaestroSeleccionadoId === campoMaestro._id"
+              (click)="seleccionarCampoMaestro(campoMaestro)"
+            >
+              <span>
+                {{ campoMaestro.nombre }} 
+              </span>
+
+              <button
+                *ngIf="campoMaestro.scope === 'user'"
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="$event.stopPropagation(); eliminarCampoMaestroUsuario(campoMaestro)"
+              >
+                Quitar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bloque-crear-maestro">
+          <h4>Crear campo maestro</h4>
+
+          <input
+            type="text"
+            placeholder="Nombre (ej. Gimnasio)"
+            [(ngModel)]="nuevoCampoMaestro.nombre"
+          />
+
+          <div class="row g-2">
+            <div class="col-6">
+              <select [(ngModel)]="nuevoCampoMaestro.tipo">
+                <option value="ingreso">Ingreso</option>
+                <option value="gasto">Gasto</option>
+              </select>
+            </div>
+
+            <div class="col-6">
+              <select [(ngModel)]="nuevoCampoMaestro.categoria">
+                <option value="fijo">Fijo</option>
+                <option value="variable">Variable</option>
+              </select>
+            </div>
+          </div>
+
+          <button
+            class="btn btn-outline-primary btn-sm"
+            type="button"
+            (click)="crearCampoMaestroUsuario()"
+            [disabled]="guardandoCampoMaestro"
+          >
+            {{ guardandoCampoMaestro ? 'Guardando...' : 'Guardar campo maestro' }}
+          </button>
+        </div>
+      </aside>
+    </div>
+
+    <ng-template #modoEditarCampo>
+      <label>Tipo</label>
+      <select [(ngModel)]="nuevoCampo.tipo">
+        <option value="ingreso">Ingreso</option>
+        <option value="gasto">Gasto</option>
+      </select>
+
+      <label>Categoria</label>
+      <select [(ngModel)]="nuevoCampo.categoria">
+        <option value="fijo">Fijo</option>
+        <option value="variable">Variable</option>
+      </select>
+
+      <label>Concepto</label>
+      <input type="text" [(ngModel)]="nuevoCampo.concepto" />
+
+      <label>Importe</label>
+      <input type="number" min="0" step="0.01" [(ngModel)]="nuevoCampo.importe" />
+    </ng-template>
 
     <div class="acciones">
       <button class="btn btn-success" type="button" (click)="guardarCampo()">

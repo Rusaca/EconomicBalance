@@ -2,6 +2,7 @@ import Cliente from '../modelos/modelos/UsuarioModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import PlantillaService from './PlantillaService';
+import CampoMaestroService from './CampoMaestroService';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
@@ -89,4 +90,5 @@ export const clienteService = {
 };
 
 export const plantillaService = new PlantillaService();
+export const campoMaestroService = new CampoMaestroService();
 
