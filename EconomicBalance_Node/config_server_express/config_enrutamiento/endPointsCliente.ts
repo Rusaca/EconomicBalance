@@ -212,9 +212,14 @@ router.post('/login-google', async (req: Request, res: Response) => {
 
 router.post('/register-google', async (req: Request, res: Response) => {
   try {
-    const { token } = req.body;
+    const {
+      token,
+      telefono,
+      prefijoTelefono,
+      genero
+    } = req.body;
 
-    console.log('TOKEN RECIBIDO:', token); // 👈 AQUÍ
+    console.log('BODY RECIBIDO:', req.body);
 
     if (!token) {
       return res.status(400).json({
@@ -223,9 +228,15 @@ router.post('/register-google', async (req: Request, res: Response) => {
       });
     }
 
-    const respuesta = await authService.registerGoogle(token);
+    const respuesta = await authService.registerGoogle({
+      token,
+      telefono,
+      prefijoTelefono,
+      genero
+    });
 
     return res.status(respuesta.ok ? 200 : 400).json(respuesta);
+
   } catch (error) {
     console.error('Error en /register-google:', error);
 

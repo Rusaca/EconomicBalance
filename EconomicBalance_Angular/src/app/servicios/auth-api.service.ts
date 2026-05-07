@@ -69,15 +69,23 @@ export class AuthApiService {
     }
   }
 
-  async registerGoogle(data: { token: string }): Promise<IRespuestaAuth> {
+  async registerGoogle(data: {
+    token: string;
+    telefono?: string;
+    prefijoTelefono?: string;
+    genero?: string;
+  }): Promise<IRespuestaAuth> {
     try {
-      const respuesta = await fetch('http://localhost:3000/api/cliente/register-google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+      const respuesta = await fetch(
+        'http://localhost:3000/api/cliente/register-google',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }
+      );
 
       const body = await respuesta.json();
 
@@ -88,7 +96,11 @@ export class AuthApiService {
       };
     } catch (error) {
       console.error('Error register Google:', error);
-      return { ok: false, mensaje: 'Error conectando con el servidor' };
+
+      return {
+        ok: false,
+        mensaje: 'Error conectando con el servidor'
+      };
     }
   }
 

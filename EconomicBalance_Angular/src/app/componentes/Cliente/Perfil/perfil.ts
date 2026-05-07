@@ -52,8 +52,14 @@ export class PerfilComponent implements OnInit {
   constructor(
     private router: Router,
     private authApiService: AuthApiService
-  ) {}
-
+  ) {
+    document.addEventListener('mousemove', this.moverArrastreGlobal);
+    document.addEventListener('mouseup', this.finalizarArrastre);
+  }
+  ngOnDestroy(): void {
+    document.removeEventListener('mousemove', this.moverArrastreGlobal);
+    document.removeEventListener('mouseup', this.finalizarArrastre);
+  }
   ngOnInit(): void {
     const usuarioGuardado = localStorage.getItem('usuario');
 
@@ -149,23 +155,38 @@ export class PerfilComponent implements OnInit {
   }
 
   procesarArchivoTemporal(archivo: File): void {
+
+    if (this.fotoTemporal) {
+      this.errorPerfil = 'Ya tienes una imagen. Elimínala para cambiarla.';
+      return;
+    }
+
     if (!archivo.type.startsWith('image/')) {
-      this.errorPerfil = 'Selecciona una imagen valida.';
+      this.errorPerfil = 'Archivo no válido.';
       return;
     }
 
     this.errorPerfil = '';
-    this.zoomFoto = 1.2;
+    this.fotoTemporal = URL.createObjectURL(archivo);
+  }
+  abrirSelector(input: HTMLInputElement): void {
+    if (this.fotoTemporal) {
+      this.errorPerfil = 'Primero elimina la imagen actual para cambiarla.';
+      return;
+    }
+
+    input.click();
+  }
+  borrarImagenTemporal(): void {
+    if (this.fotoTemporal) {
+      URL.revokeObjectURL(this.fotoTemporal);
+    }
+
+    this.fotoTemporal = null;
     this.desplazamientoX = 0;
     this.desplazamientoY = 0;
-
-    const lector = new FileReader();
-    lector.onload = () => {
-      this.fotoTemporal = lector.result as string;
-    };
-    lector.readAsDataURL(archivo);
+    this.errorPerfil = '';
   }
-
   onSeleccionarFoto(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || !input.files.length) return;
@@ -186,24 +207,35 @@ export class PerfilComponent implements OnInit {
     this.procesarArchivoTemporal(archivo);
   }
 
+
+  dragActivo = false;
+  ultimaX = 0;
+  ultimaY = 0;
+
   iniciarArrastre(event: MouseEvent): void {
     if (!this.fotoTemporal) return;
 
-    this.arrastrandoFoto = true;
-    this.inicioArrastreX = event.clientX - this.desplazamientoX;
-    this.inicioArrastreY = event.clientY - this.desplazamientoY;
+    this.dragActivo = true;
+    this.ultimaX = event.clientX;
+    this.ultimaY = event.clientY;
   }
 
-  moverArrastre(event: MouseEvent): void {
-    if (!this.arrastrandoFoto) return;
+  moverArrastreGlobal = (event: MouseEvent): void => {
+    if (!this.dragActivo) return;
 
-    this.desplazamientoX = event.clientX - this.inicioArrastreX;
-    this.desplazamientoY = event.clientY - this.inicioArrastreY;
-  }
+    const dx = event.clientX - this.ultimaX;
+    const dy = event.clientY - this.ultimaY;
 
-  finalizarArrastre(): void {
-    this.arrastrandoFoto = false;
-  }
+    this.desplazamientoX += dx;
+    this.desplazamientoY += dy;
+
+    this.ultimaX = event.clientX;
+    this.ultimaY = event.clientY;
+  };
+
+  finalizarArrastre = (): void => {
+    this.dragActivo = false;
+  };
 
   abrirModalFoto(): void {
     this.mostrarModalFoto = true;
@@ -213,14 +245,16 @@ export class PerfilComponent implements OnInit {
 
   cerrarModalFoto(): void {
     this.mostrarModalFoto = false;
+
+    if (this.fotoTemporal) {
+      URL.revokeObjectURL(this.fotoTemporal);
+    }
+
     this.fotoTemporal = null;
     this.zoomFoto = 1.2;
     this.desplazamientoX = 0;
     this.desplazamientoY = 0;
-    this.arrastrandoFoto = false;
-
-    const usuarioGuardado = JSON.parse(localStorage.getItem('usuario') || '{}');
-    this.perfil.fotoPerfil = usuarioGuardado.fotoPerfil || '';
+    this.dragActivo = false;
   }
 
   dataURLtoFile(dataUrl: string, filename: string): Promise<File> {
@@ -335,5 +369,22 @@ export class PerfilComponent implements OnInit {
 
   volver(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+
+  onPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+
+    const items = event.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of items) {
+      if (item.type.startsWith('image')) {
+        const file = item.getAsFile();
+        if (file) {
+          this.procesarArchivoTemporal(file);
+        }
+      }
+    }
   }
 }

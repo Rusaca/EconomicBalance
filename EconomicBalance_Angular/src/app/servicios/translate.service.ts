@@ -325,6 +325,7 @@ export class TranslateService {
     }
 
     setLang(lang: 'es' | 'en') {
+        
         this.lang.set(lang);
         localStorage.setItem('lang', lang);
     }
