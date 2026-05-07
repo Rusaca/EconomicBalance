@@ -34,10 +34,8 @@
             <!-- FOTO -->
             <div class="perfil-avatar-wrapper mx-auto mb-3">
 
-              <img *ngIf="fotoTemporal || perfil.fotoPerfil"
-                   [src]="fotoTemporal || perfil.fotoPerfil"
-                   alt="Foto de perfil"
-                   class="perfil-foto" />
+              <img *ngIf="fotoTemporal || perfil.fotoPerfil" [src]="fotoTemporal || perfil.fotoPerfil"
+                alt="Foto de perfil" class="perfil-foto" />
 
               <div *ngIf="!fotoTemporal && !perfil.fotoPerfil" class="perfil-avatar mx-auto">
                 {{ perfil.nombre.charAt(0) || 'U' }}{{ perfil.apellidos.charAt(0) || '' }}
@@ -52,10 +50,8 @@
             </div>
 
             <!-- QUITAR FOTO -->
-            <button *ngIf="perfil.fotoPerfil"
-                    type="button"
-                    class="btn btn-link text-danger p-0 mb-3"
-                    (click)="eliminarFoto()">
+            <button *ngIf="perfil.fotoPerfil" type="button" class="btn btn-link text-danger p-0 mb-3"
+              (click)="eliminarFoto()">
               {{ 'perfil_quitar_foto' | translate }}
             </button>
 
@@ -69,7 +65,8 @@
             </p>
 
             <p class="text-muted mb-2">
-              {{ perfil.telefono ? (perfil.prefijoTelefono || '+34') + ' ' + perfil.telefono : ('perfil_sin_telefono' | translate) }}
+              {{ perfil.telefono ? (perfil.prefijoTelefono || '+34') + ' ' + perfil.telefono : ('perfil_sin_telefono' |
+              translate) }}
             </p>
 
             <p class="text-muted mb-4">
@@ -124,7 +121,8 @@
 
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">{{ 'perfil_correo' | translate }}</label>
-                  <input type="email" class="form-control form-control-lg" [(ngModel)]="perfil.correo" name="correo" disabled />
+                  <input type="email" class="form-control form-control-lg" [(ngModel)]="perfil.correo" name="correo"
+                    disabled />
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -134,7 +132,8 @@
 
                 <div class="col-12 col-md-6">
                   <label class="form-label fw-semibold">{{ 'perfil_apellidos' | translate }}</label>
-                  <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.apellidos" name="apellidos" />
+                  <input type="text" class="form-control form-control-lg" [(ngModel)]="perfil.apellidos"
+                    name="apellidos" />
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -144,7 +143,7 @@
 
                     <div class="prefijo-dropdown">
                       <button type="button" class="btn prefijo-btn dropdown-toggle"
-                              (click)="mostrarPrefijos = !mostrarPrefijos">
+                        (click)="mostrarPrefijos = !mostrarPrefijos">
                         {{ perfil.prefijoTelefono || '+34' }}
                       </button>
 
@@ -172,14 +171,9 @@
                       </div>
                     </div>
 
-                    <input type="text"
-                           class="form-control"
-                           [(ngModel)]="perfil.telefono"
-                           name="telefono"
-                           placeholder="{{ 'perfil_numero_telefono' | translate }}"
-                           inputmode="numeric"
-                           pattern="[0-9]*"
-                           (input)="perfil.telefono = perfil.telefono.replace(/[^0-9]/g, '')" />
+                    <input type="text" class="form-control" [(ngModel)]="perfil.telefono" name="telefono"
+                      placeholder="{{ 'perfil_numero_telefono' | translate }}" inputmode="numeric" pattern="[0-9]*"
+                      (input)="perfil.telefono = perfil.telefono.replace(/[^0-9]/g, '')" />
                   </div>
                 </div>
 
@@ -278,7 +272,7 @@
           </div>
         </div>
 
-       
+
 
       </div>
     </div>
@@ -288,66 +282,59 @@
   <div class="modal-foto-backdrop" *ngIf="mostrarModalFoto">
     <div class="modal-foto">
 
-      <h4 class="fw-bold mb-3 text-center">{{ 'perfil_modal_titulo' | translate }}</h4>
+      <h4 class="fw-bold mb-3 text-center">
+        {{ 'perfil_modal_titulo' | translate }}
+      </h4>
 
+      <!-- EDITOR -->
       <div class="editor-foto mb-3">
 
-        <div class="editor-circulo"
-             [class.editor-circulo-activo]="!!fotoTemporal"
-             (mousedown)="iniciarArrastre($event)"
-             (mousemove)="moverArrastre($event)"
-             (mouseup)="finalizarArrastre()"
-             (mouseleave)="finalizarArrastre()">
+        <div class="editor-circulo" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)"
+          (paste)="onPaste($event)" (mousedown)="iniciarArrastre($event)">
 
-          <img *ngIf="fotoTemporal"
-               [src]="fotoTemporal"
-               alt="Preview"
-               class="editor-img"
-               [style.transform]="'translate(calc(-50% + ' + desplazamientoX + 'px), calc(-50% + ' + desplazamientoY + 'px)) scale(' + zoomFoto + ')'" />
+          <!-- IMAGEN -->
+          <img *ngIf="fotoTemporal" [src]="fotoTemporal" class="editor-img" [style.transform]="
+            'translate(calc(-50% + ' + desplazamientoX + 'px), calc(-50% + ' + desplazamientoY + 'px))'
+          " />
 
+          <!-- TEXTO -->
           <div *ngIf="!fotoTemporal" class="editor-placeholder">
-            <p class="fw-semibold mb-1">{{ 'perfil_modal_preview' | translate }}</p>
-            <p class="text-muted small mb-0">{{ 'perfil_modal_preview_desc' | translate }}</p>
+            <p class="fw-bold mb-2 text-center">
+              Haz clic para subir una foto
+            </p>
+
+            <p class="text-muted small text-center mb-0">
+              Selecciona, arrastra o pega una imagen aquí
+            </p>
           </div>
 
         </div>
-
-        <p *ngIf="fotoTemporal" class="editor-ayuda">
-          Arrastra la imagen dentro del círculo para ajustarla
-        </p>
-
       </div>
 
-      <div class="drop-area"
-           (click)="fileInput.click()"
-           (dragover)="onDragOver($event)"
-           (drop)="onDrop($event)">
+      <!-- INPUT -->
+      <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)"
+        [disabled]="!!fotoTemporal" />
 
-        <p class="fw-semibold mb-1">{{ 'perfil_modal_arrastra' | translate }}</p>
-        <p class="text-muted small">{{ 'perfil_modal_o_click' | translate }}</p>
-
-        <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)">
+      <!-- BOTÓN BORRAR -->
+      <div class="text-center mt-2" *ngIf="fotoTemporal">
+        <button class="btn btn-danger btn-sm" (click)="borrarImagenTemporal()">
+          Eliminar imagen
+        </button>
       </div>
 
+      <!-- BOTONES -->
       <div class="d-flex justify-content-between mt-4">
 
-        <button class="btn btn-danger" *ngIf="perfil.fotoPerfil" (click)="eliminarFoto()">
-          {{ 'perfil_modal_eliminar' | translate }}
+        <button class="btn btn-secondary" (click)="cerrarModalFoto()">
+          Cancelar
         </button>
 
-        <div class="ms-auto d-flex gap-2">
-          <button class="btn btn-secondary" (click)="cerrarModalFoto()">
-            {{ 'perfil_modal_cancelar' | translate }}
-          </button>
-
-          <button class="btn btn-success" (click)="aceptarFoto()">
-            {{ 'perfil_modal_aceptar' | translate }}
-          </button>
-        </div>
+        <button class="btn btn-success" (click)="aceptarFoto()">
+          Guardar foto
+        </button>
 
       </div>
 
     </div>
   </div>
-
 </div>

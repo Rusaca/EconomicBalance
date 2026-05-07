@@ -433,87 +433,139 @@ export default class AuthService {
     }
   }
 
-  public async registerGoogle(token: string) {
-    try {
-      const googleClientId = getGoogleClientId();
-      const client = new OAuth2Client(googleClientId);
+  public async registerGoogle(data: {
+  token: string;
+  telefono?: string;
+  prefijoTelefono?: string;
+  genero?: string;
+}) {
+  try {
+    const { token, telefono, prefijoTelefono, genero } = data;
 
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: googleClientId
-      });
+    const googleClientId = getGoogleClientId();
+    const client = new OAuth2Client(googleClientId);
 
-      const payload = ticket.getPayload();
-      const email = payload?.email;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: googleClientId
+    });
 
-      if (!email) {
-        return {
-          ok: false,
-          mensaje: 'No se pudo obtener la informacion de Google'
-        };
-      }
+    const payload = ticket.getPayload();
 
-      const correo = email.toLowerCase();
+    const email = payload?.email;
 
-      const nombreGoogle = (payload?.given_name || '').trim();
-      const apellidoGoogle = (payload?.family_name || '').trim();
-      const nombreCompleto = (payload?.name || '').trim();
-
-      let nombre = nombreGoogle;
-      let apellidos = apellidoGoogle;
-
-      if (!nombre && nombreCompleto) {
-        const partes = nombreCompleto.split(' ').filter(Boolean);
-        nombre = partes[0] || 'Usuario';
-        apellidos = partes.slice(1).join(' ');
-      }
-
-      if (!nombre) {
-        nombre = 'Usuario';
-      }
-
-      if (!apellidos) {
-        apellidos = 'Sin apellidos';
-      }
-
-      const usuarioExistente = await UserModel.findOne({ correo });
-
-      if (usuarioExistente) {
-        return {
-          ok: false,
-          mensaje: 'Ya existe un usuario con ese correo'
-        };
-      }
-
-      const tokenActivacion = crypto.randomBytes(32).toString('hex');
-      const passwordTemporal = crypto.randomBytes(32).toString('hex');
-      const passwordHash = await bcrypt.hash(passwordTemporal, 10);
-
-      const nuevoUsuario = new UserModel({
-        nombre,
-        apellidos,
-        correo,
-        password: passwordHash,
-        activo: false,
-        tokenActivacion
-      });
-
-      await nuevoUsuario.save();
-      await enviarCorreoActivacion(correo, tokenActivacion);
-
-      return {
-        ok: true,
-        mensaje: 'Registro con Google correcto. Revisa tu correo para activar la cuenta.'
-      };
-    } catch (error) {
-      console.error('Error en registerGoogle:', error);
-
+    if (!email) {
       return {
         ok: false,
-        mensaje: 'Error en registro con Google'
+        mensaje: 'No se pudo obtener la informacion de Google'
       };
     }
+
+    const correo = email.toLowerCase();
+
+    const usuarioExistente = await UserModel.findOne({ correo });
+
+    if (usuarioExistente) {
+      return {
+        ok: false,
+        mensaje: 'Ya existe un usuario con ese correo'
+      };
+    }
+
+    // NOMBRE
+    const nombreGoogle = (payload?.given_name || '').trim();
+    const apellidoGoogle = (payload?.family_name || '').trim();
+    const nombreCompleto = (payload?.name || '').trim();
+
+    let nombre = nombreGoogle;
+    let apellidos = apellidoGoogle;
+
+    if (!nombre && nombreCompleto) {
+      const partes = nombreCompleto.split(' ').filter(Boolean);
+      nombre = partes[0] || 'Usuario';
+      apellidos = partes.slice(1).join(' ');
+    }
+
+    if (!nombre) nombre = 'Usuario';
+    if (!apellidos) apellidos = 'Sin apellidos';
+
+    // PASSWORD TEMPORAL
+    const passwordTemporal = crypto.randomBytes(32).toString('hex');
+    const passwordHash = await bcrypt.hash(passwordTemporal, 10);
+
+    // TOKEN ACTIVACION
+    const tokenActivacion = crypto.randomBytes(32).toString('hex');
+
+    const telefonoFinal = telefono?.trim() || '';
+    const tieneTelefono = telefonoFinal.length > 0;
+
+    // CREAR USUARIO
+    const nuevoUsuario = new UserModel({
+      nombre,
+      apellidos,
+      correo,
+      telefono: telefonoFinal,
+      prefijoTelefono: prefijoTelefono || '+34',
+      genero: genero || '',
+      fotoPerfil: payload?.picture || '',
+      password: passwordHash,
+      activo: false,
+      tokenActivacion
+    });
+
+    await nuevoUsuario.save();
+
+    // CORREO ACTIVACIÓN
+    await enviarCorreoActivacion(correo, tokenActivacion);
+
+    // 🔔 NOTIFICACIÓN SIEMPRE (BIENVENIDA)
+    await NotificacionModel.create({
+      usuarioId: nuevoUsuario._id,
+      titulo: 'Bienvenido 👋',
+      mensaje: `Hola ${nombre}, gracias por registrarte en Economic Balance`,
+      leida: false
+    });
+
+    // 🔔 NOTIFICACIÓN SI NO TIENE TELÉFONO
+    if (!tieneTelefono) {
+      await NotificacionModel.create({
+        usuarioId: nuevoUsuario._id,
+        titulo: 'Completa tu perfil 📱',
+        mensaje:
+          'Añade tu número de teléfono para recibir resúmenes y alertas importantes',
+        leida: false
+      });
+    }
+
+    if (tieneTelefono) {
+      try {
+        await enviarSmsYGuardarNotificacion({
+          usuarioId: nuevoUsuario._id.toString(),
+          prefijoTelefono: prefijoTelefono || '+34',
+          telefono: telefonoFinal,
+          titulo: 'Bienvenido',
+          mensaje:
+            'Gracias por contar con nosotros. Economic Balance'
+        });
+      } catch (error) {
+        console.error('Error SMS Google:', error);
+      }
+    }
+
+    return {
+      ok: true,
+      mensaje:
+        'Registro con Google correcto. Revisa tu correo para activar la cuenta.'
+    };
+  } catch (error) {
+    console.error('Error en registerGoogle:', error);
+
+    return {
+      ok: false,
+      mensaje: 'Error en registro con Google'
+    };
   }
+}
 
   public async actualizarPerfil(data: {
     id: string;

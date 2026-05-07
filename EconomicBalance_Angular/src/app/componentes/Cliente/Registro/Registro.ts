@@ -35,6 +35,7 @@ export class Registro implements OnInit, AfterViewInit {
   correo: string = '';
   telefono: string = '';
   prefijoTelefono: string = '+34';
+  genero: string = '';
   password: string = '';
   confirmPassword: string = '';
   mensajeError: string = '';
@@ -169,36 +170,44 @@ export class Registro implements OnInit, AfterViewInit {
     }
   }
 
-  async handleGoogleRegister(response: any) {
-    try {
-      const googleToken = response?.credential;
+ async handleGoogleRegister(response: any) {
+  try {
+    const googleToken = response?.credential;
 
-      if (!googleToken) {
-        this.mensajeError = 'No se pudo obtener el token de Google';
+    if (!googleToken) {
+      this.mensajeError = 'No se pudo obtener el token de Google';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const payload = {
+      token: googleToken,
+      telefono: this.telefono,
+      prefijoTelefono: this.prefijoTelefono,
+      genero: this.genero
+    };
+
+    const respuesta = await this.authApiService.registerGoogle(payload);
+
+    this.ngZone.run(() => {
+      if (!respuesta || !respuesta.ok) {
+        this.mensajeError = respuesta?.mensaje || 'No se pudo registrar con Google';
         this.cdr.detectChanges();
         return;
       }
 
-      const respuesta = await this.authApiService.registerGoogle({ token: googleToken });
+      alert('Correo de activacion enviado');
+      this.router.navigate(['/login']);
+      this.cdr.detectChanges();
+    });
 
-      this.ngZone.run(() => {
-        if (!respuesta || !respuesta.ok) {
-          this.mensajeError = respuesta?.mensaje || 'No se pudo registrar con Google';
-          this.cdr.detectChanges();
-          return;
-        }
+  } catch (error) {
+    console.error('ERROR REGISTER GOOGLE:', error);
 
-        alert('Correo de activacion enviado');
-        this.router.navigate(['/login']);
-        this.cdr.detectChanges();
-      });
-    } catch (error) {
-      console.error('ERROR REGISTER GOOGLE:', error);
-
-      this.ngZone.run(() => {
-        this.mensajeError = 'Error conectando con Google';
-        this.cdr.detectChanges();
-      });
-    }
+    this.ngZone.run(() => {
+      this.mensajeError = 'Error conectando con Google';
+      this.cdr.detectChanges();
+    });
   }
+}
 }

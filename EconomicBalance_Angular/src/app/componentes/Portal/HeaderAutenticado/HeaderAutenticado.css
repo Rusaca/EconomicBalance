@@ -1,12 +1,16 @@
-/* HEADER */
+
+/* =========================
+   HEADER GENERAL
+========================= */
 .dashboard-header {
   background: #ffffff !important;
   border-bottom: 1px solid #e3e8ef;
   padding-right: 2rem !important;
-  /* más aire a la derecha */
 }
 
-/* LOGO */
+/* =========================
+   LOGO
+========================= */
 .brand-logo-dashboard {
   height: 54px;
   transform: scale(1.85);
@@ -15,72 +19,9 @@
   margin-bottom: -4px;
 }
 
-/* CAMPANA */
-.notif-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.notif-icon {
-  height: 26px;
-  width: auto;
-  object-fit: contain;
-  transition: 0.2s ease;
-  filter: brightness(0.2);
-  margin-right: 1.3rem !important;
-}
-
-.notif-btn:hover .notif-icon {
-  transform: scale(1.15);
-  filter: brightness(0);
-  margin-right: 1.2rem !important;
-}
-
-/* BLOQUE: Hola + nombre + avatar */
-.user-block {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  /* casi pegado */
-  cursor: pointer;
-}
-
-/* Texto Hola + nombre */
-.user-block span {
-  margin: 0;
-  padding: 0;
-  color: #111 !important;
-}
-
-/* Avatar */
-.user-avatar {
-  width: 38px;
-  height: 38px;
-  background: #0d6efd;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  font-size: 17px;
-  text-transform: uppercase;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-  margin-left: 1 !important;
-  /* pegado al texto */
-}
-
-/* Ajuste general del bloque derecho */
-.header-right {
-  gap: 0 !important;
-  /* eliminamos separación automática */
-}
-
-/* BOTÓN MENÚ (HAMBURGER) — IGUAL QUE EL SIDEBAR PERO EN HORIZONTAL */
+/* =========================
+   BOTÓN HAMBURGER
+========================= */
 .menu-btn {
   width: 34px;
   height: 24px;
@@ -102,19 +43,89 @@
   transition: 0.3s ease;
 }
 
-.menu-perfil-wrapper {
-  position: absolute;
-  top: 72px; /* justo debajo del header */
-  right: 25px; /* alineado con el avatar */
-  z-index: 9999;
-}
-.notif-dropdown-wrapper {
-  position: absolute;
-  top: 72px; /* igual que el menú de usuario */
-  right: 85px; /* alineado con la campana */
-  z-index: 9999;
+/* =========================
+   CONTENEDOR IZQUIERDO
+========================= */
+.d-flex.align-items-center.gap-5 {
+  gap: 2rem;
 }
 
+/* =========================
+   CONTENEDOR DERECHO
+   (IMPORTANTE: control global del layout)
+========================= */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 6rem; /* separación general equilibrada */
+}
+
+/* =========================
+   CAMPANA NOTIFICACIONES
+   (AJUSTE HACIA IZQUIERDA)
+========================= */
+.notif-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+
+  margin-left: -4.5rem; 
+}
+
+.notif-icon {
+  height: 26px;
+  width: auto;
+  object-fit: contain;
+  transition: 0.2s ease;
+  filter: brightness(0.2);
+  margin-right: 0 !important;
+}
+
+.notif-btn:hover .notif-icon {
+  transform: scale(1.15);
+  filter: brightness(0);
+}
+
+/* =========================
+   BLOQUE USUARIO
+========================= */
+.user-block {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.user-block span {
+  margin: 0;
+  padding: 0;
+  color: #111 !important;
+}
+
+/* =========================
+   AVATAR LETRA
+========================= */
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  background: #0d6efd;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 17px;
+  text-transform: uppercase;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+/* =========================
+   FOTO USUARIO
+========================= */
 .user-avatar-img {
   width: 36px;
   height: 36px;
@@ -122,5 +133,25 @@
   object-fit: cover;
   object-position: center;
   border: 2px solid #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   MENÚ PERFIL
+========================= */
+.menu-perfil-wrapper {
+  position: absolute;
+  top: 72px;
+  right: 25px;
+  z-index: 9999;
+}
+
+/* =========================
+   NOTIFICACIONES DROPDOWN
+========================= */
+.notif-dropdown-wrapper {
+  position: absolute;
+  top: 72px;
+  right: 155px;
+  z-index: 9999;
 }
