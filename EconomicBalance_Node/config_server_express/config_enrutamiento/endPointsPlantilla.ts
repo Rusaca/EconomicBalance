@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { plantillaService } from '../../servicios/servicioNecesario';
 import { authMiddleware, AuthRequest } from '../../middleware/authMiddleware';
 
+
 const router = Router();
 
 router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
@@ -154,6 +155,40 @@ router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
       mensaje: 'Error actualizando la plantilla'
     });
   }
-});
 
+});
+router.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const userId = req.usuario?.id;
+
+    if (!id) {
+      return res.status(400).json({
+        ok: false,
+        mensaje: 'Falta el id de la plantilla'
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        ok: false,
+        mensaje: 'Usuario no autenticado'
+      });
+    }
+
+    const respuesta = await plantillaService.eliminarPlantilla(id, userId);
+
+    if (!respuesta.ok) {
+      return res.status(404).json(respuesta);
+    }
+
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    console.error('Error en DELETE /api/plantillas/:id:', error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error eliminando la plantilla'
+    });
+  }
+});
 export default router;

@@ -47,4 +47,7 @@ export class TemplatesService {
       `${this.apiUrl}/mis-plantillas`
     );
   }
+   deleteTemplate(id: string): Observable<{ ok: boolean; mensaje: string }> {
+    return this.http.delete<{ ok: boolean; mensaje: string }>(`${this.apiUrl}/${id}`);
+  }
 }

@@ -56,6 +56,32 @@ export class MisPlantillas implements OnInit {
     this.router.navigate(['/templates', id]);
   }
 
+
+  eliminarPlantilla(plantilla: PlantillaDashboard): void {
+    const id = plantilla.id || plantilla._id;
+
+    if (!id) {
+      console.error('No se puede eliminar la plantilla porque no tiene id:', plantilla);
+      return;
+    }
+
+    const confirmado = window.confirm(
+      `¿Seguro que quieres eliminar la plantilla "${plantilla.nombre}"? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmado) return;
+
+    this.templateService.deleteTemplate(id).subscribe({
+      next: () => {
+        this.plantillas = this.plantillas.filter((p) => (p.id || p._id) !== id);
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error eliminando plantilla:', error);
+      }
+    });
+  }
+
   cerrarSesion(): void {
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');

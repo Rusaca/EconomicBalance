@@ -142,4 +142,34 @@ export default class PlantillaService {
       updatedAt: plantilla.updatedAt
     };
   }
+
+  public async eliminarPlantilla(id: string, userId: string) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return {
+      ok: false,
+      mensaje: 'Id de plantilla no válido'
+    };
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return {
+      ok: false,
+      mensaje: 'userId no válido'
+    };
+  }
+
+  const eliminada = await PlantillaModel.findOneAndDelete({ _id: id, userId });
+
+  if (!eliminada) {
+    return {
+      ok: false,
+      mensaje: 'Plantilla no encontrada o no pertenece al usuario'
+    };
+  }
+
+  return {
+    ok: true,
+    mensaje: 'Plantilla eliminada correctamente'
+  };
+}
 }
