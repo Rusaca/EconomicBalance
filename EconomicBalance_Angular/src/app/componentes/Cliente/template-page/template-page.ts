@@ -6,6 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { TemplatesService } from '../../../services/templates-service';
 import { Plantilla, Bloque, Campo, GraficaPlantilla } from '../../../modelos/template.intetrfaces';
 
+type ElementoMovible = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fijado?: boolean;
+};
+
 @Component({
   selector: 'app-template-page',
   standalone: true,
@@ -29,9 +37,17 @@ export class TemplatePage implements OnInit {
   menuBloque = { visible: false, x: 0, y: 0, bloque: null as Bloque | null };
 
   dragging = false;
+  resizing = false;
   offsetX = 0;
   offsetY = 0;
-  bloqueActivo: Bloque | null = null;
+  elementoActivo: ElementoMovible | null = null;
+  elementoResizeActivo: ElementoMovible | null = null;
+  minResizeWidth = 200;
+  minResizeHeight = 120;
+  resizeStartX = 0;
+  resizeStartY = 0;
+  resizeStartWidth = 0;
+  resizeStartHeight = 0;
 
   popupCampoVisible = false;
   bloqueSeleccionado: Bloque | null = null;
@@ -95,8 +111,8 @@ ngOnInit(): void {
       this.template = {
         ...respuesta.data,
         id: respuesta.data.id || this.plantillaIdRuta || '',
-        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : [],
-        graficas: Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : []
+        blocks: this.normalizarBloques(Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []),
+        graficas: this.normalizarGraficas(Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : [])
       };
     },
     error: (err) => {
@@ -142,6 +158,8 @@ ngOnInit(): void {
       titulo: 'Nuevo bloque',
       x: this.menuLienzo.x,
       y: this.menuLienzo.y,
+      width: 260,
+      height: 140,
       fijado: false,
       campos: [],
     };
@@ -159,6 +177,8 @@ ngOnInit(): void {
       titulo: `${bloque.titulo} (copia)`,
       x: bloque.x + desplazamiento,
       y: bloque.y + desplazamiento,
+      width: bloque.width,
+      height: bloque.height,
       fijado: false,
       campos: bloque.campos
         .filter((campo) => campo.tipo !== 'total')
@@ -371,6 +391,12 @@ ngOnInit(): void {
   }
 
   abrirPopupGrafica(): void {
+    if (!this.template.blocks.length) {
+      this.mensajeGuardado = 'Crea al menos un bloque antes de generar una grafica';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
     this.bloqueGraficaId = this.template.blocks[0]?.id || '';
     this.tipoGrafica = 'bar';
     this.tituloGrafica = this.template.blocks[0]?.titulo || '';
@@ -399,6 +425,10 @@ ngOnInit(): void {
     }
 
     const titulo = this.tituloGrafica.trim() || bloque.titulo;
+    const graficaExistente = (this.template.graficas || []).length;
+    const desplazamiento = (graficaExistente % 4) * 24;
+    const xInicial = (bloque.x || 40) + 300 + desplazamiento;
+    const yInicial = (bloque.y || 40) + desplazamiento;
 
     this.template.graficas = this.template.graficas || [];
     this.template.graficas.push({
@@ -406,10 +436,16 @@ ngOnInit(): void {
       bloqueId: bloque.id,
       titulo,
       tipo: this.tipoGrafica,
+      x: xInicial,
+      y: yInicial,
+      width: 420,
+      height: 300,
+      fijado: false,
       createdAt: new Date().toISOString(),
     });
 
     this.mensajeGuardado = 'Grafica generada correctamente';
+    this.popupGraficaVisible = false;
     this.limpiarMensajeGuardado();
   }
 
@@ -481,10 +517,32 @@ ngOnInit(): void {
   }
 
   startDrag(event: MouseEvent, bloque: Bloque): void {
+    this.iniciarDrag(event, bloque);
+  }
+
+  startDragGrafica(event: MouseEvent, grafica: GraficaPlantilla): void {
+    this.iniciarDrag(event, grafica);
+  }
+
+  toggleFijadoGrafica(grafica: GraficaPlantilla): void {
+    grafica.fijado = !grafica.fijado;
+  }
+
+  startResizeBloque(event: MouseEvent, bloque: Bloque): void {
+    this.iniciarResize(event, bloque, 220, 120);
+  }
+
+  startResizeGrafica(event: MouseEvent, grafica: GraficaPlantilla): void {
+    this.iniciarResize(event, grafica, 320, 220);
+  }
+
+  private iniciarDrag(event: MouseEvent, elemento: ElementoMovible): void {
     const target = event.target as HTMLElement;
 
     if (
-      bloque.fijado ||
+      this.resizing ||
+      elemento.fijado ||
+      target.closest('.resize-handle') ||
       target.closest('input') ||
       target.closest('select') ||
       target.closest('button') ||
@@ -498,25 +556,57 @@ ngOnInit(): void {
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
 
     this.dragging = true;
-    this.bloqueActivo = bloque;
+    this.elementoActivo = elemento;
     this.offsetX = event.clientX - rect.left;
     this.offsetY = event.clientY - rect.top;
 
     this.cerrarMenus();
   }
 
+  private iniciarResize(
+    event: MouseEvent,
+    elemento: ElementoMovible,
+    minWidth: number,
+    minHeight: number
+  ): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.dragging = false;
+    this.elementoActivo = null;
+    this.resizing = true;
+    this.elementoResizeActivo = elemento;
+    this.minResizeWidth = minWidth;
+    this.minResizeHeight = minHeight;
+    this.resizeStartX = event.clientX;
+    this.resizeStartY = event.clientY;
+    this.resizeStartWidth = elemento.width;
+    this.resizeStartHeight = elemento.height;
+  }
+
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
-    if (!this.dragging || !this.bloqueActivo) return;
+    if (this.resizing && this.elementoResizeActivo) {
+      const deltaX = event.clientX - this.resizeStartX;
+      const deltaY = event.clientY - this.resizeStartY;
 
-    this.bloqueActivo.x = event.clientX - this.offsetX;
-    this.bloqueActivo.y = event.clientY - this.offsetY;
+      this.elementoResizeActivo.width = Math.max(this.minResizeWidth, this.resizeStartWidth + deltaX);
+      this.elementoResizeActivo.height = Math.max(this.minResizeHeight, this.resizeStartHeight + deltaY);
+      return;
+    }
+
+    if (!this.dragging || !this.elementoActivo) return;
+
+    this.elementoActivo.x = event.clientX - this.offsetX;
+    this.elementoActivo.y = event.clientY - this.offsetY;
   }
 
   @HostListener('document:mouseup')
   onMouseUp(): void {
+    this.resizing = false;
+    this.elementoResizeActivo = null;
     this.dragging = false;
-    this.bloqueActivo = null;
+    this.elementoActivo = null;
   }
 
   @HostListener('document:click')
@@ -561,8 +651,8 @@ ngOnInit(): void {
       this.template = {
         ...respuesta.data,
         id: respuesta.data.id || idPlantilla,
-        blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : [],
-        graficas: Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : []
+        blocks: this.normalizarBloques(Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []),
+        graficas: this.normalizarGraficas(Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : [])
       };
 
       this.plantillaIdRuta = this.template.id;
@@ -614,8 +704,8 @@ ngOnInit(): void {
           ...respuesta.data,
           id: idCreado,
           nombre,
-          blocks: Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : [],
-          graficas: Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : []
+          blocks: this.normalizarBloques(Array.isArray(respuesta.data.blocks) ? respuesta.data.blocks : []),
+          graficas: this.normalizarGraficas(Array.isArray(respuesta.data.graficas) ? respuesta.data.graficas : [])
         };
 
         this.plantillaIdRuta = idCreado;
@@ -649,5 +739,24 @@ ngOnInit(): void {
     setTimeout(() => {
       this.mensajeGuardado = '';
     }, 2500);
+  }
+
+  private normalizarGraficas(graficas: GraficaPlantilla[]): GraficaPlantilla[] {
+    return graficas.map((grafica, indice) => ({
+      ...grafica,
+      x: typeof grafica.x === 'number' ? grafica.x : 340 + ((indice % 4) * 24),
+      y: typeof grafica.y === 'number' ? grafica.y : 40 + ((indice % 4) * 24),
+      width: typeof grafica.width === 'number' ? grafica.width : 420,
+      height: typeof grafica.height === 'number' ? grafica.height : 300,
+      fijado: typeof grafica.fijado === 'boolean' ? grafica.fijado : false
+    }));
+  }
+
+  private normalizarBloques(blocks: Bloque[]): Bloque[] {
+    return blocks.map((bloque) => ({
+      ...bloque,
+      width: typeof bloque.width === 'number' ? bloque.width : 260,
+      height: typeof bloque.height === 'number' ? bloque.height : 140
+    }));
   }
 }

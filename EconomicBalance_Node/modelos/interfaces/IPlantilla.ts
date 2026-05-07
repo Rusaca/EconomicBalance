@@ -23,6 +23,8 @@ export interface IBloque {
   titulo: string;
   x: number;
   y: number;
+  width: number;
+  height: number;
   fijado: boolean;
   campos: ICampo[];
 }
@@ -32,6 +34,11 @@ export interface IGraficaPlantilla {
   bloqueId: string;
   titulo: string;
   tipo: 'bar' | 'pie' | 'doughnut' | 'line';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fijado: boolean;
   createdAt: string;
 }
 

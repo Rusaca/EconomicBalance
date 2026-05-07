@@ -19,6 +19,8 @@ export interface Bloque {
   titulo: string;
   x: number;
   y: number;
+  width: number;
+  height: number;
   fijado: boolean;
   campos: Campo[];
 }
@@ -28,6 +30,11 @@ export interface GraficaPlantilla {
   bloqueId: string;
   titulo: string;
   tipo: 'bar' | 'pie' | 'doughnut' | 'line';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fijado: boolean;
   createdAt: string;
 }
 

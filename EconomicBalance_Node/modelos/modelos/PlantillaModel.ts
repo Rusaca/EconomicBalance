@@ -34,6 +34,8 @@ const BloqueSchema = new Schema(
     titulo: { type: String, required: true, trim: true },
     x: { type: Number, required: true, default: 0 },
     y: { type: Number, required: true, default: 0 },
+    width: { type: Number, required: true, default: 260 },
+    height: { type: Number, required: true, default: 140 },
     fijado: { type: Boolean, default: false },
     campos: { type: [CampoSchema], default: [] }
   },
@@ -46,6 +48,11 @@ const GraficaPlantillaSchema = new Schema(
     bloqueId: { type: String, required: true },
     titulo: { type: String, required: true, trim: true },
     tipo: { type: String, enum: ['bar', 'pie', 'doughnut', 'line'], required: true },
+    x: { type: Number, required: true, default: 340 },
+    y: { type: Number, required: true, default: 40 },
+    width: { type: Number, required: true, default: 420 },
+    height: { type: Number, required: true, default: 300 },
+    fijado: { type: Boolean, required: true, default: false },
     createdAt: { type: String, required: true }
   },
   { _id: false }

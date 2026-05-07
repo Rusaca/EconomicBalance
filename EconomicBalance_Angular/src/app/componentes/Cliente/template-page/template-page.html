@@ -39,6 +39,8 @@
     *ngFor="let bloque of template?.blocks"
     [style.left.px]="bloque.x"
     [style.top.px]="bloque.y"
+    [style.width.px]="bloque.width"
+    [style.height.px]="bloque.height"
     (contextmenu)="abrirMenuBloque($event, bloque)"
   >
     <div
@@ -141,6 +143,78 @@
         </div>
       </div>
     </div>
+
+    <button
+      type="button"
+      class="resize-handle"
+      aria-label="Redimensionar bloque"
+      title="Redimensionar bloque"
+      (mousedown)="startResizeBloque($event, bloque)"
+    ></button>
+  </div>
+
+  <!-- GRAFICAS EN LIENZO -->
+  <div
+    class="grafica-lienzo"
+    *ngFor="let grafica of template.graficas || []"
+    [style.left.px]="grafica.x"
+    [style.top.px]="grafica.y"
+    [style.width.px]="grafica.width"
+    [style.height.px]="grafica.height"
+  >
+    <div
+      class="grafica-lienzo-header d-flex justify-content-between align-items-center gap-2"
+      (mousedown)="startDragGrafica($event, grafica)"
+    >
+      <div>
+        <strong>{{ grafica.titulo }}</strong>
+        <span>{{ grafica.tipo }}</span>
+      </div>
+
+      <div class="d-flex gap-1">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary btn-icono"
+          (click)="toggleFijadoGrafica(grafica)"
+          [title]="grafica.fijado ? 'Desfijar grafica' : 'Fijar grafica'"
+          [attr.aria-label]="grafica.fijado ? 'Desfijar grafica' : 'Fijar grafica'"
+        >
+          <span class="icono-accion" [class.icono-fijado]="grafica.fijado" aria-hidden="true">
+            &#128204;
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger btn-icono"
+          (click)="eliminarGrafica(grafica.id)"
+          title="Eliminar grafica"
+          aria-label="Eliminar grafica"
+        >
+          <span class="icono-accion" aria-hidden="true">&#128465;</span>
+        </button>
+      </div>
+    </div>
+
+    <img
+      *ngIf="generarUrlGrafica(grafica); else graficaSinDatos"
+      [src]="generarUrlGrafica(grafica)"
+      alt="Grafica generada"
+    />
+
+    <ng-template #graficaSinDatos>
+      <div class="grafica-vacia">
+        No hay datos suficientes en el bloque para mostrar esta grafica.
+      </div>
+    </ng-template>
+
+    <button
+      type="button"
+      class="resize-handle"
+      aria-label="Redimensionar grafica"
+      title="Redimensionar grafica"
+      (mousedown)="startResizeGrafica($event, grafica)"
+    ></button>
   </div>
 
   <!-- MENU CONTEXTUAL LIENZO -->
@@ -288,29 +362,6 @@
       <button class="btn btn-secondary" type="button" (click)="cerrarPopupGrafica()">
         Cerrar
       </button>
-    </div>
-
-    <div class="graficas-guardadas" *ngIf="template.graficas?.length">
-      <h4>Graficas guardadas</h4>
-
-      <div class="grafica-card" *ngFor="let grafica of template.graficas">
-        <div class="grafica-card-header">
-          <div>
-            <strong>{{ grafica.titulo }}</strong>
-            <span>{{ grafica.tipo }}</span>
-          </div>
-
-          <button class="btn btn-sm btn-outline-danger" type="button" (click)="eliminarGrafica(grafica.id)">
-            Eliminar
-          </button>
-        </div>
-
-        <img
-          *ngIf="generarUrlGrafica(grafica)"
-          [src]="generarUrlGrafica(grafica)"
-          alt="Grafica generada"
-        />
-      </div>
     </div>
   </div>
 </div>
