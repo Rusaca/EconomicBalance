@@ -5,8 +5,10 @@
 <div class="overlay"></div>
 
 <div class="container-login">
-  <img src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-login" width="380" height="auto">
-
+  <a routerLink="/">
+    <img src="assets/LogoSinFondoBlnc.png" alt="Economic Balance" class="logo-login" width="380" height="auto"
+      style="cursor: pointer;">
+  </a>
   <div class="card shadow p-4 tarjeta-pro">
     <h3 class="titulo-login text-center fw-bold">Inicio de sesión</h3>
 
@@ -14,7 +16,7 @@
       <div class="mb-3">
         <label class="form-label">Correo o numero de telefono</label>
         <input type="text" class="form-control" [(ngModel)]="identificador" name="identificador"
-          (ngModelChange)="limpiarError()" required >
+          (ngModelChange)="limpiarError()" required>
       </div>
 
 
