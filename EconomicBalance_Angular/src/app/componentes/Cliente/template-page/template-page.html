@@ -24,6 +24,22 @@
     >
       Generar grafica
     </button>
+
+    <button
+      class="btn btn-outline-primary"
+      type="button"
+      (click)="abrirPopupImportacion()"
+    >
+      Importar
+    </button>
+
+    <button
+      class="btn btn-outline-info"
+      type="button"
+      (click)="abrirPopupResumen()"
+    >
+      Crear resumen
+    </button>
   </div>
 
   <span class="mensaje" *ngIf="mensajeGuardado">
@@ -495,6 +511,158 @@
       </button>
 
       <button class="btn btn-secondary" type="button" (click)="cerrarPopupGrafica()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="popupImportacionVisible">
+  <div class="popup popup-importacion" (click)="$event.stopPropagation()">
+    <h3>Importar desde otra plantilla</h3>
+
+    <div *ngIf="cargandoPlantillasImportables" class="small text-muted">
+      Cargando plantillas...
+    </div>
+
+    <ng-container *ngIf="!cargandoPlantillasImportables">
+      <div *ngIf="!plantillasImportables.length" class="small text-muted">
+        No tienes otras plantillas disponibles para importar.
+      </div>
+
+      <ng-container *ngIf="plantillasImportables.length">
+        <label>Plantilla origen</label>
+        <select [(ngModel)]="plantillaOrigenId" (ngModelChange)="onCambioPlantillaOrigen()">
+          <option *ngFor="let plantilla of plantillasImportables" [value]="plantilla.id">
+            {{ plantilla.nombre }}
+          </option>
+        </select>
+
+        <div class="modo-importacion-switch">
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="modoImportacion === 'bloques'"
+            [class.btn-outline-primary]="modoImportacion !== 'bloques'"
+            (click)="cambiarModoImportacion('bloques')"
+          >
+            Importar bloque completo
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="modoImportacion === 'campos'"
+            [class.btn-outline-primary]="modoImportacion !== 'campos'"
+            (click)="cambiarModoImportacion('campos')"
+          >
+            Importar campos
+          </button>
+        </div>
+
+        <label>Bloque origen</label>
+        <select [(ngModel)]="bloqueOrigenSeleccionadoId" (ngModelChange)="onCambioBloqueOrigen()">
+          <option value="" disabled>Selecciona un bloque</option>
+          <option *ngFor="let bloque of bloquesPlantillaOrigen" [value]="bloque.id">
+            {{ bloque.titulo }}
+          </option>
+        </select>
+
+        <ng-container *ngIf="modoImportacion === 'campos'">
+          <label>Bloque destino (plantilla actual)</label>
+          <select [(ngModel)]="bloqueDestinoSeleccionadoId">
+            <option value="" disabled>Selecciona un bloque</option>
+            <option *ngFor="let bloque of template.blocks" [value]="bloque.id">
+              {{ bloque.titulo }}
+            </option>
+          </select>
+
+          <label>Campos a importar</label>
+          <div class="lista-campos-importacion">
+            <div *ngIf="!camposBloqueOrigenDisponibles.length" class="small text-muted">
+              El bloque origen no tiene campos importables.
+            </div>
+
+            <label
+              class="item-campo-importacion"
+              *ngFor="let campo of camposBloqueOrigenDisponibles"
+            >
+              <input
+                type="checkbox"
+                [checked]="camposOrigenSeleccionadosIds.includes(campo.id)"
+                (change)="toggleCampoOrigen(campo.id)"
+              />
+              <span>
+                {{ campo.concepto }} · {{ campo.tipo }} · {{ campo.categoria }} · {{ campo.importe }} €
+              </span>
+            </label>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <div class="acciones">
+      <button
+        *ngIf="modoImportacion === 'bloques'"
+        class="btn btn-success"
+        type="button"
+        (click)="importarBloqueSeleccionado()"
+        [disabled]="!plantillasImportables.length"
+      >
+        Importar bloque
+      </button>
+
+      <button
+        *ngIf="modoImportacion === 'campos'"
+        class="btn btn-success"
+        type="button"
+        (click)="importarCamposSeleccionados()"
+        [disabled]="!plantillasImportables.length || !template.blocks.length"
+      >
+        Importar campos
+      </button>
+
+      <button class="btn btn-secondary" type="button" (click)="cerrarPopupImportacion()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="popupResumenVisible">
+  <div class="popup popup-resumen" (click)="$event.stopPropagation()">
+    <h3>Crear bloque resumen</h3>
+
+    <label>Tipo de campos</label>
+    <select [(ngModel)]="tipoResumenSeleccionado" (ngModelChange)="onCambioTipoResumen()">
+      <option value="gasto">Gasto</option>
+      <option value="ingreso">Ingreso</option>
+    </select>
+
+    <label>Campos disponibles</label>
+    <div class="campos-resumen-lista">
+      <div *ngIf="!camposDisponiblesParaResumen.length" class="small text-muted">
+        No hay campos de tipo {{ tipoResumenSeleccionado }} en esta plantilla.
+      </div>
+
+      <label class="campo-resumen-item" *ngFor="let item of camposDisponiblesParaResumen">
+        <input
+          type="checkbox"
+          [checked]="camposResumenSeleccionadosKeys.includes(item.key)"
+          (change)="toggleCampoResumen(item.key)"
+        />
+        <span>
+          {{ item.bloqueTitulo }} · {{ item.campo.concepto }} · {{ item.valor }} €
+        </span>
+      </label>
+    </div>
+
+    <div class="acciones">
+      <button class="btn btn-success" type="button" (click)="crearBloqueResumenDesdeCampos()">
+        Crear bloque resumen
+      </button>
+
+      <button class="btn btn-secondary" type="button" (click)="cerrarPopupResumen()">
         Cerrar
       </button>
     </div>
