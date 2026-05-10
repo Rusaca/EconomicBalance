@@ -157,6 +157,12 @@
   font-size: 0.75rem;
 }
 
+.referencia-importacion {
+  margin-top: 4px;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
 /* ====== MENU CONTEXTUAL ====== */
 .menu {
   position: absolute;
@@ -241,6 +247,12 @@
   overflow: auto;
 }
 
+.popup-importacion {
+  width: min(680px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+}
+
 .popup-campo {
   width: min(920px, calc(100vw - 32px));
   max-height: calc(100vh - 48px);
@@ -264,6 +276,12 @@
   display: flex;
   gap: 8px;
   margin-bottom: 2px;
+}
+
+.modo-importacion-switch {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0;
 }
 
 .col-campo-maestros {
@@ -336,6 +354,40 @@
 .item-maestro-system {
   background: #f1f5f9;
   color: #475569;
+}
+
+.campos-origen-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px;
+  background: #f8fafc;
+}
+
+.campo-origen-item {
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  padding: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.campo-origen-item span {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.campo-origen-item-seleccionado {
+  border-color: #1d4ed8;
+  background: #eff6ff;
 }
 
 @media (max-width: 991.98px) {

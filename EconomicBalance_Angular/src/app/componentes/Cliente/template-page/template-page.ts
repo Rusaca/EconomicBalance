@@ -4,7 +4,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TemplatesService } from '../../../services/templates-service';
-import { Plantilla, Bloque, Campo, GraficaPlantilla } from '../../../modelos/template.intetrfaces';
+import {
+  Plantilla,
+  Bloque,
+  Campo,
+  GraficaPlantilla,
+  ReferenciaImportacion
+} from '../../../modelos/template.intetrfaces';
 import { CampoMaestro, CamposMaestrosService } from '../../../services/campos-maestros.service';
 
 type ElementoMovible = {
@@ -14,6 +20,8 @@ type ElementoMovible = {
   height: number;
   fijado?: boolean;
 };
+
+type PlantillaImportable = Plantilla & { _id?: string };
 
 @Component({
   selector: 'app-template-page',
@@ -87,6 +95,15 @@ export class TemplatePage implements OnInit {
   bloqueGraficaId = '';
   tipoGrafica: 'bar' | 'pie' | 'doughnut' | 'line' = 'bar';
   tituloGrafica = '';
+
+  popupImportacionVisible = false;
+  cargandoPlantillasImportables = false;
+  plantillasImportables: PlantillaImportable[] = [];
+  plantillaOrigenId = '';
+  modoImportacion: 'bloques' | 'campos' = 'bloques';
+  bloqueOrigenSeleccionadoId = '';
+  bloqueDestinoSeleccionadoId = '';
+  camposOrigenSeleccionadosIds: string[] = [];
 
   guardando = false;
   mensajeGuardado = '';
@@ -444,6 +461,167 @@ ngOnInit(): void {
 
   cerrarPopupGrafica(): void {
     this.popupGraficaVisible = false;
+  }
+
+  abrirPopupImportacion(): void {
+    if (!this.template.id && !this.plantillaIdRuta) {
+      this.mensajeGuardado = 'Guarda primero la plantilla para poder importar';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    this.popupImportacionVisible = true;
+    this.modoImportacion = 'bloques';
+    this.cargarPlantillasImportables();
+    this.bloqueDestinoSeleccionadoId = this.template.blocks[0]?.id || '';
+  }
+
+  cerrarPopupImportacion(): void {
+    this.popupImportacionVisible = false;
+    this.plantillaOrigenId = '';
+    this.bloqueOrigenSeleccionadoId = '';
+    this.camposOrigenSeleccionadosIds = [];
+  }
+
+  cambiarModoImportacion(modo: 'bloques' | 'campos'): void {
+    this.modoImportacion = modo;
+    this.camposOrigenSeleccionadosIds = [];
+
+    if (!this.bloqueDestinoSeleccionadoId) {
+      this.bloqueDestinoSeleccionadoId = this.template.blocks[0]?.id || '';
+    }
+  }
+
+  cargarPlantillasImportables(): void {
+    this.cargandoPlantillasImportables = true;
+
+    this.templateService.getMisPlantillas().subscribe({
+      next: (respuesta) => {
+        this.cargandoPlantillasImportables = false;
+        if (!respuesta.ok) {
+          this.plantillasImportables = [];
+          return;
+        }
+
+        const actualId = this.template.id || this.plantillaIdRuta || '';
+        const plantillas = Array.isArray(respuesta.data) ? respuesta.data : [];
+
+        this.plantillasImportables = plantillas
+          .map((plantilla: any) => ({
+            ...plantilla,
+            id: plantilla.id || plantilla._id || '',
+            blocks: this.normalizarBloques(Array.isArray(plantilla.blocks) ? plantilla.blocks : []),
+            graficas: this.normalizarGraficas(Array.isArray(plantilla.graficas) ? plantilla.graficas : [])
+          }))
+          .filter((plantilla) => plantilla.id && plantilla.id !== actualId);
+
+        this.plantillaOrigenId = this.plantillasImportables[0]?.id || '';
+        this.sincronizarSeleccionBloqueOrigen();
+      },
+      error: (error) => {
+        console.error('Error cargando plantillas importables:', error);
+        this.cargandoPlantillasImportables = false;
+        this.plantillasImportables = [];
+      }
+    });
+  }
+
+  onCambioPlantillaOrigen(): void {
+    this.sincronizarSeleccionBloqueOrigen();
+    this.camposOrigenSeleccionadosIds = [];
+  }
+
+  onCambioBloqueOrigen(): void {
+    this.camposOrigenSeleccionadosIds = [];
+  }
+
+  toggleCampoOrigen(campoId: string): void {
+    const existe = this.camposOrigenSeleccionadosIds.includes(campoId);
+    this.camposOrigenSeleccionadosIds = existe
+      ? this.camposOrigenSeleccionadosIds.filter((id) => id !== campoId)
+      : [...this.camposOrigenSeleccionadosIds, campoId];
+  }
+
+  importarBloqueSeleccionado(): void {
+    const plantillaOrigen = this.plantillaOrigenSeleccionada;
+    const bloqueOrigen = this.bloqueOrigenSeleccionado;
+
+    if (!plantillaOrigen || !bloqueOrigen) {
+      this.mensajeGuardado = 'Selecciona una plantilla y un bloque para importar';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    const referenciaBase = this.crearReferenciaImportacion(plantillaOrigen, bloqueOrigen);
+    const offset = (this.template.blocks.length % 4) * 30;
+
+    const bloqueImportado: Bloque = {
+      ...bloqueOrigen,
+      id: this.generarId(),
+      x: (bloqueOrigen.x || 40) + 60 + offset,
+      y: (bloqueOrigen.y || 40) + 60 + offset,
+      fijado: false,
+      importedFrom: referenciaBase,
+      campos: (bloqueOrigen.campos || []).map((campo) => ({
+        ...campo,
+        id: this.generarId(),
+        importedFrom: {
+          ...referenciaBase,
+          campoId: campo.id,
+          campoConcepto: campo.concepto
+        },
+        movimientos: Array.isArray(campo.movimientos)
+          ? campo.movimientos.map((movimiento) => ({ ...movimiento, id: this.generarId() }))
+          : []
+      }))
+    };
+
+    this.template.blocks.push(bloqueImportado);
+    this.mensajeGuardado = 'Bloque importado correctamente';
+    this.limpiarMensajeGuardado();
+    this.cerrarPopupImportacion();
+  }
+
+  importarCamposSeleccionados(): void {
+    const plantillaOrigen = this.plantillaOrigenSeleccionada;
+    const bloqueOrigen = this.bloqueOrigenSeleccionado;
+    const bloqueDestino = this.bloqueDestinoSeleccionado;
+
+    if (!plantillaOrigen || !bloqueOrigen || !bloqueDestino) {
+      this.mensajeGuardado = 'Selecciona plantilla origen, bloque origen y bloque destino';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    if (!this.camposOrigenSeleccionadosIds.length) {
+      this.mensajeGuardado = 'Selecciona al menos un campo para importar';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    const referenciaBase = this.crearReferenciaImportacion(plantillaOrigen, bloqueOrigen);
+    const camposAImportar = this.camposBloqueOrigenDisponibles.filter((campo) =>
+      this.camposOrigenSeleccionadosIds.includes(campo.id)
+    );
+
+    camposAImportar.forEach((campo) => {
+      bloqueDestino.campos.push({
+        ...campo,
+        id: this.generarId(),
+        importedFrom: {
+          ...referenciaBase,
+          campoId: campo.id,
+          campoConcepto: campo.concepto
+        },
+        movimientos: Array.isArray(campo.movimientos)
+          ? campo.movimientos.map((movimiento) => ({ ...movimiento, id: this.generarId() }))
+          : []
+      });
+    });
+
+    this.mensajeGuardado = 'Campos importados correctamente';
+    this.limpiarMensajeGuardado();
+    this.cerrarPopupImportacion();
   }
 
   generarGrafica(): void {
@@ -921,6 +1099,24 @@ ngOnInit(): void {
     this.aplicarCampoMaestroSeleccionado();
   }
 
+  private sincronizarSeleccionBloqueOrigen(): void {
+    const bloquesOrigen = this.bloquesPlantillaOrigen;
+    this.bloqueOrigenSeleccionadoId = bloquesOrigen[0]?.id || '';
+  }
+
+  private crearReferenciaImportacion(
+    plantillaOrigen: PlantillaImportable,
+    bloqueOrigen: Bloque
+  ): ReferenciaImportacion {
+    return {
+      templateId: plantillaOrigen.id,
+      templateNombre: plantillaOrigen.nombre,
+      bloqueId: bloqueOrigen.id,
+      bloqueTitulo: bloqueOrigen.titulo,
+      importedAt: new Date().toISOString()
+    };
+  }
+
   private resetEstadoCampoMaestro(): void {
     this.modoCampoManual = false;
     this.campoMaestroSeleccionadoId = this.camposMaestros[0]?._id || '';
@@ -934,6 +1130,34 @@ ngOnInit(): void {
   get campoMaestroSeleccionado(): CampoMaestro | null {
     return this.camposMaestros.find(
       (campoMaestro) => campoMaestro._id === this.campoMaestroSeleccionadoId
+    ) || null;
+  }
+
+  get plantillaOrigenSeleccionada(): PlantillaImportable | null {
+    return this.plantillasImportables.find(
+      (plantilla) => plantilla.id === this.plantillaOrigenId
+    ) || null;
+  }
+
+  get bloquesPlantillaOrigen(): Bloque[] {
+    return this.plantillaOrigenSeleccionada?.blocks || [];
+  }
+
+  get bloqueOrigenSeleccionado(): Bloque | null {
+    return this.bloquesPlantillaOrigen.find(
+      (bloque) => bloque.id === this.bloqueOrigenSeleccionadoId
+    ) || null;
+  }
+
+  get camposBloqueOrigenDisponibles(): Campo[] {
+    const bloque = this.bloqueOrigenSeleccionado;
+    if (!bloque) return [];
+    return (bloque.campos || []).filter((campo) => campo.tipo !== 'total');
+  }
+
+  get bloqueDestinoSeleccionado(): Bloque | null {
+    return this.template.blocks.find(
+      (bloque) => bloque.id === this.bloqueDestinoSeleccionadoId
     ) || null;
   }
 

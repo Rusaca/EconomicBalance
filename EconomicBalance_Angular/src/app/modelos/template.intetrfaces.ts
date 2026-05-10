@@ -5,6 +5,16 @@ export interface MovimientoCampo {
   importe: number;
 }
 
+export interface ReferenciaImportacion {
+  templateId: string;
+  templateNombre: string;
+  bloqueId?: string;
+  bloqueTitulo?: string;
+  campoId?: string;
+  campoConcepto?: string;
+  importedAt: string;
+}
+
 export interface Campo {
   id: string;
   tipo: 'ingreso' | 'gasto' | 'total';
@@ -12,6 +22,7 @@ export interface Campo {
   concepto: string;
   importe: number;
   movimientos?: MovimientoCampo[];
+  importedFrom?: ReferenciaImportacion;
 }
 
 export interface Bloque {
@@ -23,6 +34,7 @@ export interface Bloque {
   height: number;
   fijado: boolean;
   campos: Campo[];
+  importedFrom?: ReferenciaImportacion;
 }
 
 export interface GraficaPlantilla {

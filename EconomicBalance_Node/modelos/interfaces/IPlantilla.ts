@@ -7,6 +7,16 @@ export interface IMovimientoCampo {
   importe: number;
 }
 
+export interface IReferenciaImportacion {
+  templateId: string;
+  templateNombre: string;
+  bloqueId?: string;
+  bloqueTitulo?: string;
+  campoId?: string;
+  campoConcepto?: string;
+  importedAt: string;
+}
+
 
 export interface ICampo {
   id: string;
@@ -15,6 +25,7 @@ export interface ICampo {
   concepto: string;
   importe: number;
   movimientos?: IMovimientoCampo[];
+  importedFrom?: IReferenciaImportacion;
 }
 
 
@@ -27,6 +38,7 @@ export interface IBloque {
   height: number;
   fijado: boolean;
   campos: ICampo[];
+  importedFrom?: IReferenciaImportacion;
 }
 
 export interface IGraficaPlantilla {

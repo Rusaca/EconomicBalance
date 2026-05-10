@@ -11,6 +11,19 @@ const MovimientoCampoSchema = new Schema(
   { _id: false }
 );
 
+const ReferenciaImportacionSchema = new Schema(
+  {
+    templateId: { type: String, required: true },
+    templateNombre: { type: String, required: true },
+    bloqueId: { type: String, default: null },
+    bloqueTitulo: { type: String, default: null },
+    campoId: { type: String, default: null },
+    campoConcepto: { type: String, default: null },
+    importedAt: { type: String, required: true }
+  },
+  { _id: false }
+);
+
 
 const CampoSchema = new Schema(
   {
@@ -23,7 +36,8 @@ const CampoSchema = new Schema(
     },
     concepto: { type: String, required: true, trim: true },
     importe: { type: Number, required: true, default: 0 },
-    movimientos: { type: [MovimientoCampoSchema], default: [] }
+    movimientos: { type: [MovimientoCampoSchema], default: [] },
+    importedFrom: { type: ReferenciaImportacionSchema, default: null }
   },
   { _id: false }
 );
@@ -37,7 +51,8 @@ const BloqueSchema = new Schema(
     width: { type: Number, required: true, default: 260 },
     height: { type: Number, required: true, default: 140 },
     fijado: { type: Boolean, default: false },
-    campos: { type: [CampoSchema], default: [] }
+    campos: { type: [CampoSchema], default: [] },
+    importedFrom: { type: ReferenciaImportacionSchema, default: null }
   },
   { _id: false }
 );
