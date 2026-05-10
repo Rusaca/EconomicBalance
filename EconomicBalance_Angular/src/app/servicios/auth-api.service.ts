@@ -37,6 +37,12 @@ export class AuthApiService {
 
     console.log('AuthApiService - respuesta login:', respuesta);
 
+    if (respuesta?.ok && respuesta?.data?.token && respuesta?.data?.usuario) {
+      localStorage.setItem('token', respuesta.data.token);
+      localStorage.setItem('usuario', JSON.stringify(respuesta.data.usuario));
+      localStorage.setItem('usuarioId', respuesta.data.usuario.id);
+    }
+
     return respuesta;
   }
 

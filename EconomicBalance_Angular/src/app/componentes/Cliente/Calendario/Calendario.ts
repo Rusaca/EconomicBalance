@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 import { FooterComponent } from '../../Portal/FooterAutenticado/footer';
 import { PresupuestosService } from '../../../servicios/presupuestos.service';
@@ -16,6 +16,7 @@ interface DiaCalendario {
   fecha: Date;
   esMesActual: boolean;
   esHoy: boolean;
+  esSeleccionado: boolean;
   eventos: EventoCalendario[];
 }
 
@@ -27,8 +28,10 @@ interface DiaCalendario {
   styleUrl: './Calendario.css'
 })
 export class CalendarioComponent implements OnInit {
-
-  constructor(private presupuestosService: PresupuestosService) {}
+  constructor(
+    private presupuestosService: PresupuestosService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   diasSemana: string[] = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
@@ -43,7 +46,6 @@ export class CalendarioComponent implements OnInit {
 
   diasCalendario: DiaCalendario[] = [];
   diaSeleccionado: DiaCalendario | null = null;
-
   eventosPorFecha: Record<string, EventoCalendario[]> = {};
 
   get nombreMesActual(): string {
@@ -51,68 +53,108 @@ export class CalendarioComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 🔥 SIEMPRE SE VE EL CALENDARIO COMPLETO
     this.generarCalendario();
-
-    // 🔥 LUEGO SE RELLENAN LOS EVENTOS
     this.cargarEventosDesdeBBDD();
   }
 
   cargarEventosDesdeBBDD(): void {
-    const userId = localStorage.getItem('usuarioId');
+    this.presupuestosService.obtenerPlantillas().subscribe({
+      next: (respuesta: any) => {
+        const plantillas = respuesta?.data || [];
+        this.eventosPorFecha = {};
 
-    if (!userId) {
-      console.error("❌ No hay usuarioId en localStorage. No se pueden cargar plantillas.");
-      return;
-    }
+        plantillas.forEach((plantilla: any) => {
+          const fechaFallback = plantilla.createdAt;
 
-    this.presupuestosService.obtenerPlantillas(userId).subscribe((plantillas) => {
-      this.eventosPorFecha = {};
-
-      plantillas.forEach((plantilla: any) => {
-        plantilla.blocks.forEach((block: any) => {
-          block.campos.forEach((campo: any) => {
-
-            // 🔥 TU BACKEND REAL: movimientos dentro de cada campo
-            campo.movimientos.forEach((mov: any) => {
-
-              const fecha = mov.fecha;
-              if (!fecha) return;
-
-              if (!this.eventosPorFecha[fecha]) {
-                this.eventosPorFecha[fecha] = [];
+          plantilla.blocks?.forEach((block: any) => {
+            block.campos?.forEach((campo: any) => {
+              if (Array.isArray(campo.movimientos) && campo.movimientos.length > 0) {
+                campo.movimientos.forEach((mov: any) => {
+                  this.agregarEvento(
+                    mov.fecha || fechaFallback,
+                    campo.concepto,
+                    mov.descripcion || '',
+                    campo.tipo,
+                    mov.importe ?? campo.importe
+                  );
+                });
+              } else {
+                this.agregarEvento(
+                  fechaFallback,
+                  campo.concepto,
+                  '',
+                  campo.tipo,
+                  campo.importe
+                );
               }
-
-              this.eventosPorFecha[fecha].push({
-                titulo: campo.concepto,
-                descripcion: mov.descripcion || '',
-                tipo: campo.tipo,
-                cantidad: `${campo.tipo === 'gasto' ? '-' : '+'}${mov.importe} €`
-              });
-
             });
-
           });
         });
-      });
 
-      // 🔥 SOLO ACTUALIZAMOS LOS EVENTOS, NO REGENERAMOS EL CALENDARIO
-      this.actualizarEventosEnCalendario();
+        this.generarCalendario();
+        this.seleccionarDiaInicial();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error cargando eventos del calendario:', error);
+      }
     });
   }
 
-  actualizarEventosEnCalendario(): void {
-    this.diasCalendario = this.diasCalendario.map(dia => {
-      const clave = this.formatearFecha(dia.fecha);
-      return {
-        ...dia,
-        eventos: this.eventosPorFecha[clave] || []
-      };
+  agregarEvento(
+    fechaValor: string,
+    titulo: string,
+    descripcion: string,
+    tipo: 'ingreso' | 'gasto' | 'total',
+    importe: number
+  ): void {
+    if (!fechaValor) return;
+
+    const fecha = new Date(fechaValor);
+    if (isNaN(fecha.getTime())) return;
+
+    const clave = this.formatearFecha(fecha);
+
+    if (!this.eventosPorFecha[clave]) {
+      this.eventosPorFecha[clave] = [];
+    }
+
+    this.eventosPorFecha[clave].push({
+      titulo: titulo || 'Sin concepto',
+      descripcion: descripcion || '',
+      tipo,
+      cantidad: `${tipo === 'gasto' ? '-' : '+'}${importe ?? 0} €`
     });
+  }
+
+  seleccionarDiaInicial(): void {
+    this.diaSeleccionado =
+      this.diasCalendario.find((dia) => dia.esHoy && dia.esMesActual) ||
+      this.diasCalendario.find((dia) => dia.esMesActual && dia.eventos.length > 0) ||
+      this.diasCalendario.find((dia) => dia.esMesActual) ||
+      null;
+
+    this.marcarDiaSeleccionado();
+  }
+
+  marcarDiaSeleccionado(): void {
+    const claveSeleccionada = this.diaSeleccionado
+      ? this.formatearFecha(this.diaSeleccionado.fecha)
+      : null;
+
+    this.diasCalendario = this.diasCalendario.map((dia) => ({
+      ...dia,
+      esSeleccionado: claveSeleccionada === this.formatearFecha(dia.fecha)
+    }));
+
+    if (claveSeleccionada) {
+      this.diaSeleccionado =
+        this.diasCalendario.find((dia) => this.formatearFecha(dia.fecha) === claveSeleccionada) || null;
+    }
   }
 
   generarCalendario(): void {
-    this.diasCalendario = [];
+    const dias: DiaCalendario[] = [];
 
     const primerDiaMes = new Date(this.anioActual, this.mesActual, 1);
     const ultimoDiaMes = new Date(this.anioActual, this.mesActual + 1, 0);
@@ -123,27 +165,24 @@ export class CalendarioComponent implements OnInit {
     const diasMesAnterior = new Date(this.anioActual, this.mesActual, 0).getDate();
     const totalDiasMes = ultimoDiaMes.getDate();
 
-    // Mes anterior
     for (let i = inicioSemana - 1; i >= 0; i--) {
       const numero = diasMesAnterior - i;
       const fecha = new Date(this.anioActual, this.mesActual - 1, numero);
-      this.diasCalendario.push(this.crearDia(fecha, numero, false));
+      dias.push(this.crearDia(fecha, numero, false));
     }
 
-    // Mes actual
     for (let dia = 1; dia <= totalDiasMes; dia++) {
       const fecha = new Date(this.anioActual, this.mesActual, dia);
-      this.diasCalendario.push(this.crearDia(fecha, dia, true));
+      dias.push(this.crearDia(fecha, dia, true));
     }
 
-    // Mes siguiente
-    const restantes = 42 - this.diasCalendario.length;
+    const restantes = 42 - dias.length;
     for (let dia = 1; dia <= restantes; dia++) {
       const fecha = new Date(this.anioActual, this.mesActual + 1, dia);
-      this.diasCalendario.push(this.crearDia(fecha, dia, false));
+      dias.push(this.crearDia(fecha, dia, false));
     }
 
-    this.diaSeleccionado = this.diasCalendario.find(d => d.esHoy && d.esMesActual) || null;
+    this.diasCalendario = dias;
   }
 
   crearDia(fecha: Date, numero: number, esMesActual: boolean): DiaCalendario {
@@ -158,12 +197,14 @@ export class CalendarioComponent implements OnInit {
         fecha.getDate() === hoy.getDate() &&
         fecha.getMonth() === hoy.getMonth() &&
         fecha.getFullYear() === hoy.getFullYear(),
+      esSeleccionado: false,
       eventos: this.eventosPorFecha[clave] || []
     };
   }
 
   seleccionarDia(dia: DiaCalendario): void {
     this.diaSeleccionado = dia;
+    this.marcarDiaSeleccionado();
   }
 
   mesAnterior(): void {
@@ -173,8 +214,9 @@ export class CalendarioComponent implements OnInit {
     } else {
       this.mesActual--;
     }
+
     this.generarCalendario();
-    this.actualizarEventosEnCalendario();
+    this.seleccionarDiaInicial();
   }
 
   mesSiguiente(): void {
@@ -184,8 +226,9 @@ export class CalendarioComponent implements OnInit {
     } else {
       this.mesActual++;
     }
+
     this.generarCalendario();
-    this.actualizarEventosEnCalendario();
+    this.seleccionarDiaInicial();
   }
 
   formatearFecha(fecha: Date): string {

@@ -1,52 +1,99 @@
 <app-header-autenticado></app-header-autenticado>
 
-<div class="container py-4">
+<div class="metas-page">
+  <div class="metas-shell">
+    <div class="metas-header">
+      <div>
+        <p class="metas-tag">Ahorro</p>
+        <h2>Metas de ahorro</h2>
+        <p class="metas-subtitle">
+          Controla tus objetivos y revisa cuánto te falta para alcanzarlos.
+        </p>
+      </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Metas de Ahorro</h2>
-
-        <button class="btn btn-primary px-4">
-            + Nueva Meta
-        </button>
+      <button class="btn btn-primary metas-add-btn" (click)="toggleFormulario()">
+        {{ mostrarFormulario ? 'Cerrar' : '+ Nueva Meta' }}
+      </button>
     </div>
 
-    <div class="row g-4">
+    <div *ngIf="mostrarFormulario" class="meta-form-card">
+      <div class="meta-form-card-body">
+        <h5>Nueva meta</h5>
 
-        <div class="col-md-4" *ngFor="let meta of metas">
-            <div class="card shadow-sm border-0 h-100">
+        <div class="meta-form-grid">
+          <div class="meta-field">
+            <label>Título</label>
+            <input type="text" [(ngModel)]="nuevaMetaData.titulo" placeholder="Ej: Viaje a Roma" />
+          </div>
 
-                <div class="card-body">
+          <div class="meta-field">
+            <label>Objetivo (€)</label>
+            <input type="number" [(ngModel)]="nuevaMetaData.objetivo" placeholder="3000" />
+          </div>
 
-                    <h5 class="card-title fw-semibold">{{ meta.titulo }}</h5>
+          <div class="meta-field">
+            <label>Ahorrado (€)</label>
+            <input type="number" [(ngModel)]="nuevaMetaData.actual" placeholder="500" />
+          </div>
 
-                    <p class="mb-1 text-muted">
-                        Objetivo: <strong>{{ meta.objetivo }} €</strong>
-                    </p>
-
-                    <p class="mb-1 text-muted">
-                        Ahorrado: <strong>{{ meta.actual }} €</strong>
-                    </p>
-
-                    <p class="mb-3 text-muted">
-                        Fecha límite: <strong>{{ meta.fechaLimite }}</strong>
-                    </p>
-
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar bg-success"
-                             role="progressbar"
-                             [style.width.%]="calcularProgreso(meta)">
-                        </div>
-                    </div>
-
-                    <p class="text-end mt-2 fw-bold">
-                        {{ calcularProgreso(meta) }}%
-                    </p>
-
-                </div>
-
-            </div>
+          <div class="meta-field">
+            <label>Fecha límite</label>
+            <input type="date" [(ngModel)]="nuevaMetaData.fechaLimite" />
+          </div>
         </div>
 
+        <div class="meta-form-actions">
+          <button class="btn btn-success" (click)="guardarMeta()">Guardar</button>
+          <button class="btn btn-outline-secondary" (click)="cancelarFormulario()">Cancelar</button>
+        </div>
+      </div>
     </div>
 
+    <div class="metas-grid">
+      <div class="meta-card" *ngFor="let meta of metas; let i = index">
+        <div class="meta-card-body">
+          <div class="meta-card-top">
+            <h5>{{ meta.titulo }}</h5>
+            <div class="meta-card-actions">
+              <span class="meta-progress-pill">{{ calcularProgreso(meta) }}%</span>
+              <button class="meta-delete-btn" type="button" (click)="eliminarMeta(i)">Quitar</button>
+            </div>
+          </div>
+
+          <p>Objetivo: <strong>{{ meta.objetivo }} €</strong></p>
+          <p>Ahorrado: <strong>{{ meta.actual }} €</strong></p>
+          <p>Fecha límite: <strong>{{ meta.fechaLimite }}</strong></p>
+
+          <div class="progress meta-progress-bar">
+            <div
+              class="progress-bar bg-success"
+              role="progressbar"
+              [style.width.%]="calcularProgreso(meta)"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ahorro-mensual-card" *ngIf="ahorroMensual.length > 0">
+      <div class="ahorro-mensual-header">
+        <div>
+          <p class="metas-tag">Resumen</p>
+          <h3>Ahorro por mes</h3>
+          <p class="ahorro-mensual-subtitle">
+            Desliza horizontalmente para revisar la evolución mensual.
+          </p>
+        </div>
+      </div>
+
+      <div class="ahorro-carrusel">
+        <div class="ahorro-carrusel-track">
+          <div class="ahorro-mes-item" *ngFor="let item of ahorroMensual">
+            <span class="ahorro-mes-nombre">{{ item.etiqueta }}</span>
+            <strong class="ahorro-mes-cantidad">{{ item.total }} €</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

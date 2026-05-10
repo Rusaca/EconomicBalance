@@ -13,9 +13,7 @@ import { AjustesComponent } from './componentes/Cliente/Ajustes/ajustes';
 import { CalendarioComponent } from './componentes/Cliente/Calendario/Calendario';
 import { SoporteComponent } from './componentes/Cliente/Soporte/soporte';
 import { AyudaComponent } from './componentes/Cliente/Ayuda/ayuda';
-import { MetasComponent } from './componentes/Cliente/MetasAhorro/MetasAhorro';
-
-
+import { MetasAhorroComponent } from './componentes/Cliente/MetasAhorro/MetasAhorro';
 
 export const routes: Routes = [
   {
@@ -72,22 +70,21 @@ export const routes: Routes = [
     component: AjustesComponent
   },
   {
-  path: 'calendario',
-  component: CalendarioComponent
+    path: 'calendario',
+    component: CalendarioComponent
   },
   {
-  path: 'soporte',
-  component: SoporteComponent
+    path: 'soporte',
+    component: SoporteComponent
   },
 
-{
-  path: 'ayuda',
-  component: AyudaComponent
-},
-{
-  path: 'metas',
-  component: MetasComponent
-}
-
+  {
+    path: 'ayuda',
+    component: AyudaComponent
+  },
+  {
+    path: 'metas',
+    component: MetasAhorroComponent
+  }
 
 ];
