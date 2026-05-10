@@ -32,6 +32,14 @@
     >
       Importar
     </button>
+
+    <button
+      class="btn btn-outline-warning"
+      type="button"
+      (click)="abrirPopupResumen()"
+    >
+      Crear resumen
+    </button>
   </div>
 
   <span class="mensaje" *ngIf="mensajeGuardado">
@@ -648,6 +656,49 @@
         (click)="cancelarPrimerGuardado()"
         [disabled]="guardando"
       >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="popupResumenVisible">
+  <div class="popup popup-resumen" (click)="$event.stopPropagation()">
+    <h3>Crear bloque resumen</h3>
+
+    <label>Tipo de campos a sumar</label>
+    <select [(ngModel)]="tipoResumenSeleccionado" (change)="onCambioTipoResumen()">
+      <option value="gasto">Gasto</option>
+      <option value="ingreso">Ingreso</option>
+    </select>
+
+    <div class="campos-resumen-lista" *ngIf="camposDisponiblesParaResumen.length; else sinCamposResumen">
+      <div
+        class="campo-resumen-item"
+        *ngFor="let item of camposDisponiblesParaResumen"
+        [class.campo-resumen-item-seleccionado]="camposResumenSeleccionadosKeys.includes(item.key)"
+        (click)="toggleCampoResumen(item.key)"
+      >
+        <div>
+          <strong>{{ item.campo.concepto }}</strong>
+          <div class="small text-muted">{{ item.bloqueTitulo }}</div>
+        </div>
+        <span>{{ item.valor }} €</span>
+      </div>
+    </div>
+
+    <ng-template #sinCamposResumen>
+      <div class="small text-muted">
+        No hay campos de tipo {{ tipoResumenSeleccionado }} para seleccionar.
+      </div>
+    </ng-template>
+
+    <div class="acciones">
+      <button class="btn btn-success" type="button" (click)="crearBloqueResumenDesdeCampos()">
+        Crear bloque resumen
+      </button>
+
+      <button class="btn btn-secondary" type="button" (click)="cerrarPopupResumen()">
         Cancelar
       </button>
     </div>

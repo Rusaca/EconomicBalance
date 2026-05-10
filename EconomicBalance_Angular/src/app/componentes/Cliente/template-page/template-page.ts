@@ -22,6 +22,13 @@ type ElementoMovible = {
 };
 
 type PlantillaImportable = Plantilla & { _id?: string };
+type CampoSeleccionResumen = {
+  key: string;
+  bloqueId: string;
+  bloqueTitulo: string;
+  campo: Campo;
+  valor: number;
+};
 
 @Component({
   selector: 'app-template-page',
@@ -104,6 +111,10 @@ export class TemplatePage implements OnInit {
   bloqueOrigenSeleccionadoId = '';
   bloqueDestinoSeleccionadoId = '';
   camposOrigenSeleccionadosIds: string[] = [];
+
+  popupResumenVisible = false;
+  tipoResumenSeleccionado: 'ingreso' | 'gasto' = 'gasto';
+  camposResumenSeleccionadosKeys: string[] = [];
 
   guardando = false;
   mensajeGuardado = '';
@@ -481,6 +492,89 @@ ngOnInit(): void {
     this.plantillaOrigenId = '';
     this.bloqueOrigenSeleccionadoId = '';
     this.camposOrigenSeleccionadosIds = [];
+  }
+
+  abrirPopupResumen(): void {
+    if (!this.template.blocks.length) {
+      this.mensajeGuardado = 'Debes crear bloques antes de generar un resumen';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    this.popupResumenVisible = true;
+    this.tipoResumenSeleccionado = 'gasto';
+    this.camposResumenSeleccionadosKeys = [];
+  }
+
+  cerrarPopupResumen(): void {
+    this.popupResumenVisible = false;
+    this.camposResumenSeleccionadosKeys = [];
+  }
+
+  onCambioTipoResumen(): void {
+    this.camposResumenSeleccionadosKeys = [];
+  }
+
+  toggleCampoResumen(key: string): void {
+    const existe = this.camposResumenSeleccionadosKeys.includes(key);
+    this.camposResumenSeleccionadosKeys = existe
+      ? this.camposResumenSeleccionadosKeys.filter((item) => item !== key)
+      : [...this.camposResumenSeleccionadosKeys, key];
+  }
+
+  crearBloqueResumenDesdeCampos(): void {
+    if (!this.camposResumenSeleccionadosKeys.length) {
+      this.mensajeGuardado = 'Selecciona al menos un campo para crear el resumen';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    const seleccionados = this.camposDisponiblesParaResumen.filter((item) =>
+      this.camposResumenSeleccionadosKeys.includes(item.key)
+    );
+
+    if (!seleccionados.length) {
+      this.mensajeGuardado = 'No se han encontrado campos validos para el resumen';
+      this.limpiarMensajeGuardado();
+      return;
+    }
+
+    const total = seleccionados.reduce((acum, item) => acum + (Number(item.valor) || 0), 0);
+    const offset = (this.template.blocks.length % 4) * 22;
+
+    const camposResumen: Campo[] = seleccionados.map((item) => ({
+      id: this.generarId(),
+      tipo: this.tipoResumenSeleccionado,
+      categoria: 'resumen',
+      concepto: `${item.bloqueTitulo}: ${item.campo.concepto}`,
+      importe: Number(item.valor) || 0,
+      movimientos: []
+    }));
+
+    camposResumen.push({
+      id: this.generarId(),
+      tipo: 'total',
+      categoria: 'resumen',
+      concepto: `Total ${this.tipoResumenSeleccionado === 'gasto' ? 'gastos' : 'ingresos'}`,
+      importe: total,
+      movimientos: []
+    });
+
+    const bloqueResumen: Bloque = {
+      id: this.generarId(),
+      titulo: `Resumen ${this.tipoResumenSeleccionado === 'gasto' ? 'gastos' : 'ingresos'}`,
+      x: 80 + offset,
+      y: 80 + offset,
+      width: 320,
+      height: 220,
+      fijado: false,
+      campos: camposResumen
+    };
+
+    this.template.blocks.push(bloqueResumen);
+    this.mensajeGuardado = 'Bloque resumen creado correctamente';
+    this.limpiarMensajeGuardado();
+    this.cerrarPopupResumen();
   }
 
   cambiarModoImportacion(modo: 'bloques' | 'campos'): void {
@@ -1159,6 +1253,32 @@ ngOnInit(): void {
     return this.template.blocks.find(
       (bloque) => bloque.id === this.bloqueDestinoSeleccionadoId
     ) || null;
+  }
+
+  get camposDisponiblesParaResumen(): CampoSeleccionResumen[] {
+    const salida: CampoSeleccionResumen[] = [];
+
+    (this.template.blocks || []).forEach((bloque) => {
+      (bloque.campos || [])
+        .filter((campo) => campo.tipo === this.tipoResumenSeleccionado)
+        .forEach((campo) => {
+          salida.push({
+            key: `${bloque.id}::${campo.id}`,
+            bloqueId: bloque.id,
+            bloqueTitulo: bloque.titulo,
+            campo,
+            valor: this.obtenerImporteCampoResumen(campo)
+          });
+        });
+    });
+
+    return salida;
+  }
+
+  private obtenerImporteCampoResumen(campo: Campo): number {
+    return campo.categoria === 'variable'
+      ? this.calcularGastadoCampo(campo)
+      : Number(campo.importe) || 0;
   }
 
   private normalizarGraficas(graficas: GraficaPlantilla[]): GraficaPlantilla[] {
