@@ -2,8 +2,6 @@
 
 <div class="calendar-page">
   <div class="calendar-shell">
-
-    <!-- ENCABEZADO -->
     <div class="calendar-header">
       <div>
         <p class="calendar-tag">Planificación</p>
@@ -22,35 +20,23 @@
       </div>
     </div>
 
-    <!-- TARJETA DEL CALENDARIO -->
     <div class="calendar-card">
-
-      <!-- DÍAS DE LA SEMANA -->
       <div class="calendar-weekdays">
         <div *ngFor="let dia of diasSemana" class="calendar-weekday">
           {{ dia }}
         </div>
       </div>
 
-      <!-- GRID DEL CALENDARIO -->
       <div class="calendar-grid">
-        <div
-          *ngFor="let dia of diasCalendario"
-          class="calendar-day"
-          [class.other-month]="!dia.esMesActual"
-          [class.today]="dia.esHoy"
-          [class.has-events]="dia.eventos.length > 0"
-          (click)="seleccionarDia(dia)"
-        >
+        <div *ngFor="let dia of diasCalendario" class="calendar-day" [class.other-month]="!dia.esMesActual"
+          [class.today]="dia.esHoy" [class.selected]="dia.esSeleccionado" [class.has-events]="dia.eventos.length > 0"
+          (click)="seleccionarDia(dia)">
+
           <div class="calendar-day-number">{{ dia.numero }}</div>
 
-          <div class="calendar-events">
-            <div
-              *ngFor="let evento of dia.eventos.slice(0, 2)"
-              class="calendar-event"
-              [class.ingreso]="evento.tipo === 'ingreso'"
-              [class.gasto]="evento.tipo === 'gasto'"
-            >
+          <div class="calendar-events" *ngIf="dia.eventos.length > 0">
+            <div *ngFor="let evento of dia.eventos.slice(0, 2)" class="calendar-event"
+              [class.ingreso]="evento.tipo === 'ingreso'" [class.gasto]="evento.tipo === 'gasto'">
               {{ evento.titulo }}
             </div>
 
@@ -62,7 +48,6 @@
       </div>
     </div>
 
-    <!-- PANEL DE DETALLE -->
     <div class="calendar-detail" *ngIf="diaSeleccionado">
       <div class="calendar-detail-header">
         <div>
@@ -71,18 +56,14 @@
         </div>
       </div>
 
-      <div *ngIf="diaSeleccionado.eventos.length; else sinEventos" class="calendar-detail-list">
-        <div
-          *ngFor="let evento of diaSeleccionado.eventos"
-          class="calendar-detail-item"
-          [class.ingreso]="evento.tipo === 'ingreso'"
-          [class.gasto]="evento.tipo === 'gasto'"
-        >
+      <div *ngIf="diaSeleccionado.eventos.length > 0; else sinEventos" class="calendar-detail-list">
+        <div *ngFor="let evento of diaSeleccionado.eventos" class="calendar-detail-item"
+          [class.ingreso]="evento.tipo === 'ingreso'" [class.gasto]="evento.tipo === 'gasto'">
           <div class="calendar-detail-top">
             <strong>{{ evento.titulo }}</strong>
             <span *ngIf="evento.cantidad">{{ evento.cantidad }}</span>
           </div>
-          <p>{{ evento.descripcion }}</p>
+          <p>{{ evento.descripcion || 'Sin descripción' }}</p>
         </div>
       </div>
 
@@ -90,6 +71,5 @@
         <p class="calendar-empty">No hay eventos para este día.</p>
       </ng-template>
     </div>
-
   </div>
 </div>

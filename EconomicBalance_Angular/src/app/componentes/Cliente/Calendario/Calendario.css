@@ -23,7 +23,6 @@
   flex: 1 0 auto;
 }
 
-
 .calendar-header {
   display: flex;
   justify-content: space-between;
@@ -128,6 +127,11 @@
   background: #ffffff;
   cursor: pointer;
   transition: background 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  overflow: hidden;
 }
 
 .calendar-day:hover {
@@ -144,6 +148,11 @@
   background: linear-gradient(180deg, rgba(25, 135, 84, 0.08), rgba(255, 255, 255, 1));
 }
 
+.calendar-day.selected {
+  background: #f5f1e8;
+  box-shadow: inset 0 0 0 2px #111827;
+}
+
 .calendar-day.has-events .calendar-day-number {
   color: #111827;
   font-weight: 800;
@@ -152,7 +161,7 @@
 .calendar-day-number {
   font-size: 0.82rem;
   font-weight: 700;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.1rem;
   color: #4b5563;
 }
 
@@ -160,9 +169,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  width: 100%;
+  margin-top: 0.1rem;
 }
 
 .calendar-event {
+  display: block;
+  width: 100%;
   padding: 0.25rem 0.42rem;
   border-radius: 0.55rem;
   font-size: 0.62rem;
