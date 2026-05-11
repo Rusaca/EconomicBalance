@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
@@ -88,29 +88,36 @@ export class SoporteComponent {
 
   constructor(
     private chatApi: ChatApiService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async sendMessage(): Promise<void> {
     const message = this.userMessage.trim();
 
-    if (!message) return;
+    if (!message || this.loading) {
+      return;
+    }
 
     this.messages.push({ text: message, sender: 'user' });
     this.userMessage = '';
     this.loading = true;
+    this.cdr.detectChanges();
 
     try {
       const response = await this.chatApi.enviarMensaje(message);
       this.messages.push({ text: response.reply, sender: 'bot' });
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Error enviando mensaje al chatbot:', error);
       this.messages.push({
         text: 'Hubo un error al contactar con el chatbot.',
         sender: 'bot'
       });
+      this.cdr.detectChanges();
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 

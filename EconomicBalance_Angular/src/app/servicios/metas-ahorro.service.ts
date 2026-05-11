@@ -1,38 +1,104 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { PresupuestosService } from './presupuestos.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import {
+  ApiResponse,
+  CrearMetaAhorroPayload,
+  MetaAhorro,
+  ResumenMensualAhorro
+} from '../modelos/metas-ahorro-model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MetasAhorroService {
-  constructor(private presupuestosService: PresupuestosService) {}
+  private readonly baseUrl = 'http://localhost:3000/api/metas-ahorro';
 
-  obtenerAhorroTotal(): Observable<number> {
-    return this.presupuestosService.obtenerPlantillas().pipe(
-      map((respuesta: any) => {
-        const plantillas = respuesta?.data || [];
-        let total = 0;
+  constructor(private http: HttpClient) {}
 
-        plantillas.forEach((plantilla: any) => {
-          plantilla.blocks?.forEach((block: any) => {
-            block.campos?.forEach((campo: any) => {
-              const importe = Number(campo.importe || 0);
-
-              if (campo.tipo === 'ingreso') total += importe;
-              if (campo.tipo === 'gasto') total -= importe;
-            });
-          });
-        });
-
-        return total > 0 ? total : 0;
-      })
-    );
+  private obtenerUserId(): string {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    return usuario.id || usuario._id || localStorage.getItem('usuarioId') || '';
   }
 
-  obtenerPlantillasParaResumen(): Observable<any[]> {
-    return this.presupuestosService.obtenerPlantillas().pipe(
-      map((respuesta: any) => respuesta?.data || [])
+  private normalizarMeta(meta: any): MetaAhorro {
+    return {
+      id: meta.id || meta._id || '',
+      titulo: meta.titulo || '',
+      objetivo: Number(meta.objetivo || 0),
+      actual: Number(meta.actual || 0),
+      fechaLimite: meta.fechaLimite || '',
+      createdAt: meta.createdAt || ''
+    };
+  }
+
+  async obtenerMetas(): Promise<ApiResponse<{ metas: MetaAhorro[] }>> {
+    const userId = this.obtenerUserId();
+
+    const data: any = await firstValueFrom(
+      this.http.get(`${this.baseUrl}?userId=${encodeURIComponent(userId)}`)
     );
+
+    return {
+      ok: data?.ok === true,
+      mensaje: data?.mensaje || '',
+      data: {
+        metas: (data?.data?.metas || []).map((meta: any) => this.normalizarMeta(meta))
+      }
+    };
+  }
+
+  async crearMeta(payload: CrearMetaAhorroPayload): Promise<ApiResponse<{ meta: MetaAhorro }>> {
+    const userId = this.obtenerUserId();
+
+    const data: any = await firstValueFrom(
+      this.http.post(this.baseUrl, {
+        ...payload,
+        userId
+      })
+    );
+
+    return {
+      ok: data?.ok === true,
+      mensaje: data?.mensaje || '',
+      data: data?.data?.meta
+        ? { meta: this.normalizarMeta(data.data.meta) }
+        : undefined
+    };
+  }
+
+  async eliminarMeta(id: string): Promise<ApiResponse<null>> {
+    const userId = this.obtenerUserId();
+
+    const data: any = await firstValueFrom(
+      this.http.delete(`${this.baseUrl}/${id}?userId=${encodeURIComponent(userId)}`)
+    );
+
+    return {
+      ok: data?.ok === true,
+      mensaje: data?.mensaje || '',
+      data: data?.data ?? null
+    };
+  }
+
+  async obtenerResumenMensual(): Promise<ApiResponse<{ resumen: ResumenMensualAhorro[] }>> {
+    const userId = this.obtenerUserId();
+
+    const data: any = await firstValueFrom(
+      this.http.get(`${this.baseUrl}/resumen-mensual?userId=${encodeURIComponent(userId)}`)
+    );
+
+    return {
+      ok: data?.ok === true,
+      mensaje: data?.mensaje || '',
+      data: {
+        resumen: (data?.data?.resumen || []).map((item: any) => ({
+          mes: item.mes || '',
+          anio: Number(item.anio || 0),
+          etiqueta: item.etiqueta || '',
+          total: Number(item.total || 0)
+        }))
+      }
+    };
   }
 }
