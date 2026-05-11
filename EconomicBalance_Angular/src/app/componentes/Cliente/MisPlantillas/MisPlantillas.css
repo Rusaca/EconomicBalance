@@ -197,6 +197,111 @@
 	border-width: 1.5px;
 }
 
+.plantillas-layout {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.crear-plantilla-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	border: 2px dashed #b9cdfb;
+	border-radius: 22px;
+	padding: 1.2rem 1.4rem;
+	background: linear-gradient(90deg, rgba(239, 246, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.crear-plantilla-row:hover {
+	transform: translateY(-4px);
+	border-color: #0d6efd;
+	box-shadow: 0 1rem 2rem rgba(13, 110, 253, 0.12);
+}
+
+.crear-plantilla-left {
+	display: flex;
+	align-items: center;
+	gap: 0.9rem;
+}
+
+.lista-plantillas-fila {
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+}
+
+.plantilla-fila-card {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	background: rgba(255, 255, 255, 0.95);
+	border: 1px solid #e5edf6;
+	border-radius: 18px;
+	padding: 1rem 1.1rem;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.plantilla-fila-card:hover {
+	transform: translateY(-3px);
+	border-color: #bfdbfe;
+	box-shadow: 0 0.9rem 1.8rem rgba(15, 23, 42, 0.08);
+}
+
+.fila-info {
+	display: flex;
+	align-items: center;
+	gap: 0.9rem;
+	min-width: 0;
+}
+
+.fila-texto {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	min-width: 0;
+}
+
+.fila-titulo-wrap {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-width: 0;
+}
+
+.fila-titulo {
+	color: #0f172a;
+	font-size: 1.05rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fila-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	font-size: 0.82rem;
+	color: #64748b;
+}
+
+.separador-meta {
+	color: #94a3b8;
+	font-weight: 700;
+}
+
+.fila-acciones {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	flex-shrink: 0;
+}
+
 @media (max-width: 767.98px) {
 	.plantilla-stats {
 		grid-template-columns: 1fr;
@@ -204,5 +309,19 @@
 
 	.usuario-badge {
 		display: none;
+	}
+
+	.crear-plantilla-row,
+	.plantilla-fila-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.fila-acciones {
+		width: 100%;
+	}
+
+	.fila-acciones .btn {
+		flex: 1;
 	}
 }

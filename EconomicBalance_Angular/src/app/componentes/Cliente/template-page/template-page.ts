@@ -68,7 +68,7 @@ export class TemplatePage implements OnInit {
   popupCampoVisible = false;
   bloqueSeleccionado: Bloque | null = null;
   campoEditandoId: string | null = null;
-  modoCampoManual = false;
+  modoCampoManual = true;
   camposMaestros: CampoMaestro[] = [];
   campoMaestroSeleccionadoId = '';
   guardandoCampoMaestro = false;
@@ -306,11 +306,8 @@ ngOnInit(): void {
       concepto: '',
       importe: 0,
     };
-    this.modoCampoManual = this.camposMaestros.length === 0;
+    this.modoCampoManual = true;
     this.campoMaestroSeleccionadoId = this.camposMaestros[0]?._id || '';
-    if (!this.modoCampoManual) {
-      this.aplicarCampoMaestroSeleccionado();
-    }
 
     this.popupCampoVisible = true;
     this.cerrarMenus();
@@ -504,6 +501,21 @@ ngOnInit(): void {
     this.popupResumenVisible = true;
     this.tipoResumenSeleccionado = 'gasto';
     this.camposResumenSeleccionadosKeys = [];
+  }
+
+  abrirPopupGraficaDesdeMenu(): void {
+    this.cerrarMenus();
+    this.abrirPopupGrafica();
+  }
+
+  abrirPopupImportacionDesdeMenu(): void {
+    this.cerrarMenus();
+    this.abrirPopupImportacion();
+  }
+
+  abrirPopupResumenDesdeMenu(): void {
+    this.cerrarMenus();
+    this.abrirPopupResumen();
   }
 
   cerrarPopupResumen(): void {
@@ -1044,7 +1056,7 @@ ngOnInit(): void {
   }
 
   volverAlDashboard(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/mis-plantillas']);
   }
 
   private limpiarMensajeGuardado(): void {
@@ -1212,7 +1224,7 @@ ngOnInit(): void {
   }
 
   private resetEstadoCampoMaestro(): void {
-    this.modoCampoManual = false;
+    this.modoCampoManual = true;
     this.campoMaestroSeleccionadoId = this.camposMaestros[0]?._id || '';
     this.nuevoCampoMaestro = {
       nombre: '',
