@@ -152,6 +152,52 @@
 .notif-dropdown-wrapper {
   position: absolute;
   top: 72px;
-  right: 155px;
+  right: 185px;
   z-index: 9999;
+}
+
+/* 🔵 Ajuste para zoom 110% – 125% o pantallas medianas */
+@media (max-width: 1350px) {
+  .header-right {
+    gap: 0.8rem;
+  }
+
+  .user-block span {
+    font-size: 0.85rem;
+  }
+
+  .user-avatar,
+  .user-avatar-img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .notif-dropdown-wrapper {
+    transform: translateX(-10px); 
+  }
+}
+
+@media (max-width: 1200px) {
+  .dashboard-header {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .user-block span {
+    display: none; 
+  }
+
+  .notif-dropdown-wrapper {
+    transform: translateX(-25px); 
+  }
+}
+
+
+@media (max-width: 1000px) {
+  .header-right {
+    gap: 0.4rem;
+  }
+
+  .notif-dropdown-wrapper {
+    transform: translateX(-40px);
+  }
 }

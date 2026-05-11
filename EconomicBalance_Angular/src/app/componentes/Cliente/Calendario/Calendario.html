@@ -12,11 +12,17 @@
       </div>
 
       <div class="calendar-actions">
-        <button class="btn btn-outline-dark" (click)="mesAnterior()">‹</button>
+        <button class="calendar-nav-btn" (click)="mesAnterior()">
+          ←
+        </button>
+
         <div class="calendar-month">
           {{ nombreMesActual }} {{ anioActual }}
         </div>
-        <button class="btn btn-outline-dark" (click)="mesSiguiente()">›</button>
+
+        <button class="calendar-nav-btn" (click)="mesSiguiente()">
+          →
+        </button>
       </div>
     </div>
 
