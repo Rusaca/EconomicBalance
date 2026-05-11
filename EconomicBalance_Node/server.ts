@@ -10,6 +10,7 @@ import rutasCliente from './config_server_express/config_enrutamiento/endPointsC
 import rutasPlantilla from './config_server_express/config_enrutamiento/endPointsPlantilla';
 import endPointsTienda from './config_server_express/config_enrutamiento/endPointsTienda';
 import endPointsCampoMaestro from './config_server_express/config_enrutamiento/endPointsCampoMaestro';
+import endPointsMetasAhorro from './config_server_express/config_enrutamiento/endPointsMetasAhorro';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use('/api/plantillas', rutasPlantilla);
 app.use('/api/tienda', endPointsTienda);
 app.use('/api/campos-maestros', endPointsCampoMaestro);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/api/metas-ahorro', endPointsMetasAhorro);
 
 mongoose
   .connect(MONGO_URI)

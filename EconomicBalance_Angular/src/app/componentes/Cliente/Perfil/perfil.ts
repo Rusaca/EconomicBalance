@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../servicios/auth-api.service';
@@ -49,17 +49,24 @@ export class PerfilComponent implements OnInit {
   inicioArrastreX: number = 0;
   inicioArrastreY: number = 0;
 
+  dragActivo = false;
+  ultimaX = 0;
+  ultimaY = 0;
+
   constructor(
     private router: Router,
-    private authApiService: AuthApiService
+    private authApiService: AuthApiService,
+    private cdr: ChangeDetectorRef
   ) {
     document.addEventListener('mousemove', this.moverArrastreGlobal);
     document.addEventListener('mouseup', this.finalizarArrastre);
   }
+
   ngOnDestroy(): void {
     document.removeEventListener('mousemove', this.moverArrastreGlobal);
     document.removeEventListener('mouseup', this.finalizarArrastre);
   }
+
   ngOnInit(): void {
     const usuarioGuardado = localStorage.getItem('usuario');
 
@@ -80,11 +87,14 @@ export class PerfilComponent implements OnInit {
       fotoPerfil: usuario.fotoPerfil || '',
       genero: usuario.genero || '',
     };
+
+    this.cdr.detectChanges();
   }
 
   async guardarPerfil(): Promise<void> {
     this.mensajePerfil = '';
     this.errorPerfil = '';
+    this.cdr.detectChanges();
 
     if (
       !this.perfil.nombre.trim() ||
@@ -92,11 +102,13 @@ export class PerfilComponent implements OnInit {
       !this.perfil.correo.trim()
     ) {
       this.errorPerfil = 'Completa nombre, apellidos y correo.';
+      this.cdr.detectChanges();
       return;
     }
 
     if (!this.perfil.correo.includes('@')) {
       this.errorPerfil = 'Introduce un correo valido.';
+      this.cdr.detectChanges();
       return;
     }
 
@@ -105,6 +117,7 @@ export class PerfilComponent implements OnInit {
       !/^[0-9\s()-]{7,20}$/.test(this.perfil.telefono.trim())
     ) {
       this.errorPerfil = 'Introduce un numero de telefono valido.';
+      this.cdr.detectChanges();
       return;
     }
 
@@ -122,6 +135,7 @@ export class PerfilComponent implements OnInit {
 
       if (!respuesta?.ok) {
         this.errorPerfil = respuesta?.mensaje || 'No se pudo actualizar el perfil.';
+        this.cdr.detectChanges();
         return;
       }
 
@@ -143,40 +157,48 @@ export class PerfilComponent implements OnInit {
       }
 
       this.mensajePerfil = respuesta?.mensaje || 'Perfil actualizado correctamente.';
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Error actualizando perfil:', error);
       this.errorPerfil = 'Error al actualizar el perfil.';
+      this.cdr.detectChanges();
     }
   }
 
   seleccionarPrefijo(prefijo: string): void {
     this.perfil.prefijoTelefono = prefijo;
     this.mostrarPrefijos = false;
+    this.cdr.detectChanges();
   }
 
   procesarArchivoTemporal(archivo: File): void {
-
     if (this.fotoTemporal) {
       this.errorPerfil = 'Ya tienes una imagen. Elimínala para cambiarla.';
+      this.cdr.detectChanges();
       return;
     }
 
     if (!archivo.type.startsWith('image/')) {
       this.errorPerfil = 'Archivo no válido.';
+      this.cdr.detectChanges();
       return;
     }
 
     this.errorPerfil = '';
     this.fotoTemporal = URL.createObjectURL(archivo);
+    this.cdr.detectChanges();
   }
+
   abrirSelector(input: HTMLInputElement): void {
     if (this.fotoTemporal) {
       this.errorPerfil = 'Primero elimina la imagen actual para cambiarla.';
+      this.cdr.detectChanges();
       return;
     }
 
     input.click();
   }
+
   borrarImagenTemporal(): void {
     if (this.fotoTemporal) {
       URL.revokeObjectURL(this.fotoTemporal);
@@ -186,7 +208,9 @@ export class PerfilComponent implements OnInit {
     this.desplazamientoX = 0;
     this.desplazamientoY = 0;
     this.errorPerfil = '';
+    this.cdr.detectChanges();
   }
+
   onSeleccionarFoto(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || !input.files.length) return;
@@ -207,17 +231,13 @@ export class PerfilComponent implements OnInit {
     this.procesarArchivoTemporal(archivo);
   }
 
-
-  dragActivo = false;
-  ultimaX = 0;
-  ultimaY = 0;
-
   iniciarArrastre(event: MouseEvent): void {
     if (!this.fotoTemporal) return;
 
     this.dragActivo = true;
     this.ultimaX = event.clientX;
     this.ultimaY = event.clientY;
+    this.cdr.detectChanges();
   }
 
   moverArrastreGlobal = (event: MouseEvent): void => {
@@ -231,16 +251,19 @@ export class PerfilComponent implements OnInit {
 
     this.ultimaX = event.clientX;
     this.ultimaY = event.clientY;
+    this.cdr.detectChanges();
   };
 
   finalizarArrastre = (): void => {
     this.dragActivo = false;
+    this.cdr.detectChanges();
   };
 
   abrirModalFoto(): void {
     this.mostrarModalFoto = true;
     this.errorPerfil = '';
     this.mensajePerfil = '';
+    this.cdr.detectChanges();
   }
 
   cerrarModalFoto(): void {
@@ -255,6 +278,7 @@ export class PerfilComponent implements OnInit {
     this.desplazamientoX = 0;
     this.desplazamientoY = 0;
     this.dragActivo = false;
+    this.cdr.detectChanges();
   }
 
   dataURLtoFile(dataUrl: string, filename: string): Promise<File> {
@@ -318,6 +342,7 @@ export class PerfilComponent implements OnInit {
 
       if (!imagenRecortada) {
         this.errorPerfil = 'No se pudo preparar la imagen.';
+        this.cdr.detectChanges();
         return;
       }
 
@@ -326,6 +351,7 @@ export class PerfilComponent implements OnInit {
 
       if (!respuesta?.ok) {
         this.errorPerfil = respuesta?.mensaje || 'No se pudo subir la foto.';
+        this.cdr.detectChanges();
         return;
       }
 
@@ -336,9 +362,11 @@ export class PerfilComponent implements OnInit {
       localStorage.setItem('usuario', JSON.stringify(usuarioGuardado));
 
       this.mensajePerfil = 'Foto actualizada correctamente.';
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Error subiendo foto:', error);
       this.errorPerfil = 'Error al subir la foto.';
+      this.cdr.detectChanges();
     }
 
     this.cerrarModalFoto();
@@ -350,6 +378,7 @@ export class PerfilComponent implements OnInit {
 
       if (!respuesta?.ok) {
         this.errorPerfil = respuesta?.mensaje || 'No se pudo eliminar la foto.';
+        this.cdr.detectChanges();
         return;
       }
 
@@ -361,16 +390,17 @@ export class PerfilComponent implements OnInit {
       localStorage.setItem('usuario', JSON.stringify(usuarioGuardado));
 
       this.mensajePerfil = 'Foto eliminada correctamente.';
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('Error eliminando foto:', error);
       this.errorPerfil = 'Error al eliminar la foto.';
+      this.cdr.detectChanges();
     }
   }
 
   volver(): void {
     this.router.navigate(['/dashboard']);
   }
-
 
   onPaste(event: ClipboardEvent): void {
     event.preventDefault();
