@@ -1,8 +1,12 @@
 <app-header-autenticado></app-header-autenticado>
 
 <div class="metas-page">
+
   <div class="metas-shell">
+
+    <!-- HEADER -->
     <section class="metas-header">
+
       <div>
         <p class="metas-tag">Ahorro</p>
         <h2>Metas de ahorro</h2>
@@ -11,11 +15,17 @@
         </p>
       </div>
 
-      <button class="btn btn-primary metas-add-btn" type="button" (click)="toggleFormulario()">
+      <button
+        class="btn btn-primary metas-add-btn"
+        type="button"
+        (click)="toggleFormulario()"
+      >
         {{ mostrarFormulario ? 'Cerrar formulario' : '+ Nueva meta' }}
       </button>
+
     </section>
 
+    <!-- MENSAJES -->
     <div *ngIf="mensajeMeta" class="meta-feedback meta-feedback-ok">
       {{ mensajeMeta }}
     </div>
@@ -24,88 +34,117 @@
       {{ errorMeta }}
     </div>
 
+    <!-- FORMULARIO -->
     <section *ngIf="mostrarFormulario" class="meta-form-card">
+
       <div class="meta-form-card-body">
-        <h5>Nueva meta</h5>
+
+        <h5>
+          {{ modoEdicion ? 'Editar meta' : 'Nueva meta' }}
+        </h5>
 
         <div class="meta-form-grid">
+
           <div class="meta-field">
-            <label for="titulo">Titulo</label>
-            <input id="titulo" type="text" [(ngModel)]="nuevaMetaData.titulo" placeholder="Ej: Viaje a Roma" />
+            <label>Titulo</label>
+            <input type="text" [(ngModel)]="nuevaMetaData.titulo" />
           </div>
 
           <div class="meta-field">
-            <label for="objetivo">Objetivo (€)</label>
-            <input id="objetivo" type="number" min="1" [(ngModel)]="nuevaMetaData.objetivo" placeholder="3000" />
+            <label>Objetivo (€)</label>
+            <input type="number" [(ngModel)]="nuevaMetaData.objetivo" />
           </div>
 
           <div class="meta-field">
-            <label for="actual">Ahorrado (€)</label>
-            <input id="actual" type="number" min="0" [(ngModel)]="nuevaMetaData.actual" placeholder="500" />
+            <label>Ahorrado (€)</label>
+            <input type="number" [(ngModel)]="nuevaMetaData.actual" />
           </div>
 
           <div class="meta-field">
-            <label for="fechaLimite">Fecha limite</label>
-            <input id="fechaLimite" type="date" [(ngModel)]="nuevaMetaData.fechaLimite" />
+            <label>Fecha limite</label>
+            <input type="date" [(ngModel)]="nuevaMetaData.fechaLimite" />
           </div>
+
         </div>
 
         <div class="meta-form-actions">
-          <button class="btn btn-success" type="button" (click)="guardarMeta()" [disabled]="guardandoMeta">
-            {{ guardandoMeta ? 'Guardando...' : 'Guardar meta' }}
+
+          <button
+            class="btn btn-success"
+            type="button"
+            (click)="guardarMeta()"
+            [disabled]="guardandoMeta"
+          >
+            {{ guardandoMeta
+              ? 'Guardando...'
+              : (modoEdicion ? 'Guardar cambios' : 'Guardar meta')
+            }}
           </button>
 
-          <button class="btn btn-outline-secondary" type="button" (click)="cancelarFormulario()" [disabled]="guardandoMeta">
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="cancelarFormulario()"
+          >
             Cancelar
           </button>
+
         </div>
+
       </div>
+
     </section>
 
-    <section *ngIf="cargandoMetas" class="meta-loading-card">
-      Cargando metas...
-    </section>
+    <!-- METAS -->
+    <section class="metas-grid">
 
-    <section *ngIf="!cargandoMetas && metas.length === 0" class="meta-empty-card">
-      <h3>Aun no tienes metas creadas</h3>
-      <p>Empieza creando tu primer objetivo de ahorro para llevar un seguimiento real.</p>
-      <button class="btn btn-dark" type="button" (click)="toggleFormulario()">
-        Crear primera meta
-      </button>
-    </section>
+      <article
+        class="meta-card"
+        *ngFor="let meta of metas; trackBy: trackByMeta"
+      >
 
-    <section *ngIf="!cargandoMetas && metas.length > 0" class="metas-grid">
-      <article class="meta-card" *ngFor="let meta of metas; trackBy: trackByMeta">
         <div class="meta-card-body">
+
           <div class="meta-card-top">
+
             <div>
               <h5>{{ meta.titulo }}</h5>
-              <span
-                class="meta-status-pill"
-                [ngClass]="{
-                  'meta-status-ok': metaCompletada(meta),
-                  'meta-status-warn': metaVencida(meta),
-                  'meta-status-progress': !metaCompletada(meta) && !metaVencida(meta)
-                }"
-              >
+
+              <span class="meta-status-pill">
                 {{ obtenerEstadoMeta(meta) }}
               </span>
             </div>
 
             <div class="meta-card-actions">
-              <span class="meta-progress-pill">{{ obtenerTextoProgreso(meta) }}</span>
+
+              <span class="meta-progress-pill">
+                {{ obtenerTextoProgreso(meta) }}
+              </span>
+
+              <!-- 🔵 BOTÓN EDITAR -->
+              <button
+                class="meta-edit-btn"
+                type="button"
+                (click)="toggleFormulario(meta)"
+              >
+                Editar
+              </button>
+
               <button
                 class="meta-delete-btn"
                 type="button"
                 (click)="eliminarMeta(meta)"
                 [disabled]="eliminandoMetaId === meta.id"
               >
-                {{ eliminandoMetaId === meta.id ? 'Eliminando...' : 'Quitar' }}
+                {{ eliminandoMetaId === meta.id ? '...' : 'Quitar' }}
               </button>
+
             </div>
+
           </div>
 
           <div class="meta-numbers">
+
             <div class="meta-number-box">
               <span>Objetivo</span>
               <strong>{{ meta.objetivo }} €</strong>
@@ -120,55 +159,52 @@
               <span>Restante</span>
               <strong>{{ calcularRestante(meta) }} €</strong>
             </div>
+
           </div>
 
           <p class="meta-date">
-            Fecha limite:
-            <strong>{{ meta.fechaLimite }}</strong>
+            Fecha limite: <strong>{{ meta.fechaLimite }}</strong>
           </p>
 
           <div class="progress meta-progress-bar">
+
             <div
               class="progress-bar"
-              [ngClass]="{
-                'bg-success': metaCompletada(meta),
-                'bg-warning': metaVencida(meta),
-                'bg-primary': !metaCompletada(meta) && !metaVencida(meta)
-              }"
-              role="progressbar"
               [style.width.%]="calcularProgreso(meta)"
             ></div>
+
           </div>
+
         </div>
+
       </article>
+
     </section>
 
-    <section class="ahorro-mensual-card" *ngIf="ahorroMensual.length > 0">
-      <div class="ahorro-mensual-header">
-        <div>
-          <p class="metas-tag">Resumen</p>
-          <h3>Ahorro por mes</h3>
-          <p class="ahorro-mensual-subtitle">
-            Revisa la evolucion mensual de tus movimientos de ahorro.
-          </p>
-        </div>
+    <!-- RESUMEN MENSUAL -->
+    <section class="resumen-meses-section">
+
+      <div class="resumen-header">
+
+        <p class="metas-tag">Resumen anual</p>
+        <h3>Dinero restante por meses</h3>
+
       </div>
 
-      <div *ngIf="cargandoResumen" class="meta-loading-inline">
-        Cargando resumen...
+      <div class="meses-scroll-container">
+
+        <div
+          class="mes-card"
+          *ngFor="let mes of resumenMeses"
+        >
+          <span class="mes-nombre">{{ mes.mes }}</span>
+          <strong class="mes-total">{{ mes.total }} €</strong>
+        </div>
+
       </div>
 
-      <div class="ahorro-carrusel" *ngIf="!cargandoResumen">
-        <div class="ahorro-carrusel-track">
-          <div class="ahorro-mes-item" *ngFor="let item of ahorroMensual">
-            <span class="ahorro-mes-nombre">{{ item.etiqueta }}</span>
-            <strong class="ahorro-mes-cantidad">
-              {{ item.total }} €
-            </strong>
-          </div>
-        </div>
-      </div>
     </section>
+
   </div>
-</div>
 
+</div>

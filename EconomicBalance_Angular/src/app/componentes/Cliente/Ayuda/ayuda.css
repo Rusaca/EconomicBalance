@@ -5,11 +5,14 @@
 }
 
 .ayuda-shell {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 1.2rem;
+  padding-right: 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
-
 .ayuda-hero-card,
 .ayuda-status-card,
 .ayuda-card,
