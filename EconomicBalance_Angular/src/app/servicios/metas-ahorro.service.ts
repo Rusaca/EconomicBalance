@@ -101,4 +101,26 @@ export class MetasAhorroService {
       }
     };
   }
+  async editarMeta(
+  id: string,
+  payload: CrearMetaAhorroPayload
+): Promise<ApiResponse<{ meta: MetaAhorro }>> {
+
+  const userId = this.obtenerUserId();
+
+  const data: any = await firstValueFrom(
+    this.http.put(`${this.baseUrl}/${id}`, {
+      ...payload,
+      userId
+    })
+  );
+
+  return {
+    ok: data?.ok === true,
+    mensaje: data?.mensaje || '',
+    data: data?.data?.meta
+      ? { meta: this.normalizarMeta(data.data.meta) }
+      : undefined
+  };
+}
 }

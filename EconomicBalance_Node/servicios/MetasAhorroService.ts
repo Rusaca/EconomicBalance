@@ -67,4 +67,30 @@ export class MetasAhorroService {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([, valor]) => valor);
   }
+
+  async editarMeta(
+  id: string,
+  userId: string,
+  payload: IMetaAhorro
+) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+
+  return MetaAhorroModel.findOneAndUpdate(
+    {
+      _id: id,
+      userId
+    },
+    {
+      titulo: payload.titulo,
+      objetivo: payload.objetivo,
+      actual: payload.actual,
+      fechaLimite: payload.fechaLimite
+    },
+    {
+      new: true
+    }
+  ).lean();
+}
 }
