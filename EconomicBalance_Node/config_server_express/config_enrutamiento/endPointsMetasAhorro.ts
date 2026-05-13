@@ -240,5 +240,29 @@ router.get('/resumen-mensual', async (req: Request, res: Response) => {
     });
   }
 });
+// =========================
+// ENVIAR RESUMEN POR CORREO
+// =========================
+router.post('/enviar-correo', async (req: Request, res: Response) => {
+  try {
+    const respuesta = await metasAhorroService.enviarResumenCorreo(req.body);
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error interno al enviar el resumen por correo.'
+    });
+  }
+});
+
+
+// =========================
+// ENVIAR RESUMEN AL MÓVIL
+// =========================
+router.post('/enviar-movil', async (req, res) => {
+  const respuesta = await metasAhorroService.enviarResumenMovil(req.body);
+  return res.status(200).json(respuesta);
+});
 
 export default router;

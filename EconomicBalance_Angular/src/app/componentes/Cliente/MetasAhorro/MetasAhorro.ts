@@ -11,11 +11,16 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 
+import { ResumenService } from '../../../servicios/resumen.service';
+
 import { FormsModule } from '@angular/forms';
 
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 
 import { MetasAhorroService } from '../../../servicios/metas-ahorro.service';
+
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 import {
   CrearMetaAhorroPayload,
@@ -44,23 +49,17 @@ interface ResumenMesVisual {
 export class MetasAhorroComponent implements OnInit {
 
   metas: MetaAhorro[] = [];
-
   resumenMeses: ResumenMesVisual[] = [];
-
   mostrarFormulario = false;
-
   cargandoMetas = false;
-
   guardandoMeta = false;
-
   eliminandoMetaId = '';
-
   mensajeMeta = '';
-
   errorMeta = '';
-
   modoEdicion = false;
   metaEditandoId: string | null = null;
+
+  usuario: any = {};   // ← AÑADIR AQUÍ
 
   nuevaMetaData: CrearMetaAhorroPayload = {
     titulo: '',
@@ -71,17 +70,23 @@ export class MetasAhorroComponent implements OnInit {
 
   constructor(
     private metasAhorroService: MetasAhorroService,
+    private resumenService: ResumenService,
     private cdr: ChangeDetectorRef
   ) { }
 
   async ngOnInit(): Promise<void> {
 
+    const usuarioGuardado = localStorage.getItem('usuario');
+
+    if (usuarioGuardado) {
+      this.usuario = JSON.parse(usuarioGuardado);
+    }
+
     await this.cargarMetas();
-
     this.generarResumenMensual();
-
     this.cdr.detectChanges();
   }
+
 
 
   toggleFormulario(meta?: MetaAhorro): void {
@@ -114,6 +119,51 @@ export class MetasAhorroComponent implements OnInit {
         this.resetFormulario();
       }
     }
+  }
+  exportarExcel(): void {
+
+    const metasData = this.metas.map(meta => {
+
+      // Obtener el mes de la meta
+      const fecha = new Date(meta.fechaLimite);
+      const mesIndex = fecha.getMonth(); // 0 = Enero
+      const totalMes = this.resumenMeses[mesIndex]?.total ?? 0;
+
+      return {
+        Titulo: meta.titulo,
+        Objetivo: meta.objetivo,
+        Gastado: meta.actual,
+        Ahorrado: meta.objetivo - meta.actual,
+        Progreso: `${this.calcularProgreso(meta).toFixed(0)}%`,
+        Estado: this.obtenerEstadoMeta(meta),
+        FechaLimite: meta.fechaLimite,
+        TotalMes: totalMes   // ← NUEVA COLUMNA
+      };
+    });
+
+    const mesesData = this.resumenMeses.map(m => ({
+      Mes: m.mes,
+      Total: m.total
+    }));
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+    const wsMetas = XLSX.utils.json_to_sheet(metasData);
+    const wsMeses = XLSX.utils.json_to_sheet(mesesData);
+
+    XLSX.utils.book_append_sheet(wb, wsMetas, 'Metas');
+    XLSX.utils.book_append_sheet(wb, wsMeses, 'Resumen Mensual');
+
+    const excelBuffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/octet-stream'
+    });
+
+    saveAs(data, `resumen-ahorro-${new Date().toISOString().slice(0, 10)}.xlsx`);
   }
 
   cancelarFormulario(): void {
@@ -323,6 +373,56 @@ export class MetasAhorroComponent implements OnInit {
       this.cdr.detectChanges();
     }
   }
+
+  async enviarResumenCorreo(): Promise<void> {
+
+    try {
+
+      const payload = {
+        resumenMeses: this.resumenMeses,
+        metas: this.metas,
+        correoDestino: this.usuario.correo
+      };
+
+      await this.resumenService.enviarResumenCorreo(payload);
+
+      this.mensajeMeta = 'Resumen enviado correctamente por correo';
+
+    } catch (error) {
+
+      this.errorMeta = 'No se pudo enviar el resumen por correo';
+
+    }
+  }
+
+
+  async enviarResumenMovil(): Promise<void> {
+
+    try {
+
+      const payload = {
+        resumenMeses: this.resumenMeses,
+        metas: this.metas,
+        usuarioId: this.usuario.id,
+        telefono: this.usuario.telefono,
+        prefijoTelefono: this.usuario.prefijoTelefono
+      };
+
+      console.log("📨 Payload enviado al backend:", payload);
+
+      await this.resumenService.enviarResumenMovil(payload);
+
+      this.mensajeMeta = 'Resumen enviado al móvil correctamente';
+
+    } catch (error) {
+
+      this.errorMeta = 'No se pudo enviar el resumen al móvil';
+
+    }
+  }
+
+
+
 
 
   async cargarMetas(): Promise<void> {

@@ -8,18 +8,22 @@
     <section class="metas-header">
 
       <div>
-        <p class="metas-tag">Ahorro</p>
-        <h2>Metas de ahorro</h2>
-        <p class="metas-subtitle">
-          Define objetivos reales, sigue tu progreso y controla cuánto te falta para alcanzarlos.
+
+        <p class="metas-tag">
+          Ahorro
         </p>
+
+        <h2>
+          Metas de ahorro
+        </h2>
+
+        <p class="metas-subtitle">
+          Define objetivos reales, sigue tu progreso y controla tus gastos y ahorros mensuales.
+        </p>
+
       </div>
 
-      <button
-        class="btn btn-primary metas-add-btn"
-        type="button"
-        (click)="toggleFormulario()"
-      >
+      <button class="btn btn-primary metas-add-btn" type="button" (click)="toggleFormulario()">
         {{ mostrarFormulario ? 'Cerrar formulario' : '+ Nueva meta' }}
       </button>
 
@@ -46,7 +50,7 @@
         <div class="meta-form-grid">
 
           <div class="meta-field">
-            <label>Titulo</label>
+            <label>Título</label>
             <input type="text" [(ngModel)]="nuevaMetaData.titulo" />
           </div>
 
@@ -56,12 +60,12 @@
           </div>
 
           <div class="meta-field">
-            <label>Ahorrado (€)</label>
+            <label>Gastado (€)</label>
             <input type="number" [(ngModel)]="nuevaMetaData.actual" />
           </div>
 
           <div class="meta-field">
-            <label>Fecha limite</label>
+            <label>Fecha límite</label>
             <input type="date" [(ngModel)]="nuevaMetaData.fechaLimite" />
           </div>
 
@@ -69,23 +73,11 @@
 
         <div class="meta-form-actions">
 
-          <button
-            class="btn btn-success"
-            type="button"
-            (click)="guardarMeta()"
-            [disabled]="guardandoMeta"
-          >
-            {{ guardandoMeta
-              ? 'Guardando...'
-              : (modoEdicion ? 'Guardar cambios' : 'Guardar meta')
-            }}
+          <button class="btn btn-success" type="button" (click)="guardarMeta()" [disabled]="guardandoMeta">
+            {{ guardandoMeta ? 'Guardando...' : (modoEdicion ? 'Guardar cambios' : 'Guardar meta') }}
           </button>
 
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            (click)="cancelarFormulario()"
-          >
+          <button class="btn btn-outline-secondary" type="button" (click)="cancelarFormulario()">
             Cancelar
           </button>
 
@@ -95,24 +87,23 @@
 
     </section>
 
-    <!-- METAS -->
+    <!-- GRID METAS -->
     <section class="metas-grid">
 
-      <article
-        class="meta-card"
-        *ngFor="let meta of metas; trackBy: trackByMeta"
-      >
+      <article class="meta-card" *ngFor="let meta of metas; trackBy: trackByMeta">
 
         <div class="meta-card-body">
 
           <div class="meta-card-top">
 
             <div>
+
               <h5>{{ meta.titulo }}</h5>
 
               <span class="meta-status-pill">
                 {{ obtenerEstadoMeta(meta) }}
               </span>
+
             </div>
 
             <div class="meta-card-actions">
@@ -121,21 +112,12 @@
                 {{ obtenerTextoProgreso(meta) }}
               </span>
 
-              <!-- 🔵 BOTÓN EDITAR -->
-              <button
-                class="meta-edit-btn"
-                type="button"
-                (click)="toggleFormulario(meta)"
-              >
+              <button class="meta-edit-btn" (click)="toggleFormulario(meta)">
                 Editar
               </button>
 
-              <button
-                class="meta-delete-btn"
-                type="button"
-                (click)="eliminarMeta(meta)"
-                [disabled]="eliminandoMetaId === meta.id"
-              >
+              <button class="meta-delete-btn" type="button" (click)="eliminarMeta(meta)"
+                [disabled]="eliminandoMetaId === meta.id">
                 {{ eliminandoMetaId === meta.id ? '...' : 'Quitar' }}
               </button>
 
@@ -143,6 +125,7 @@
 
           </div>
 
+          <!-- NUMEROS -->
           <div class="meta-numbers">
 
             <div class="meta-number-box">
@@ -151,28 +134,23 @@
             </div>
 
             <div class="meta-number-box">
-              <span>Ahorrado</span>
+              <span>Gastado</span>
               <strong>{{ meta.actual }} €</strong>
             </div>
 
             <div class="meta-number-box">
-              <span>Restante</span>
+              <span>Ahorrado</span>
               <strong>{{ calcularRestante(meta) }} €</strong>
             </div>
 
           </div>
 
           <p class="meta-date">
-            Fecha limite: <strong>{{ meta.fechaLimite }}</strong>
+            Fecha límite: <strong>{{ meta.fechaLimite }}</strong>
           </p>
 
           <div class="progress meta-progress-bar">
-
-            <div
-              class="progress-bar"
-              [style.width.%]="calcularProgreso(meta)"
-            ></div>
-
+            <div class="progress-bar" [style.width.%]="calcularProgreso(meta)"></div>
           </div>
 
         </div>
@@ -181,24 +159,88 @@
 
     </section>
 
-    <!-- RESUMEN MENSUAL -->
-    <section class="resumen-meses-section">
+    <!-- GRAFICA -->
+    <section class="grafica-section">
 
-      <div class="resumen-header">
+      <div class="grafica-card">
 
-        <p class="metas-tag">Resumen anual</p>
-        <h3>Dinero restante por meses</h3>
+        <div class="grafica-header">
+
+          <div>
+
+            <p class="metas-tag">Resumen anual</p>
+
+            <h3>Evolución mensual</h3>
+
+            <p class="grafica-subtitle">
+              Visualiza el ahorro restante de cada mes.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="grafica-wrapper">
+
+          <div class="grafica-item" *ngFor="let mes of resumenMeses">
+
+            <div class="grafica-bar-wrapper">
+
+              <div class="grafica-bar" [style.height.%]="mes.total > 1000 ? 100 : (mes.total / 10)"></div>
+
+            </div>
+
+            <strong class="grafica-total">
+              {{ mes.total }}€
+            </strong>
+
+            <span class="grafica-mes">
+              {{ mes.mes }}
+            </span>
+
+          </div>
+
+        </div>
 
       </div>
 
-      <div class="meses-scroll-container">
+    </section>
 
-        <div
-          class="mes-card"
-          *ngFor="let mes of resumenMeses"
-        >
-          <span class="mes-nombre">{{ mes.mes }}</span>
-          <strong class="mes-total">{{ mes.total }} €</strong>
+    <!-- ACCIONES NUEVAS -->
+    <section class="acciones-section">
+
+      <div class="acciones-card">
+
+        <div class="acciones-header">
+
+          <p class="metas-tag">
+            Exportación
+          </p>
+
+          <h3>
+            Enviar y descargar resumen
+          </h3>
+
+          <p class="grafica-subtitle">
+            Recibe tu resumen mensual por correo, móvil o descárgalo en PDF.
+          </p>
+
+        </div>
+
+        <div class="acciones-buttons">
+
+          <button class="accion-btn accion-email" type="button" (click)="enviarResumenCorreo()">
+            📧 Enviar por correo
+          </button>
+
+          <button class="accion-btn accion-sms" type="button" (click)="enviarResumenMovil()">
+            📱 Enviar al móvil
+          </button>
+
+          <button class="accion-btn accion-excel" type="button" (click)="exportarExcel()">
+            📊 Descargar Excel
+          </button>
+
         </div>
 
       </div>

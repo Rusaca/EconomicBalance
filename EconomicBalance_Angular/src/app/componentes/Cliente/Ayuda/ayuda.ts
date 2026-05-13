@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 import { SoporteApiService } from '../../../servicios/soporte-api.service';
+import { RouterModule } from '@angular/router';
 
 interface PreguntaFrecuente {
   pregunta: string;
@@ -12,7 +13,12 @@ interface PreguntaFrecuente {
 @Component({
   selector: 'app-ayuda',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderAutenticado],
+  imports: [
+  CommonModule,
+  FormsModule,
+  HeaderAutenticado,
+  RouterModule
+],
   templateUrl: './ayuda.html',
   styleUrl: './ayuda.css'
 })

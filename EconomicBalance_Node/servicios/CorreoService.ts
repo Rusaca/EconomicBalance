@@ -413,7 +413,135 @@ export const enviarConfirmacionSoporteUsuario = async (
     </html>
     `
   });
+
+  
 };
+
+export const enviarCorreoResumen = async (
+  correo: string,
+  metas: any[],
+  resumenMeses: any[]
+) => {
+
+  const html = `
+  <!DOCTYPE html>
+  <html lang="es">
+    <body style="margin:0; padding:0; background:#f5f7fa; font-family:Arial, sans-serif;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+        <tr>
+          <td align="center">
+
+            <table width="520" cellpadding="0" cellspacing="0" 
+                   style="background:#ffffff; border-radius:12px; padding:40px; 
+                          box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+
+              <!-- LOGO -->
+              <tr>
+                <td align="center" style="padding-bottom:25px;">
+                  <img src="https://raw.githubusercontent.com/Rusaca/EconomicBalance/master/EconomicBalance_Angular/public/Logo.png"
+                       alt="Economic Balance"
+                       width="140"
+                       style="display:block; margin:auto;">
+                </td>
+              </tr>
+
+              <!-- TÍTULO -->
+              <tr>
+                <td style="font-size:22px; font-weight:bold; color:#333; text-align:center; padding-bottom:10px;">
+                  Resumen de tus Metas de Ahorro
+                </td>
+              </tr>
+
+              <!-- TEXTO PRINCIPAL -->
+              <tr>
+                <td style="font-size:15px; color:#555; line-height:1.6; text-align:center; padding-bottom:25px;">
+                  Aquí tienes un resumen actualizado de tus metas de ahorro y el estado mensual.
+                </td>
+              </tr>
+
+              <!-- SECCIÓN METAS -->
+              <tr>
+                <td style="font-size:18px; font-weight:bold; color:#333; padding-bottom:10px;">
+                  Metas registradas
+                </td>
+              </tr>
+
+              <tr>
+                <td style="font-size:14px; color:#555; line-height:1.6; padding-bottom:25px;">
+                  <ul style="padding-left:20px; margin:0;">
+                    ${metas.map(m => `
+                      <li style="margin-bottom:8px;">
+                        <strong>${m.titulo}</strong><br>
+                        Objetivo: ${m.objetivo} €<br>
+                        Actual: ${m.actual} €<br>
+                        Restante: ${Math.max(m.objetivo - m.actual, 0)} €
+                      </li>
+                    `).join('')}
+                  </ul>
+                </td>
+              </tr>
+
+              <!-- SECCIÓN RESUMEN MENSUAL -->
+              <tr>
+                <td style="font-size:18px; font-weight:bold; color:#333; padding-bottom:10px;">
+                  Resumen mensual
+                </td>
+              </tr>
+
+              <tr>
+                <td style="font-size:14px; color:#555; line-height:1.6; padding-bottom:25px;">
+                  <ul style="padding-left:20px; margin:0;">
+                    ${resumenMeses.map(r => `
+                      <li style="margin-bottom:6px;">
+                        <strong>${r.mes}:</strong> ${r.total} €
+                      </li>
+                    `).join('')}
+                  </ul>
+                </td>
+              </tr>
+
+              <!-- BOTÓN -->
+              <tr>
+                <td align="center" style="padding-bottom:30px;">
+                  <a href="http://localhost:4200/metas"
+                    style="background:#4a6cf7; color:#ffffff; text-decoration:none; 
+                           padding:14px 28px; border-radius:8px; font-size:16px; 
+                           display:inline-block;">
+                    Ver mis metas
+                  </a>
+                </td>
+              </tr>
+
+              <!-- SEPARADOR -->
+              <tr>
+                <td style="border-top:1px solid #e5e5e5; padding-top:25px;"></td>
+              </tr>
+
+              <!-- FOOTER -->
+              <tr>
+                <td style="padding-top:35px; font-size:12px; color:#aaa; text-align:center;">
+                  © ${new Date().getFullYear()} Economic Balance. Todos los derechos reservados.
+                </td>
+              </tr>
+
+            </table>
+
+          </td>
+        </tr>
+      </table>
+    </body>
+  </html>
+  `;
+
+  return await transporter.sendMail({
+    from: `Economic Balance Soporte <${process.env.EMAIL_USER}>`,
+    to: correo,
+    subject: 'Resumen de tus Metas de Ahorro',
+    html
+  });
+};
+
+
 
 
 

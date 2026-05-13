@@ -1,7 +1,10 @@
+main {
+  margin-bottom: 0 !important;
+}
+
 .ayuda-page {
-  min-height: 100vh;
   background: linear-gradient(180deg, #f6f8fb 0%, #eef2f7 100%);
-  padding: 24px 0 48px;
+  padding: 24px 0 16px;
 }
 
 .ayuda-shell {
@@ -13,6 +16,9 @@
   flex-direction: column;
   gap: 24px;
 }
+
+/* CARDS */
+
 .ayuda-hero-card,
 .ayuda-status-card,
 .ayuda-card,
@@ -32,6 +38,8 @@
 .ayuda-faq-card {
   padding: 24px;
 }
+
+/* TEXTOS */
 
 .ayuda-kicker,
 .ayuda-mini {
@@ -57,6 +65,8 @@
   line-height: 1.7;
 }
 
+/* STATUS */
+
 .ayuda-status-pill {
   display: inline-flex;
   align-items: center;
@@ -76,6 +86,8 @@
   border-radius: 50%;
   background: #22c55e;
 }
+
+/* HEADER FORM */
 
 .ayuda-card-header {
   display: flex;
@@ -100,11 +112,14 @@
   font-weight: 700;
 }
 
+/* FORM */
+
 .ayuda-form .form-control {
   border-radius: 14px;
   border: 1px solid #cbd5e1;
   padding: 12px 14px;
   background: #f8fafc;
+  transition: all 0.2s ease;
 }
 
 .ayuda-form .form-control:focus {
@@ -115,13 +130,48 @@
 
 .ayuda-form textarea.form-control {
   resize: vertical;
+  min-height: 140px;
+}
+
+/* BOTONES */
+
+.ayuda-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .ayuda-submit {
   border-radius: 14px;
   padding: 12px 18px;
   font-weight: 700;
+  transition: all 0.25s ease;
 }
+
+.ayuda-submit:hover {
+  transform: translateY(-1px);
+}
+
+.ayuda-support-btn {
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-weight: 700;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.ayuda-support-btn:hover {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+  transform: translateY(-1px);
+}
+
+/* FEEDBACK */
 
 .ayuda-feedback p {
   margin: 0;
@@ -140,6 +190,8 @@
   margin: 0;
   color: #1e3a8a;
 }
+
+/* FAQ */
 
 .ayuda-faq-list {
   display: flex;
@@ -169,6 +221,9 @@
   color: #4b5563;
   line-height: 1.6;
 }
+
+/* OVERLAY */
+
 .ayuda-overlay {
   position: fixed;
   inset: 0;
@@ -217,10 +272,13 @@
   line-height: 1.6;
 }
 
+/* ANIMACIONES */
+
 @keyframes ayudaFadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -231,13 +289,21 @@
     opacity: 0;
     transform: scale(0.9) translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
 }
 
+/* RESPONSIVE */
+
 @media (max-width: 768px) {
+
+  .ayuda-page {
+    padding: 16px 0 12px;
+  }
+
   .ayuda-title {
     font-size: 1.8rem;
   }
@@ -246,4 +312,15 @@
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .ayuda-actions {
+    flex-direction: column;
+  }
+
+  .ayuda-submit,
+  .ayuda-support-btn {
+    width: 100%;
+    text-align: center;
+  }
+
 }
