@@ -39,38 +39,27 @@ async function enviarSmsYGuardarNotificacion(data: {
 }) {
   const { usuarioId, prefijoTelefono, telefono, titulo, mensaje } = data;
 
-  console.log('Guardando notificacion para usuario:', usuarioId);
-  console.log('Titulo:', titulo);
-  console.log('Mensaje:', mensaje);
-
-  const notificacion = await NotificacionModel.create({
+  // Guardar notificación
+  await NotificacionModel.create({
     usuarioId,
     titulo,
     mensaje,
     leida: false
   });
 
-  console.log('Notificacion guardada en Mongo:', notificacion);
-
-  if (process.env.SMS_ENABLED !== 'true') {
-    console.log('SMS desactivado por variable de entorno');
-    return;
-  }
+  if (process.env.SMS_ENABLED !== 'true') return;
 
   const telefonoLimpio = telefono.replace(/\D/g, '');
   const destino = `${prefijoTelefono}${telefonoLimpio}`;
 
-  console.log('Intentando enviar SMS a:', destino);
-  console.log('Desde numero Twilio:', process.env.TWILIO_PHONE_NUMBER);
-
-  const respuestaSms = await twilioClient.messages.create({
+  await twilioClient.messages.create({
     body: mensaje,
     from: process.env.TWILIO_PHONE_NUMBER,
     to: destino
   });
-
-  console.log('SMS enviado correctamente:', respuestaSms.sid);
 }
+export { enviarSmsYGuardarNotificacion };
+
 
 export default class AuthService {
   // REGISTRO CON EMAIL

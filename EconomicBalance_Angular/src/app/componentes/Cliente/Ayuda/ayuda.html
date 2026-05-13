@@ -4,60 +4,76 @@
 
     <div class="container-fluid ayuda-shell">
 
+        <!-- HERO -->
         <section class="ayuda-hero">
-            <div class="row g-4 align-items-center">
+
+            <div class="row g-4 align-items-stretch">
 
                 <div class="col-12 col-xl-7">
-                    <div class="ayuda-hero-card">
+
+                    <div class="ayuda-hero-card h-100">
 
                         <p class="ayuda-kicker">
                             Centro de ayuda
                         </p>
 
                         <h1 class="ayuda-title">
-                            Estamos aqui para ayudarte
+                            Estamos aquí para ayudarte
                         </h1>
 
                         <p class="ayuda-text mb-0">
-                            Envia tu consulta al equipo de soporte de Economic Balance
-                            y recibe un token para identificar tu solicitud.
+                            Envía tu consulta al equipo de soporte de Economic Balance
+                            y recibe un token para identificar tu solicitud fácilmente.
                         </p>
 
                     </div>
+
                 </div>
 
                 <div class="col-12 col-xl-5">
-                    <div class="ayuda-status-card">
+
+                    <div class="ayuda-status-card h-100">
 
                         <p class="ayuda-mini">
                             Estado del servicio
                         </p>
 
                         <div class="ayuda-status-pill">
+
                             <span class="ayuda-status-dot"></span>
+
                             Soporte disponible
+
                         </div>
 
-                        <p class="ayuda-text mb-0">
-                            Tu consulta se enviara directamente al correo de soporte.
+                        <p class="ayuda-text mb-4">
+                            Tu consulta se enviará directamente al equipo de soporte.
                         </p>
 
+                      
+
                     </div>
+
                 </div>
 
             </div>
+
         </section>
 
+        <!-- CONTENIDO -->
         <section class="ayuda-content">
 
-            <div class="row g-4">
+            <div class="row g-4 align-items-stretch">
 
+                <!-- FORMULARIO -->
                 <div class="col-12 col-xl-7">
+
                     <div class="ayuda-card h-100">
 
                         <div class="ayuda-card-header">
 
                             <div>
+
                                 <p class="ayuda-mini mb-1">
                                     Formulario de soporte
                                 </p>
@@ -65,6 +81,7 @@
                                 <h2 class="ayuda-section-title mb-0">
                                     Enviar solicitud
                                 </h2>
+
                             </div>
 
                             <span class="ayuda-badge">
@@ -78,7 +95,9 @@
                             (ngSubmit)="enviarSoporte()"
                         >
 
+                            <!-- NOMBRE -->
                             <div class="mb-3">
+
                                 <label class="form-label">
                                     Nombre
                                 </label>
@@ -88,13 +107,17 @@
                                     class="form-control"
                                     [(ngModel)]="formulario.nombre"
                                     name="nombre"
+                                    placeholder="Introduce tu nombre"
                                     required
                                 >
+
                             </div>
 
+                            <!-- CORREO -->
                             <div class="mb-3">
+
                                 <label class="form-label">
-                                    Correo
+                                    Correo electrónico
                                 </label>
 
                                 <input
@@ -102,11 +125,15 @@
                                     class="form-control"
                                     [(ngModel)]="formulario.correo"
                                     name="correo"
+                                    placeholder="ejemplo@correo.com"
                                     required
                                 >
+
                             </div>
 
+                            <!-- ASUNTO -->
                             <div class="mb-3">
+
                                 <label class="form-label">
                                     Asunto
                                 </label>
@@ -116,11 +143,15 @@
                                     class="form-control"
                                     [(ngModel)]="formulario.asunto"
                                     name="asunto"
+                                    placeholder="Describe brevemente tu consulta"
                                     required
                                 >
+
                             </div>
 
+                            <!-- MENSAJE -->
                             <div class="mb-3">
+
                                 <label class="form-label">
                                     Mensaje
                                 </label>
@@ -130,41 +161,69 @@
                                     rows="6"
                                     [(ngModel)]="formulario.mensaje"
                                     name="mensaje"
+                                    placeholder="Explica tu problema o consulta con detalle..."
                                     required
                                 ></textarea>
+
                             </div>
 
-                            <button
-                                type="submit"
-                                class="btn btn-dark ayuda-submit"
-                                [disabled]="enviandoSoporte"
-                            >
-                                {{ enviandoSoporte ? 'Enviando...' : 'Enviar solicitud' }}
-                            </button>
+                            <!-- BOTONES -->
+                            <div class="ayuda-actions">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-dark ayuda-submit"
+                                    [disabled]="enviandoSoporte"
+                                >
+                                    {{ enviandoSoporte ? 'Enviando...' : 'Enviar solicitud' }}
+                                </button>
+
+                                <a
+                                    routerLink="/soporte"
+                                    class="btn ayuda-support-btn"
+                                >
+                                    Volver al soporte
+                                </a>
+
+                            </div>
 
                         </form>
 
+                        <!-- FEEDBACK -->
                         <div
                             *ngIf="mensajeSoporte"
-                            class="ayuda-feedback mt-3"
+                            class="ayuda-feedback mt-4"
                         >
-                            <p>{{ mensajeSoporte }}</p>
+
+                            <p>
+                                {{ mensajeSoporte }}
+                            </p>
+
                         </div>
 
+                        <!-- TOKEN -->
                         <div
                             *ngIf="tokenGenerado"
-                            class="ayuda-token mt-2"
+                            class="ayuda-token mt-3"
                         >
+
                             <p>
-                                <strong>Token de soporte:</strong>
+                                <strong>
+                                    Token de soporte:
+                                </strong>
+
                                 {{ tokenGenerado }}
                             </p>
+
                         </div>
 
                     </div>
+
                 </div>
 
+                <!-- FAQ -->
                 <div class="col-12 col-xl-5">
+
                     <div class="ayuda-faq-card h-100">
 
                         <p class="ayuda-mini mb-2">
@@ -181,13 +240,21 @@
                                 class="ayuda-faq-item"
                                 *ngFor="let faq of preguntasFrecuentes"
                             >
-                                <h3>{{ faq.pregunta }}</h3>
-                                <p>{{ faq.respuesta }}</p>
+
+                                <h3>
+                                    {{ faq.pregunta }}
+                                </h3>
+
+                                <p>
+                                    {{ faq.respuesta }}
+                                </p>
+
                             </article>
 
                         </div>
 
                     </div>
+
                 </div>
 
             </div>
@@ -196,10 +263,12 @@
 
     </div>
 
+    <!-- OVERLAY -->
     <div
         class="ayuda-overlay"
         *ngIf="mostrarConfirmacion"
     >
+
         <div class="ayuda-overlay-card">
 
             <div class="ayuda-check">
@@ -207,14 +276,16 @@
             </div>
 
             <h2>
-                Enviado
+                Enviado correctamente
             </h2>
 
             <p>
-                Tu solicitud se ha enviado correctamente al correo de soporte.
+                Tu solicitud se ha enviado al equipo de soporte.
+                Guarda tu token para futuras consultas.
             </p>
 
         </div>
+
     </div>
 
 </main>

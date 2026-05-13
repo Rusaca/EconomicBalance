@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import { IMetaAhorro } from '../modelos/interfaces/IMetaAhorro';
 import { MetaAhorroModel } from '../modelos/modelos/MetaAhorroModel';
 import PlantillaModel from '../modelos/modelos/PlantillaModel';
+import { enviarSmsYGuardarNotificacion } from './AuthService';
+import { enviarCorreoResumen } from './CorreoService';
+import UserModel from '../modelos/modelos/UsuarioModel';
 
 export class MetasAhorroService {
   async obtenerMetas(userId: string) {
@@ -93,4 +96,61 @@ export class MetasAhorroService {
     }
   ).lean();
 }
+  // =========================
+  // ENVIAR RESUMEN POR CORREO
+  // =========================
+  async enviarResumenCorreo(data: any) {
+    try {
+      const { metas, resumenMeses, correoDestino } = data;
+
+      await enviarCorreoResumen(
+        correoDestino,
+        metas,
+        resumenMeses
+      );
+
+      return { ok: true, mensaje: 'Correo enviado correctamente.' };
+
+    } catch (error) {
+      console.error(error);
+      return { ok: false, mensaje: 'Error enviando el correo.' };
+    }
+  }
+
+async enviarResumenMovil(data: any) {
+  try {
+    const { metas, resumenMeses, usuarioId, telefono, prefijoTelefono } = data;
+
+    // Obtener usuario para incluir su nombre en el SMS
+    const usuario = await UserModel.findById(usuarioId);
+    const nombre = usuario?.nombre || 'usuario';
+
+    // Calcular total del mes
+    const hoy = new Date();
+    const mesActual = hoy.toLocaleDateString('es-ES', { month: 'long' });
+    const resumenMesActual = resumenMeses.find(
+      (r: any) => r.mes.toLowerCase() === mesActual.toLowerCase()
+    );
+
+    const totalMes = resumenMesActual ? resumenMesActual.total : 0;
+
+    // Mensaje simple compatible con SMS
+    const mensaje = `Este mes has ahorrado ${totalMes}€. Gracias, ${nombre}.`;
+
+    await enviarSmsYGuardarNotificacion({
+      usuarioId,
+      prefijoTelefono,
+      telefono,
+      titulo: 'Resumen mensual',
+      mensaje
+    });
+
+    return { ok: true, mensaje: 'Resumen enviado al móvil correctamente.' };
+
+  } catch (error) {
+    console.error(error);
+    return { ok: false, mensaje: 'Error enviando el resumen al móvil.' };
+  }
+}
+
 }
