@@ -3,6 +3,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 import { FooterComponent } from '../../Portal/FooterAutenticado/footer';
 import { PresupuestosService } from '../../../servicios/presupuestos.service';
+import { TranslateService } from '../../../servicios/translate.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 interface EventoCalendario {
   titulo: string;
@@ -23,22 +25,21 @@ interface DiaCalendario {
 @Component({
   selector: 'app-calendario',
   standalone: true,
-  imports: [CommonModule, HeaderAutenticado, FooterComponent],
+  imports: [CommonModule, HeaderAutenticado, FooterComponent, TranslatePipe],
   templateUrl: './Calendario.html',
   styleUrl: './Calendario.css'
 })
+
 export class CalendarioComponent implements OnInit {
   constructor(
     private presupuestosService: PresupuestosService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    public translate: TranslateService
+  ) { }
+  diasSemana: string[] = [];
+  meses: string[] = [];
 
-  diasSemana: string[] = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
-  meses: string[] = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
 
   fechaActual = new Date();
   mesActual = this.fechaActual.getMonth();
@@ -53,9 +54,18 @@ export class CalendarioComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.diasSemana = this.translate.lang() === 'en'
+      ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      : ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+    this.meses = this.translate.lang() === 'en'
+      ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      : ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
     this.generarCalendario();
     this.cargarEventosDesdeBBDD();
   }
+
 
   cargarEventosDesdeBBDD(): void {
     this.presupuestosService.obtenerPlantillas().subscribe({

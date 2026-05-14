@@ -4,10 +4,10 @@
   <div class="calendar-shell">
     <div class="calendar-header">
       <div>
-        <p class="calendar-tag">Planificación</p>
-        <h1>Calendario financiero</h1>
+        <p class="calendar-tag">{{ 'calendar_planificacion' | translate }}</p>
+        <h1>{{ 'calendar_titulo' | translate }}</h1>
         <p class="calendar-subtitle">
-          Consulta tus movimientos, recordatorios y fechas clave de un vistazo.
+          {{ 'calendar_subtitulo' | translate }}
         </p>
       </div>
 
@@ -47,7 +47,7 @@
             </div>
 
             <div *ngIf="dia.eventos.length > 2" class="calendar-more">
-              +{{ dia.eventos.length - 2 }} más
+              +{{ dia.eventos.length - 2 }} {{ 'calendar_mas' | translate }}
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
     <div class="calendar-detail" *ngIf="diaSeleccionado">
       <div class="calendar-detail-header">
         <div>
-          <p class="calendar-tag mb-1">Detalle del día</p>
+          <p class="calendar-tag mb-1">{{ 'calendar_detalle_tag' | translate }}</p>
           <h3>{{ diaSeleccionado.numero }} {{ nombreMesActual }} {{ anioActual }}</h3>
         </div>
       </div>
@@ -69,12 +69,12 @@
             <strong>{{ evento.titulo }}</strong>
             <span *ngIf="evento.cantidad">{{ evento.cantidad }}</span>
           </div>
-          <p>{{ evento.descripcion || 'Sin descripción' }}</p>
+          <p>{{ evento.descripcion || ('calendar_sin_descripcion' | translate) }}</p>
         </div>
       </div>
 
       <ng-template #sinEventos>
-        <p class="calendar-empty">No hay eventos para este día.</p>
+        <p class="calendar-empty">{{ 'calendar_sin_eventos' | translate }}</p>
       </ng-template>
     </div>
   </div>

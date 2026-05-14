@@ -1,123 +1,189 @@
 <app-header-autenticado></app-header-autenticado>
 
-<div class="dashboard-cards">
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
-    </div>
-    <div class="icon blue">💳</div>
-  </div>
+<div class="dashboard-page">
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
-    </div>
-    <div class="icon blue">💳</div>
-  </div>
+  <section class="dashboard-hero">
+    <div class="dashboard-hero-content">
+      <div>
+        <p class="dashboard-tag">{{ 'dashboard_resumen_financiero' | translate }}</p>
+        <h2>
+          {{ 'dashboard_hola' | translate }}, {{ usuario?.nombre || 'usuario' }}.
+          {{ 'dashboard_vision_general' | translate }}
+        </h2>
+        <p class="dashboard-subtitle">
+          {{ 'dashboard_subtitulo' | translate }}
+        </p>
+      </div>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
+      <div class="dashboard-user-pill">
+        <span class="dashboard-user-dot"></span>
+        {{ usuario?.correo || ('dashboard_sesion_activa' | translate) }}
+      </div>
     </div>
-    <div class="icon blue">💳</div>
-  </div>
+  </section>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
+  <section class="dashboard-section">
+    <div class="section-header">
+      <div>
+        <p class="section-tag">{{ 'dashboard_mis_plantillas' | translate }}</p>
+        <h3>{{ 'dashboard_resumen_movimientos' | translate }}</h3>
+        <p class="section-subtitle">
+          {{ 'dashboard_balance_plantillas' | translate }}
+        </p>
+      </div>
     </div>
-    <div class="icon blue">💳</div>
-  </div>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
-    </div>
-    <div class="icon blue">💳</div>
-  </div>
+    <div class="dashboard-cards">
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_saldo_total' | translate }}</h4>
+          <p class="value">{{ saldoTotal | number:'1.2-2' }} €</p>
+          <span class="sub">{{ 'dashboard_balance_acumulado' | translate }}</span>
+        </div>
+        <div class="icon blue">💳</div>
+      </article>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
-    </div>
-    <div class="icon blue">💳</div>
-  </div>
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_ingresos_mes' | translate }}</h4>
+          <p class="value green">{{ ingresosMes | number:'1.2-2' }} €</p>
+          <span class="sub">{{ 'dashboard_mes_actual' | translate }}</span>
+        </div>
+        <div class="icon green">⬆️</div>
+      </article>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
-    </div>
-    <div class="icon blue">💳</div>
-  </div>
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_gastos_mes' | translate }}</h4>
+          <p class="value red">{{ gastosMes | number:'1.2-2' }} €</p>
+          <span class="sub">{{ 'dashboard_mes_actual' | translate }}</span>
+        </div>
+        <div class="icon red">⬇️</div>
+      </article>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_ahorro_mes' | translate }}</h4>
+          <p class="value purple">{{ ahorroMes | number:'1.2-2' }} €</p>
+          <span class="sub">{{ 'dashboard_ingresos_menos_gastos' | translate }}</span>
+        </div>
+        <div class="icon purple">%</div>
+      </article>
     </div>
-    <div class="icon blue">💳</div>
-  </div>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
-    </div>
-    <div class="icon blue">💳</div>
-  </div>
+    <div class="dashboard-grid dashboard-grid-plantillas">
+      <div class="panel panel-large">
+        <div class="panel-header">
+          <h3>{{ 'dashboard_evolucion_financiera' | translate }}</h3>
+          <p>{{ 'dashboard_vista_historica' | translate }}</p>
+        </div>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Saldo total</h4>
-      <p class="value">2.450,75 €</p>
-      <span class="sub">Actualizado hoy</span>
+        <div class="chart-wrapper chart-wrapper-large">
+          <canvas
+            baseChart
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            [type]="lineChartType">
+          </canvas>
+        </div>
+      </div>
     </div>
-    <div class="icon blue">💳</div>
-  </div>
+  </section>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Ingresos (mes)</h4>
-      <p class="value green">3.200,00 €</p>
-      <span class="sub up">↑ 12% vs mes anterior</span>
+  <section class="dashboard-section">
+    <div class="section-header">
+      <div>
+        <p class="section-tag">{{ 'dashboard_mis_ahorros' | translate }}</p>
+        <h3>{{ 'dashboard_resumen_metas' | translate }}</h3>
+        <p class="section-subtitle">
+          {{ 'dashboard_estado_objetivos' | translate }}
+        </p>
+      </div>
     </div>
-    <div class="icon green">⬆️</div>
-  </div>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Gastos (mes)</h4>
-      <p class="value red">1.784,25 €</p>
-      <span class="sub down">↓ 8% vs mes anterior</span>
-    </div>
-    <div class="icon red">⬇️</div>
-  </div>
+    <div class="dashboard-cards">
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_total_metas' | translate }}</h4>
+          <p class="value">{{ totalMetas }}</p>
+          <span class="sub">{{ 'dashboard_metas_registradas' | translate }}</span>
+        </div>
+        <div class="icon blue">🎯</div>
+      </article>
 
-  <div class="card">
-    <div class="card-info">
-      <h4>Ahorro (mes)</h4>
-      <p class="value purple">1.415,75 €</p>
-      <span class="sub">44% de tus ingresos</span>
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_metas_activas' | translate }}</h4>
+          <p class="value">{{ metasActivas }}</p>
+          <span class="sub">{{ 'dashboard_pendientes' | translate }}</span>
+        </div>
+        <div class="icon purple">📌</div>
+      </article>
+
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_metas_completadas' | translate }}</h4>
+          <p class="value green">{{ metasCompletadas }}</p>
+          <span class="sub">{{ 'dashboard_objetivos_cumplidos' | translate }}</span>
+        </div>
+        <div class="icon green">✅</div>
+      </article>
+
+      <article class="card">
+        <div class="card-info">
+          <h4>{{ 'dashboard_ahorro_pendiente' | translate }}</h4>
+          <p class="value">{{ ahorroPendiente | number:'1.2-2' }} €</p>
+          <span class="sub">{{ 'dashboard_para_completar' | translate }}</span>
+        </div>
+        <div class="icon red">🏦</div>
+      </article>
     </div>
-    <div class="icon purple">%</div>
-  </div>
+
+    <div class="dashboard-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>{{ 'dashboard_distribucion_ahorro' | translate }}</h3>
+          <p>{{ 'dashboard_cuna_queso' | translate }}</p>
+        </div>
+
+        <div class="chart-wrapper chart-wrapper-donut">
+          <canvas
+            baseChart
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            [type]="doughnutChartType">
+          </canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3>{{ 'dashboard_ultimas_metas' | translate }}</h3>
+          <p>{{ 'dashboard_resumen_rapido' | translate }}</p>
+        </div>
+
+        <div class="meta-list" *ngIf="ultimasMetas.length > 0; else sinMetas">
+          <div class="meta-item" *ngFor="let meta of ultimasMetas">
+            <div class="meta-main">
+              <strong>{{ meta.titulo }}</strong>
+              <span>
+                {{ meta.actual | number:'1.2-2' }} € / {{ meta.objetivo | number:'1.2-2' }} €
+              </span>
+            </div>
+
+            <div class="meta-progress">
+              {{ calcularProgreso(meta) | number:'1.0-0' }}%
+            </div>
+          </div>
+        </div>
+
+        <ng-template #sinMetas>
+          <div class="empty-state">
+            {{ 'dashboard_no_metas' | translate }}
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </section>
+
 </div>
-
-
-

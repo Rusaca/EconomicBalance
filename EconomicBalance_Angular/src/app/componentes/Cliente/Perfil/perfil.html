@@ -1,7 +1,6 @@
 <div class="container-fluid px-0 perfil-page">
   <div class="perfil-shell">
 
-    <!-- HEADER -->
     <div class="perfil-header mb-4 d-flex justify-content-between align-items-start flex-wrap gap-3">
       <div class="perfil-brand">
         <img src="assets/Logo.png" alt="EconomicBalance" class="perfil-logo">
@@ -26,12 +25,10 @@
 
     <div class="row g-4 m-0">
 
-      <!-- COLUMNA IZQUIERDA -->
       <div class="col-12 col-lg-4 col-xl-3">
         <div class="card border-0 shadow-sm perfil-card perfil-card-left h-100">
           <div class="card-body p-4 text-center">
 
-            <!-- FOTO -->
             <div class="perfil-avatar-wrapper mx-auto mb-3">
 
               <img *ngIf="fotoTemporal || perfil.fotoPerfil" [src]="fotoTemporal || perfil.fotoPerfil"
@@ -42,20 +39,17 @@
               </div>
             </div>
 
-            <!-- BOTÓN SUBIR FOTO -->
             <div class="mb-3">
               <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3" (click)="abrirModalFoto()">
                 {{ 'perfil_subir_foto' | translate }}
               </button>
             </div>
 
-            <!-- QUITAR FOTO -->
             <button *ngIf="perfil.fotoPerfil" type="button" class="btn btn-link text-danger p-0 mb-3"
               (click)="eliminarFoto()">
               {{ 'perfil_quitar_foto' | translate }}
             </button>
 
-            <!-- DATOS -->
             <h4 class="fw-bold mb-1">
               {{ perfil.nombre || 'Usuario' }} {{ perfil.apellidos }}
             </h4>
@@ -65,15 +59,13 @@
             </p>
 
             <p class="text-muted mb-2">
-              {{ perfil.telefono ? (perfil.prefijoTelefono || '+34') + ' ' + perfil.telefono : ('perfil_sin_telefono' |
-              translate) }}
+              {{ perfil.telefono ? (perfil.prefijoTelefono || '+34') + ' ' + perfil.telefono : ('perfil_sin_telefono' | translate) }}
             </p>
 
             <p class="text-muted mb-4">
               {{ perfil.genero || ('perfil_genero_no' | translate) }}
             </p>
 
-            <!-- RESUMEN -->
             <div class="perfil-resumen text-start">
 
               <div class="resumen-item">
@@ -97,10 +89,8 @@
         </div>
       </div>
 
-      <!-- COLUMNA DERECHA -->
       <div class="col-12 col-lg-8 col-xl-9">
 
-        <!-- CARD DATOS PERSONALES -->
         <div class="card border-0 shadow-sm perfil-card mb-4">
           <div class="card-body p-4 p-md-5">
 
@@ -181,16 +171,15 @@
                   <label class="form-label fw-semibold">{{ 'perfil_genero' | translate }}</label>
                   <select class="form-select form-select-lg" [(ngModel)]="perfil.genero" name="genero">
                     <option value="">{{ 'perfil_selecciona_opcion' | translate }}</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                    <option value="Otro">Otro</option>
-                    <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                    <option value="Masculino">{{ 'perfil_genero_masculino' | translate }}</option>
+                    <option value="Femenino">{{ 'perfil_genero_femenino' | translate }}</option>
+                    <option value="Otro">{{ 'perfil_genero_otro' | translate }}</option>
+                    <option value="Prefiero no decirlo">{{ 'perfil_genero_no_decir' | translate }}</option>
                   </select>
                 </div>
 
               </div>
 
-              <!-- ALERTAS -->
               <div *ngIf="errorPerfil" class="alert alert-danger mt-4 mb-0">
                 {{ errorPerfil }}
               </div>
@@ -199,7 +188,6 @@
                 {{ mensajePerfil }}
               </div>
 
-              <!-- BOTÓN GUARDAR -->
               <div class="d-flex justify-content-end mt-4">
                 <button type="submit" class="btn btn-success btn-lg px-4 rounded-pill">
                   {{ 'perfil_guardar' | translate }}
@@ -210,7 +198,6 @@
           </div>
         </div>
 
-        <!-- CARD SEGURIDAD -->
         <div class="card border-0 shadow-sm perfil-card security-card overflow-hidden">
           <div class="card-body p-0">
             <div class="row g-0 align-items-stretch">
@@ -272,13 +259,10 @@
           </div>
         </div>
 
-
-
       </div>
     </div>
   </div>
 
-  <!-- MODAL FOTO -->
   <div class="modal-foto-backdrop" *ngIf="mostrarModalFoto">
     <div class="modal-foto">
 
@@ -286,51 +270,45 @@
         {{ 'perfil_modal_titulo' | translate }}
       </h4>
 
-      <!-- EDITOR -->
       <div class="editor-foto mb-3">
 
         <div class="editor-circulo" (click)="fileInput.click()" (dragover)="onDragOver($event)" (drop)="onDrop($event)"
           (paste)="onPaste($event)" (mousedown)="iniciarArrastre($event)">
 
-          <!-- IMAGEN -->
           <img *ngIf="fotoTemporal" [src]="fotoTemporal" class="editor-img" [style.transform]="
             'translate(calc(-50% + ' + desplazamientoX + 'px), calc(-50% + ' + desplazamientoY + 'px))'
           " />
 
-          <!-- TEXTO -->
           <div *ngIf="!fotoTemporal" class="editor-placeholder">
             <p class="fw-bold mb-2 text-center">
-              Haz clic para subir una foto
+              {{ 'perfil_modal_click_subir' | translate }}
             </p>
 
             <p class="text-muted small text-center mb-0">
-              Selecciona, arrastra o pega una imagen aquí
+              {{ 'perfil_modal_drag_paste' | translate }}
             </p>
           </div>
 
         </div>
       </div>
 
-      <!-- INPUT -->
       <input #fileInput type="file" accept="image/*" class="file-hidden" (change)="onSeleccionarFoto($event)"
         [disabled]="!!fotoTemporal" />
 
-      <!-- BOTÓN BORRAR -->
       <div class="text-center mt-2" *ngIf="fotoTemporal">
         <button class="btn btn-danger btn-sm" (click)="borrarImagenTemporal()">
-          Eliminar imagen
+          {{ 'perfil_modal_eliminar_imagen' | translate }}
         </button>
       </div>
 
-      <!-- BOTONES -->
       <div class="d-flex justify-content-between mt-4">
 
         <button class="btn btn-secondary" (click)="cerrarModalFoto()">
-          Cancelar
+          {{ 'perfil_modal_cancelar' | translate }}
         </button>
 
         <button class="btn btn-success" (click)="aceptarFoto()">
-          Guardar foto
+          {{ 'perfil_modal_guardar_foto' | translate }}
         </button>
 
       </div>
