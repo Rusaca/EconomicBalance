@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import NotificacionModel from '../../modelos/modelos/NotificacionModel';
+import AjustesService from '../../servicios/AjustesService';
 
 const router = Router();
 const authService = new AuthService();
@@ -378,6 +379,40 @@ router.delete('/notificaciones/:id', async (req: Request, res: Response) => {
     return res.status(500).json({
       ok: false,
       mensaje: 'Error eliminando notificacion'
+    });
+  }
+});
+
+router.get('/ajustes/:usuarioId', async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+
+    const respuesta = await AjustesService.obtenerAjustes(usuarioId);
+
+    return res.status(respuesta.ok ? 200 : 404).json(respuesta);
+  } catch (error) {
+    console.error('Error al obtener ajustes:', error);
+
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error interno al obtener ajustes'
+    });
+  }
+});
+
+router.put('/ajustes/:usuarioId', async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+
+    const respuesta = await AjustesService.guardarAjustes(usuarioId, req.body);
+
+    return res.status(respuesta.ok ? 200 : 400).json(respuesta);
+  } catch (error) {
+    console.error('Error al guardar ajustes:', error);
+
+    return res.status(500).json({
+      ok: false,
+      mensaje: 'Error interno al guardar ajustes'
     });
   }
 });

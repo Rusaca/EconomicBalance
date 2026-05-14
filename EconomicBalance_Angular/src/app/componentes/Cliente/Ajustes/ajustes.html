@@ -1,9 +1,8 @@
 <div class="ajustes-page">
 
-  <div class="container ajustes-container py-5">
+  <div class="ajustes-container py-4 py-md-5">
 
-    <!-- HEADER SUPERIOR -->
-    <div class="d-flex justify-content-between align-items-start mb-5 flex-wrap gap-3">
+    <div class="ajustes-topbar">
       <div>
         <p class="ajustes-tag">{{ 'configuracion' | translate }}</p>
         <h1 class="ajustes-title">{{ 'ajustesCuenta' | translate }}</h1>
@@ -17,13 +16,11 @@
 
     <div class="row g-4">
 
-      <!-- PANEL IZQUIERDO PROFESIONAL -->
       <aside class="col-12 col-lg-4">
         <div class="card ajustes-card resumen-card p-4">
 
           <h4 class="fw-bold mb-4">{{ 'resumen' | translate }}</h4>
 
-          <!-- EMAIL -->
           <div class="resumen-block">
             <div class="resumen-icon">
               <i class="bi bi-envelope-fill"></i>
@@ -36,7 +33,6 @@
             </div>
           </div>
 
-          <!-- NOTIFICACIONES APP -->
           <div class="resumen-block">
             <div class="resumen-icon">
               <i class="bi bi-bell-fill"></i>
@@ -49,7 +45,6 @@
             </div>
           </div>
 
-          <!-- MODO OSCURO -->
           <div class="resumen-block">
             <div class="resumen-icon">
               <i class="bi bi-moon-stars-fill"></i>
@@ -62,7 +57,6 @@
             </div>
           </div>
 
-          <!-- IDIOMA -->
           <div class="resumen-block">
             <div class="resumen-icon">
               <i class="bi bi-translate"></i>
@@ -75,7 +69,6 @@
             </div>
           </div>
 
-          <!-- AUTOGUARDADO -->
           <div class="resumen-block">
             <div class="resumen-icon">
               <i class="bi bi-cloud-check-fill"></i>
@@ -88,35 +81,19 @@
             </div>
           </div>
 
-          <!-- ESTADÍSTICAS -->
-          <div class="resumen-block">
-            <div class="resumen-icon">
-              <i class="bi bi-graph-up-arrow"></i>
-            </div>
-            <div class="resumen-info">
-              <p class="resumen-label">{{ 'estadisticas' | translate }}</p>
-              <p class="resumen-value">
-                {{ estadisticas ? ('activadas' | translate) : ('desactivadas' | translate) }}
-              </p>
-            </div>
-          </div>
-
         </div>
       </aside>
 
-      <!-- PANEL DERECHO -->
       <section class="col-12 col-lg-8">
         <div class="card ajustes-card p-4 p-md-5">
 
           <form (ngSubmit)="guardarAjustes()">
 
-            <!-- SECCIÓN PREFERENCIAS -->
             <div class="section-block">
               <p class="section-label">{{ 'preferencias' | translate }}</p>
               <h3 class="section-title">{{ 'opcionesGenerales' | translate }}</h3>
             </div>
 
-            <!-- SWITCHES -->
             <div class="switch-row">
               <div>
                 <h6>{{ 'notiEmail' | translate }}</h6>
@@ -150,7 +127,6 @@
               </label>
             </div>
 
-            <!-- NUEVAS OPCIONES GENERALES -->
             <div class="switch-row">
               <div>
                 <h6>{{ 'recordatorios' | translate }}</h6>
@@ -173,7 +149,7 @@
               </label>
             </div>
 
-            <div class="switch-row">
+            <div class="switch-row switch-row-last">
               <div>
                 <h6>{{ 'autoguardado' | translate }}</h6>
                 <p class="text-muted">{{ 'descAutoguardado' | translate }}</p>
@@ -184,29 +160,6 @@
               </label>
             </div>
 
-            <div class="switch-row">
-              <div>
-                <h6>{{ 'sonidos' | translate }}</h6>
-                <p class="text-muted">{{ 'descSonidos' | translate }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" [(ngModel)]="sonidos" name="sonidos">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="switch-row">
-              <div>
-                <h6>{{ 'estadisticas' | translate }}</h6>
-                <p class="text-muted">{{ 'descEstadisticas' | translate }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" [(ngModel)]="estadisticas" name="estadisticas">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <!-- SELECT IDIOMA -->
             <div class="mt-4">
               <label class="form-label fw-semibold">{{ 'idioma' | translate }}</label>
               <select class="form-select form-select-lg" [(ngModel)]="idioma" name="idioma">
@@ -215,14 +168,12 @@
               </select>
             </div>
 
-            <!-- ALERTA -->
             <div *ngIf="mensaje" class="alert alert-success mt-4">
               {{ mensaje }}
             </div>
 
-            <!-- BOTÓN GUARDAR -->
             <div class="text-end mt-4">
-              <button type="submit" class="btn btn-success px-4">
+              <button type="submit" class="btn btn-success px-4 guardar-btn">
                 {{ 'guardar' | translate }}
               </button>
             </div>

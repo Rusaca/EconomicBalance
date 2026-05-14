@@ -72,42 +72,45 @@ export class MetasAhorroService {
   }
 
   async editarMeta(
-  id: string,
-  userId: string,
-  payload: IMetaAhorro
-) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null;
+    id: string,
+    userId: string,
+    payload: IMetaAhorro
+  ) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    return MetaAhorroModel.findOneAndUpdate(
+      {
+        _id: id,
+        userId
+      },
+      {
+        titulo: payload.titulo,
+        objetivo: payload.objetivo,
+        actual: payload.actual,
+        fechaLimite: payload.fechaLimite
+      },
+      {
+        new: true
+      }
+    ).lean();
   }
 
-  return MetaAhorroModel.findOneAndUpdate(
-    {
-      _id: id,
-      userId
-    },
-    {
-      titulo: payload.titulo,
-      objetivo: payload.objetivo,
-      actual: payload.actual,
-      fechaLimite: payload.fechaLimite
-    },
-    {
-      new: true
-    }
-  ).lean();
-}
-  // =========================
-  // ENVIAR RESUMEN POR CORREO
-  // =========================
   async enviarResumenCorreo(data: any) {
     try {
-      const { metas, resumenMeses, correoDestino } = data;
+      const { metas, resumenMeses, correoDestino, usuarioId } = data;
 
-      await enviarCorreoResumen(
+      const resultado = await enviarCorreoResumen(
+        usuarioId,
         correoDestino,
         metas,
         resumenMeses
       );
+
+      if ((resultado as any)?.ok === false) {
+        return resultado;
+      }
 
       return { ok: true, mensaje: 'Correo enviado correctamente.' };
 
@@ -117,40 +120,43 @@ export class MetasAhorroService {
     }
   }
 
-async enviarResumenMovil(data: any) {
-  try {
-    const { metas, resumenMeses, usuarioId, telefono, prefijoTelefono } = data;
 
-    // Obtener usuario para incluir su nombre en el SMS
-    const usuario = await UserModel.findById(usuarioId);
-    const nombre = usuario?.nombre || 'usuario';
 
-    // Calcular total del mes
-    const hoy = new Date();
-    const mesActual = hoy.toLocaleDateString('es-ES', { month: 'long' });
-    const resumenMesActual = resumenMeses.find(
-      (r: any) => r.mes.toLowerCase() === mesActual.toLowerCase()
-    );
+  async enviarResumenMovil(data: any) {
+    try {
+      const { resumenMeses, usuarioId, telefono, prefijoTelefono } = data;
 
-    const totalMes = resumenMesActual ? resumenMesActual.total : 0;
+      const usuario = await UserModel.findById(usuarioId);
+      const nombre = usuario?.nombre || 'usuario';
 
-    // Mensaje simple compatible con SMS
-    const mensaje = `Este mes has ahorrado ${totalMes}€. Gracias, ${nombre}.`;
+      const hoy = new Date();
+      const mesActual = hoy.toLocaleDateString('es-ES', { month: 'long' });
+      const resumenMesActual = resumenMeses.find(
+        (r: any) => r.mes.toLowerCase() === mesActual.toLowerCase()
+      );
 
-    await enviarSmsYGuardarNotificacion({
-      usuarioId,
-      prefijoTelefono,
-      telefono,
-      titulo: 'Resumen mensual',
-      mensaje
-    });
+      const totalMes = resumenMesActual ? resumenMesActual.total : 0;
 
-    return { ok: true, mensaje: 'Resumen enviado al móvil correctamente.' };
+      const mensaje = `Este mes has ahorrado ${totalMes}€. Gracias, ${nombre}.`;
 
-  } catch (error) {
-    console.error(error);
-    return { ok: false, mensaje: 'Error enviando el resumen al móvil.' };
+      const resultado = await enviarSmsYGuardarNotificacion({
+        usuarioId,
+        prefijoTelefono,
+        telefono,
+        titulo: 'Resumen mensual',
+        mensaje
+      });
+
+      if ((resultado as any)?.ok === false) {
+        return resultado;
+      }
+
+      return { ok: true, mensaje: 'Resumen enviado al móvil correctamente.' };
+
+    } catch (error) {
+      console.error(error);
+      return { ok: false, mensaje: 'Error enviando el resumen al móvil.' };
+    }
   }
-}
 
 }

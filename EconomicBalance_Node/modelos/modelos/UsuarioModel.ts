@@ -54,7 +54,6 @@ const UserSchema = new Schema<IUsuario>(
       default: '+34'
     },
 
-
     genero: {
       type: String,
       default: ''
@@ -63,6 +62,38 @@ const UserSchema = new Schema<IUsuario>(
     fotoPerfil: {
       type: String,
       default: ''
+    },
+
+    ajustes: {
+      idioma: {
+        type: String,
+        enum: ['es', 'en'],
+        default: 'es'
+      },
+      notificacionesEmail: {
+        type: Boolean,
+        default: true
+      },
+      notificacionesApp: {
+        type: Boolean,
+        default: true
+      },
+      modoOscuro: {
+        type: Boolean,
+        default: false
+      },
+      recordatorios: {
+        type: Boolean,
+        default: true
+      },
+      sincronizacion: {
+        type: Boolean,
+        default: true
+      },
+      autoguardado: {
+        type: Boolean,
+        default: true
+      }
     }
   },
   {
