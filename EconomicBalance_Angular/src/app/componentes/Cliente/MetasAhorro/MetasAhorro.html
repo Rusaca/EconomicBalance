@@ -87,10 +87,23 @@
 
     </section>
 
+    <!-- BUSCADOR -->
+    <section class="metas-search-section">
+      <div class="metas-search-box">
+        <input
+          id="buscadorMetas"
+          type="text"
+          class="metas-search-input"
+          placeholder="Escribe el nombre de una meta..."
+          [(ngModel)]="busquedaMeta"
+        />
+      </div>
+    </section>
+
     <!-- GRID METAS -->
     <section class="metas-grid">
 
-      <article class="meta-card" *ngFor="let meta of metas; trackBy: trackByMeta">
+      <article class="meta-card" *ngFor="let meta of metasFiltradas; trackBy: trackByMeta">
 
         <div class="meta-card-body">
 
@@ -125,11 +138,10 @@
 
           </div>
 
-          <!-- NUMEROS -->
           <div class="meta-numbers">
 
             <div class="meta-number-box">
-              <span>Objetivo</span>
+              <span>Presupuesto</span>
               <strong>{{ meta.objetivo }} €</strong>
             </div>
 
@@ -158,6 +170,10 @@
       </article>
 
     </section>
+
+    <div *ngIf="metasFiltradas.length === 0" class="meta-feedback meta-feedback-error">
+      No se encontraron metas con esa búsqueda.
+    </div>
 
     <!-- GRAFICA -->
     <section class="grafica-section">

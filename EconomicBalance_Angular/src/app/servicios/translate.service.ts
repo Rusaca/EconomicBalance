@@ -157,7 +157,64 @@ export class TranslateService {
             perfil_modal_cancelar: 'Cancelar',
             perfil_modal_aceptar: 'Aceptar',
             perfil_modal_eliminar: 'Eliminar',
-            sidebar_metas_ahorro: "Metas de Ahorro"
+            sidebar_metas_ahorro: "Metas de Ahorro",
+            dashboard_resumen_financiero: 'Resumen financiero',
+            dashboard_hola: 'Hola',
+            dashboard_vision_general: 'Esta es tu visión general',
+            dashboard_subtitulo: 'Consulta por separado el estado de tus plantillas y tus metas de ahorro con una vista clara y profesional.',
+            dashboard_sesion_activa: 'Sesión activa',
+
+            dashboard_mis_plantillas: 'Mis plantillas',
+            dashboard_resumen_movimientos: 'Resumen de movimientos y evolución',
+            dashboard_balance_plantillas: 'Balance global calculado desde tus plantillas guardadas.',
+
+            dashboard_saldo_total: 'Saldo total',
+            dashboard_balance_acumulado: 'Balance acumulado',
+            dashboard_ingresos_mes: 'Ingresos (mes)',
+            dashboard_mes_actual: 'Mes actual',
+            dashboard_gastos_mes: 'Gastos (mes)',
+            dashboard_ahorro_mes: 'Ahorro (mes)',
+            dashboard_ingresos_menos_gastos: 'Ingresos - gastos',
+
+            dashboard_evolucion_financiera: 'Evolución financiera de toda la vida',
+            dashboard_vista_historica: 'Vista histórica de ingresos y gastos',
+
+            dashboard_mis_ahorros: 'Mis ahorros',
+            dashboard_resumen_metas: 'Resumen de metas y progreso',
+            dashboard_estado_objetivos: 'Estado actual de tus objetivos y distribución del ahorro.',
+
+            dashboard_total_metas: 'Total metas',
+            dashboard_metas_registradas: 'Metas registradas',
+            dashboard_metas_activas: 'Metas activas',
+            dashboard_pendientes: 'Pendientes',
+            dashboard_metas_completadas: 'Metas completadas',
+            dashboard_objetivos_cumplidos: 'Objetivos cumplidos',
+            dashboard_ahorro_pendiente: 'Ahorro pendiente',
+            dashboard_para_completar: 'Para completar metas',
+
+            dashboard_distribucion_ahorro: 'Distribución del ahorro',
+            dashboard_cuna_queso: 'Cuña de queso de tus metas',
+            dashboard_ultimas_metas: 'Últimas metas',
+            dashboard_resumen_rapido: 'Resumen rápido',
+            dashboard_no_metas: 'No hay metas registradas todavía.',
+
+            perfil_genero_masculino: 'Masculino',
+            perfil_genero_femenino: 'Femenino',
+            perfil_genero_otro: 'Otro',
+            perfil_genero_no_decir: 'Prefiero no decirlo',
+
+            perfil_modal_click_subir: 'Haz clic para subir una foto',
+            perfil_modal_drag_paste: 'Selecciona, arrastra o pega una imagen aquí',
+            perfil_modal_eliminar_imagen: 'Eliminar imagen',
+            perfil_modal_guardar_foto: 'Guardar foto',
+            calendar_planificacion: 'Planificación',
+            calendar_titulo: 'Calendario financiero',
+            calendar_subtitulo: 'Consulta tus movimientos, recordatorios y fechas clave de un vistazo.',
+            calendar_mas: 'más',
+            calendar_detalle_tag: 'Detalle del día',
+            calendar_sin_descripcion: 'Sin descripción',
+            calendar_sin_eventos: 'No hay eventos para este día.'
+
 
         },
 
@@ -165,34 +222,24 @@ export class TranslateService {
 
 
             noti_vacio: 'No notifications',
-
             header_hola: 'Hello',
-
             configuracion: 'Settings',
             ajustesCuenta: 'Account Settings',
             subtitulo: 'Customize your preferences, privacy, language and notifications.',
             resumen: 'Summary',
-
-            // Main options
             preferencias: 'Preferences',
             opcionesGenerales: 'General options',
             idioma: 'Language',
             guardar: 'Save settings',
             volver: 'Back',
-
-            // Notifications
             notiEmail: 'Email notifications',
             notiApp: 'In-app notifications',
             modoOscuro: 'Dark mode',
-
-            // New options
             recordatorios: 'Automatic reminders',
             sincronizacion: 'Cloud sync',
             autoguardado: 'Autosave',
             sonidos: 'App sounds',
             estadisticas: 'Advanced statistics',
-
-            // Descriptions
             descNotiEmail: 'Receive important alerts.',
             descNotiApp: 'In-app alerts.',
             descModoOscuro: 'Visual adjustment.',
@@ -201,14 +248,10 @@ export class TranslateService {
             descAutoguardado: 'Automatically save your changes.',
             descSonidos: 'Enable interaction sounds.',
             descEstadisticas: 'Show detailed data.',
-
-            // Dynamic values
             activadas: 'Enabled',
             desactivadas: 'Disabled',
             activo: 'Active',
             inactivo: 'Inactive',
-
-            // Others
             email: 'Email',
             perfil: 'Profile',
             visible: 'Visible',
@@ -217,87 +260,68 @@ export class TranslateService {
             mostrarActividad: 'Show activity',
             footer_slogan: 'Financial solutions with a modern, clear and secure approach.',
             footer_desc: 'We help individuals and businesses make better economic decisions with digital tools, precise tracking and an experience designed to inspire trust.',
-
             footer_empresa: 'Company',
             footer_sobre: 'About us',
             footer_servicios: 'Services',
             footer_contacto: 'Contact',
             footer_soporte: 'Support',
-
             footer_compromiso: 'Professional commitment',
             footer_compromiso_1: 'Close and specialized attention',
             footer_compromiso_2: 'Data protection and secure access',
             footer_compromiso_3: 'Clear and traceable processes',
             footer_compromiso_4: 'Continuous improvement focused on the client',
-
             footer_colaboradores: 'Partner companies',
-
             footer_vision: 'Corporate vision',
             footer_vision_title: 'A platform designed to grow with you',
             footer_vision_desc: 'EconomicBalance combines financial organization, personalized tracking and management tools to provide a stable foundation for safe decision-making.',
-
             footer_contacto_prof: 'Professional contact',
             footer_email: 'Email',
             footer_telefono: 'Phone',
             footer_horario: 'Schedule',
             footer_sede: 'Headquarters',
-
             footer_privacidad: 'Privacy policy',
             footer_terminos: 'Terms and conditions',
             footer_cookies: 'Cookies',
-
             footer_copy: 'All rights reserved.',
-
             sidebar_inicio: 'Home',
             sidebar_plantillas: 'My Templates',
             sidebar_calendario: 'Calendar',
             sidebar_presupuestos: 'Budgets',
             sidebar_estadisticas: 'Statistics',
             sidebar_soporte: 'Support',
-
             sidebar_modo_oscuro: 'Dark mode',
             sidebar_modo_claro: 'Light mode',
-
             perfil_editar: 'Edit profile',
             perfil_ajustes: 'Settings',
             perfil_cerrar: 'Log out',
-
             perfil_panel: 'User panel',
             perfil_editar_titulo: 'Edit profile',
             perfil_editar_desc: 'Here you can review and modify all your account data, as well as manage security from a dedicated screen.',
             perfil_volver: 'Back',
-
             perfil_subir_foto: 'Upload photo',
             perfil_quitar_foto: 'Remove photo',
-
             perfil_sin_correo: 'No email',
             perfil_sin_telefono: 'No phone',
             perfil_genero_no: 'Gender not specified',
-
             perfil_id_usuario: 'User ID',
             perfil_estado: 'Status',
             perfil_activo: 'Active',
             perfil_seguridad: 'Security',
             perfil_actualizable: 'Updatable',
-
             perfil_info_personal: 'Personal information',
             perfil_datos_usuario: 'User data',
-
             perfil_correo: 'Email',
             perfil_nombre: 'First name',
             perfil_apellidos: 'Last name',
             perfil_numero_telefono: 'Phone number',
             perfil_genero: 'Gender',
             perfil_selecciona_opcion: 'Select an option',
-
             perfil_guardar: 'Save changes',
-
             perfil_seguridad_titulo: 'Security',
             perfil_actualizar_contra: 'Update password',
             perfil_actualizar_contra_desc: 'Change your password from a separate page for a clearer, more comfortable and secure process.',
             perfil_ir_actualizar: 'Go to update password',
             perfil_acceso_especifico: 'Access a specific view to manage your login.',
-
             perfil_proteccion: 'Protection',
             perfil_cambio_seguro: 'Secure change',
             perfil_cambio_seguro_desc: 'Separate profile editing from sensitive data.',
@@ -305,7 +329,6 @@ export class TranslateService {
             perfil_mas_claridad_desc: 'Avoid mixing personal information with security actions.',
             perfil_acceso_rapido: 'Quick access',
             perfil_acceso_rapido_desc: 'Go directly to the password update screen.',
-
             perfil_modal_titulo: 'Upload profile photo',
             perfil_modal_preview: 'Your photo will appear here',
             perfil_modal_preview_desc: 'Select an image to preview it',
@@ -314,7 +337,57 @@ export class TranslateService {
             perfil_modal_cancelar: 'Cancel',
             perfil_modal_aceptar: 'Accept',
             perfil_modal_eliminar: 'Delete',
-            sidebar_metas_ahorro: "Savings Goals"
+            sidebar_metas_ahorro: "Savings Goals",
+            dashboard_resumen_financiero: 'Financial overview',
+            dashboard_hola: 'Hello',
+            dashboard_vision_general: 'This is your general overview',
+            dashboard_subtitulo: 'Check separately the status of your templates and your savings goals with a clear and professional view.',
+            dashboard_sesion_activa: 'Active session',
+            dashboard_mis_plantillas: 'My templates',
+            dashboard_resumen_movimientos: 'Movement and trend summary',
+            dashboard_balance_plantillas: 'Global balance calculated from your saved templates.',
+            dashboard_saldo_total: 'Total balance',
+            dashboard_balance_acumulado: 'Accumulated balance',
+            dashboard_ingresos_mes: 'Income (month)',
+            dashboard_mes_actual: 'Current month',
+            dashboard_gastos_mes: 'Expenses (month)',
+            dashboard_ahorro_mes: 'Savings (month)',
+            dashboard_ingresos_menos_gastos: 'Income - expenses',
+            dashboard_evolucion_financiera: 'Lifetime financial evolution',
+            dashboard_vista_historica: 'Historical view of income and expenses',
+            dashboard_mis_ahorros: 'My savings',
+            dashboard_resumen_metas: 'Goals and progress summary',
+            dashboard_estado_objetivos: 'Current status of your goals and savings distribution.',
+            dashboard_total_metas: 'Total goals',
+            dashboard_metas_registradas: 'Registered goals',
+            dashboard_metas_activas: 'Active goals',
+            dashboard_pendientes: 'Pending',
+            dashboard_metas_completadas: 'Completed goals',
+            dashboard_objetivos_cumplidos: 'Achieved goals',
+            dashboard_ahorro_pendiente: 'Pending savings',
+            dashboard_para_completar: 'To complete goals',
+            dashboard_distribucion_ahorro: 'Savings distribution',
+            dashboard_cuna_queso: 'Your goals cheese chart',
+            dashboard_ultimas_metas: 'Latest goals',
+            dashboard_resumen_rapido: 'Quick summary',
+            dashboard_no_metas: 'There are no registered goals yet.',
+            perfil_genero_masculino: 'Male',
+            perfil_genero_femenino: 'Female',
+            perfil_genero_otro: 'Other',
+            perfil_genero_no_decir: 'Prefer not to say',
+            perfil_modal_click_subir: 'Click to upload a photo',
+            perfil_modal_drag_paste: 'Select, drag or paste an image here',
+            perfil_modal_eliminar_imagen: 'Delete image',
+            perfil_modal_guardar_foto: 'Save photo',
+            calendar_planificacion: 'Planning',
+            calendar_titulo: 'Financial calendar',
+            calendar_subtitulo: 'Check your movements, reminders and key dates at a glance.',
+            calendar_mas: 'more',
+            calendar_detalle_tag: 'Day details',
+            calendar_sin_descripcion: 'No description',
+            calendar_sin_eventos: 'There are no events for this day.'
+
+
 
         }
     };
@@ -325,7 +398,7 @@ export class TranslateService {
     }
 
     setLang(lang: 'es' | 'en') {
-        
+
         this.lang.set(lang);
         localStorage.setItem('lang', lang);
     }

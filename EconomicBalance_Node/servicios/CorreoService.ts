@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import UsuarioModel from '../modelos/modelos/UsuarioModel';
 
 dotenv.config();
 
@@ -32,7 +33,6 @@ export const enviarCorreoActivacion = async (correo: string, token: string) => {
 
               <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; padding:40px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
 
-                <!-- LOGO -->
                 <tr>
                   <td align="center" style="padding-bottom:25px;">
                     <img src="https://raw.githubusercontent.com/Rusaca/EconomicBalance/master/EconomicBalance_Angular/public/Logo.png"
@@ -42,21 +42,18 @@ export const enviarCorreoActivacion = async (correo: string, token: string) => {
                   </td>
                 </tr>
 
-                <!-- TÍTULO -->
                 <tr>
                   <td style="font-size:22px; font-weight:bold; color:#333; text-align:center; padding-bottom:10px;">
                     Bienvenido a Economic Balance
                   </td>
                 </tr>
 
-                <!-- TEXTO PRINCIPAL -->
                 <tr>
                   <td style="font-size:15px; color:#555; line-height:1.6; text-align:center; padding-bottom:25px;">
                     Gracias por registrarte. Para activar tu cuenta, haz clic en el siguiente botón.
                   </td>
                 </tr>
 
-                <!-- BOTÓN -->
                 <tr>
                   <td align="center" style="padding-bottom:30px;">
                     <a href="${enlace}"
@@ -66,13 +63,11 @@ export const enviarCorreoActivacion = async (correo: string, token: string) => {
                   </td>
                 </tr>
 
-                <!-- SEPARADOR -->
                 <tr>
                   <td style="border-top:1px solid #e5e5e5; padding-top:25px;"></td>
                 </tr>
 
                
-                <!-- FOOTER -->
                 <tr>
                   <td style="padding-top:35px; font-size:12px; color:#aaa; text-align:center;">
                     © ${new Date().getFullYear()} Economic Balance. Todos los derechos reservados.
@@ -88,6 +83,42 @@ export const enviarCorreoActivacion = async (correo: string, token: string) => {
     </html>
     `
   });
+  const puedeRecibirCorreoUsuario = async (usuarioId: string): Promise<boolean> => {
+    if (!usuarioId) {
+      return false;
+    }
+
+    const usuario = await UsuarioModel.findById(usuarioId);
+
+    if (!usuario) {
+      return false;
+    }
+
+    return usuario.ajustes?.notificacionesEmail !== false;
+  };
+
+  const enviarCorreoSiPermitido = async (
+    usuarioId: string,
+    opcionesMail: nodemailer.SendMailOptions
+  ) => {
+    const permitido = await puedeRecibirCorreoUsuario(usuarioId);
+
+    if (!permitido) {
+      return {
+        ok: false,
+        mensaje: 'Las notificaciones por email están desactivadas'
+      };
+    }
+
+    const info = await transporter.sendMail(opcionesMail);
+
+    return {
+      ok: true,
+      mensaje: 'Correo enviado correctamente',
+      data: info
+    };
+  };
+
 };
 
 
@@ -169,7 +200,42 @@ export const enviarCorreoRecuperacion = async (correo: string, enlace: string) =
     `
   });
 
-  console.log('INFO SENDMAIL:', info);
+  const puedeRecibirCorreoUsuario = async (usuarioId: string): Promise<boolean> => {
+    if (!usuarioId) {
+      return false;
+    }
+
+    const usuario = await UsuarioModel.findById(usuarioId);
+
+    if (!usuario) {
+      return false;
+    }
+
+    return usuario.ajustes?.notificacionesEmail !== false;
+  };
+
+  const enviarCorreoSiPermitido = async (
+    usuarioId: string,
+    opcionesMail: nodemailer.SendMailOptions
+  ) => {
+    const permitido = await puedeRecibirCorreoUsuario(usuarioId);
+
+    if (!permitido) {
+      return {
+        ok: false,
+        mensaje: 'Las notificaciones por email están desactivadas'
+      };
+    }
+
+    const info = await transporter.sendMail(opcionesMail);
+
+    return {
+      ok: true,
+      mensaje: 'Correo enviado correctamente',
+      data: info
+    };
+  };
+
 
   return info;
 };
@@ -278,6 +344,41 @@ export const enviarCorreoBienvenida = async (correo: string, nombre: string) => 
     `
   });
 
+  const puedeRecibirCorreoUsuario = async (usuarioId: string): Promise<boolean> => {
+    if (!usuarioId) {
+      return false;
+    }
+
+    const usuario = await UsuarioModel.findById(usuarioId);
+
+    if (!usuario) {
+      return false;
+    }
+
+    return usuario.ajustes?.notificacionesEmail !== false;
+  };
+
+  const enviarCorreoSiPermitido = async (
+    usuarioId: string,
+    opcionesMail: nodemailer.SendMailOptions
+  ) => {
+    const permitido = await puedeRecibirCorreoUsuario(usuarioId);
+
+    if (!permitido) {
+      return {
+        ok: false,
+        mensaje: 'Las notificaciones por email están desactivadas'
+      };
+    }
+
+    const info = await transporter.sendMail(opcionesMail);
+
+    return {
+      ok: true,
+      mensaje: 'Correo enviado correctamente',
+      data: info
+    };
+  };
 
 
 };
@@ -341,6 +442,41 @@ export const enviarCorreoSoporte = async (
     `
   });
 
+  const puedeRecibirCorreoUsuario = async (usuarioId: string): Promise<boolean> => {
+    if (!usuarioId) {
+      return false;
+    }
+
+    const usuario = await UsuarioModel.findById(usuarioId);
+
+    if (!usuario) {
+      return false;
+    }
+
+    return usuario.ajustes?.notificacionesEmail !== false;
+  };
+
+  const enviarCorreoSiPermitido = async (
+    usuarioId: string,
+    opcionesMail: nodemailer.SendMailOptions
+  ) => {
+    const permitido = await puedeRecibirCorreoUsuario(usuarioId);
+
+    if (!permitido) {
+      return {
+        ok: false,
+        mensaje: 'Las notificaciones por email están desactivadas'
+      };
+    }
+
+    const info = await transporter.sendMail(opcionesMail);
+
+    return {
+      ok: true,
+      mensaje: 'Correo enviado correctamente',
+      data: info
+    };
+  };
 
 };
 export const enviarConfirmacionSoporteUsuario = async (
@@ -414,14 +550,72 @@ export const enviarConfirmacionSoporteUsuario = async (
     `
   });
 
-  
+  const puedeRecibirCorreoUsuario = async (usuarioId: string): Promise<boolean> => {
+    if (!usuarioId) {
+      return false;
+    }
+
+    const usuario = await UsuarioModel.findById(usuarioId);
+
+    if (!usuario) {
+      return false;
+    }
+
+    return usuario.ajustes?.notificacionesEmail !== false;
+  };
+
+  const enviarCorreoSiPermitido = async (
+    usuarioId: string,
+    opcionesMail: nodemailer.SendMailOptions
+  ) => {
+    const permitido = await puedeRecibirCorreoUsuario(usuarioId);
+
+    if (!permitido) {
+      return {
+        ok: false,
+        mensaje: 'Las notificaciones por email están desactivadas'
+      };
+    }
+
+    const info = await transporter.sendMail(opcionesMail);
+
+    return {
+      ok: true,
+      mensaje: 'Correo enviado correctamente',
+      data: info
+    };
+  };
+
 };
 
 export const enviarCorreoResumen = async (
+  usuarioId: string,
   correo: string,
   metas: any[],
   resumenMeses: any[]
 ) => {
+
+  console.log('usuarioId recibido en correo:', usuarioId);
+  console.log('correo recibido en correo:', correo);
+
+  const usuario = await UsuarioModel.findById(usuarioId);
+
+  console.log('usuario encontrado:', usuario);
+  console.log('ajustes usuario:', usuario?.ajustes);
+
+  if (!usuario) {
+    return {
+      ok: false,
+      mensaje: 'Usuario no encontrado'
+    };
+  }
+
+  if (usuario.ajustes?.notificacionesEmail === false) {
+    return {
+      ok: false,
+      mensaje: 'Las notificaciones por email están desactivadas'
+    };
+  }
 
   const html = `
   <!DOCTYPE html>
@@ -435,7 +629,6 @@ export const enviarCorreoResumen = async (
                    style="background:#ffffff; border-radius:12px; padding:40px; 
                           box-shadow:0 4px 12px rgba(0,0,0,0.08);">
 
-              <!-- LOGO -->
               <tr>
                 <td align="center" style="padding-bottom:25px;">
                   <img src="https://raw.githubusercontent.com/Rusaca/EconomicBalance/master/EconomicBalance_Angular/public/Logo.png"
@@ -445,21 +638,18 @@ export const enviarCorreoResumen = async (
                 </td>
               </tr>
 
-              <!-- TÍTULO -->
               <tr>
                 <td style="font-size:22px; font-weight:bold; color:#333; text-align:center; padding-bottom:10px;">
                   Resumen de tus Metas de Ahorro
                 </td>
               </tr>
 
-              <!-- TEXTO PRINCIPAL -->
               <tr>
                 <td style="font-size:15px; color:#555; line-height:1.6; text-align:center; padding-bottom:25px;">
                   Aquí tienes un resumen actualizado de tus metas de ahorro y el estado mensual.
                 </td>
               </tr>
 
-              <!-- SECCIÓN METAS -->
               <tr>
                 <td style="font-size:18px; font-weight:bold; color:#333; padding-bottom:10px;">
                   Metas registradas
@@ -472,16 +662,15 @@ export const enviarCorreoResumen = async (
                     ${metas.map(m => `
                       <li style="margin-bottom:8px;">
                         <strong>${m.titulo}</strong><br>
-                        Objetivo: ${m.objetivo} €<br>
-                        Actual: ${m.actual} €<br>
-                        Restante: ${Math.max(m.objetivo - m.actual, 0)} €
+                        Presupuesto: ${m.objetivo} €<br>
+                        Gastado: ${m.actual} €<br>
+                        Ahorrado: ${Math.max(m.objetivo - m.actual, 0)} €
                       </li>
                     `).join('')}
                   </ul>
                 </td>
               </tr>
 
-              <!-- SECCIÓN RESUMEN MENSUAL -->
               <tr>
                 <td style="font-size:18px; font-weight:bold; color:#333; padding-bottom:10px;">
                   Resumen mensual
@@ -500,7 +689,6 @@ export const enviarCorreoResumen = async (
                 </td>
               </tr>
 
-              <!-- BOTÓN -->
               <tr>
                 <td align="center" style="padding-bottom:30px;">
                   <a href="http://localhost:4200/metas"
@@ -512,12 +700,10 @@ export const enviarCorreoResumen = async (
                 </td>
               </tr>
 
-              <!-- SEPARADOR -->
               <tr>
                 <td style="border-top:1px solid #e5e5e5; padding-top:25px;"></td>
               </tr>
 
-              <!-- FOOTER -->
               <tr>
                 <td style="padding-top:35px; font-size:12px; color:#aaa; text-align:center;">
                   © ${new Date().getFullYear()} Economic Balance. Todos los derechos reservados.
@@ -533,13 +719,20 @@ export const enviarCorreoResumen = async (
   </html>
   `;
 
-  return await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: `Economic Balance Soporte <${process.env.EMAIL_USER}>`,
     to: correo,
     subject: 'Resumen de tus Metas de Ahorro',
     html
   });
+
+  return {
+    ok: true,
+    mensaje: 'Correo enviado correctamente',
+    data: info
+  };
 };
+
 
 
 

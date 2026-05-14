@@ -58,8 +58,9 @@ export class MetasAhorroComponent implements OnInit {
   errorMeta = '';
   modoEdicion = false;
   metaEditandoId: string | null = null;
+  busquedaMeta = '';
 
-  usuario: any = {};   // ← AÑADIR AQUÍ
+  usuario: any = {};
 
   nuevaMetaData: CrearMetaAhorroPayload = {
     titulo: '',
@@ -75,11 +76,12 @@ export class MetasAhorroComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
-
     const usuarioGuardado = localStorage.getItem('usuario');
 
     if (usuarioGuardado) {
       this.usuario = JSON.parse(usuarioGuardado);
+      console.log('usuario cargado:', this.usuario);
+
     }
 
     await this.cargarMetas();
@@ -87,18 +89,13 @@ export class MetasAhorroComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-
-
   toggleFormulario(meta?: MetaAhorro): void {
-
     this.mostrarFormulario = !this.mostrarFormulario;
 
     this.mensajeMeta = '';
     this.errorMeta = '';
 
-    // 👉 SI VIENE UNA META = MODO EDICIÓN
     if (meta) {
-
       this.modoEdicion = true;
       this.metaEditandoId = meta.id || null;
 
@@ -108,10 +105,7 @@ export class MetasAhorroComponent implements OnInit {
         actual: meta.actual,
         fechaLimite: meta.fechaLimite
       };
-
     } else {
-
-      // 👉 SI NO, ES CREAR
       this.modoEdicion = false;
       this.metaEditandoId = null;
 
@@ -120,65 +114,86 @@ export class MetasAhorroComponent implements OnInit {
       }
     }
   }
-  exportarExcel(): void {
 
-    const metasData = this.metas.map(meta => {
+exportarExcel(): void {
 
-      // Obtener el mes de la meta
-      const fecha = new Date(meta.fechaLimite);
-      const mesIndex = fecha.getMonth(); // 0 = Enero
-      const totalMes = this.resumenMeses[mesIndex]?.total ?? 0;
+  const meses = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre'
+  ];
 
-      return {
-        Titulo: meta.titulo,
-        Objetivo: meta.objetivo,
-        Gastado: meta.actual,
-        Ahorrado: meta.objetivo - meta.actual,
-        Progreso: `${this.calcularProgreso(meta).toFixed(0)}%`,
-        Estado: this.obtenerEstadoMeta(meta),
-        FechaLimite: meta.fechaLimite,
-        TotalMes: totalMes   // ← NUEVA COLUMNA
-      };
-    });
+  const metasData = this.metas.map(meta => ({
+    Titulo: meta.titulo,
+    Objetivo: meta.objetivo,
+    Gastado: meta.actual,
+    Ahorrado: meta.objetivo - meta.actual,
+    Progreso: `${this.calcularProgreso(meta).toFixed(0)}%`,
+    Estado: this.obtenerEstadoMeta(meta),
+    FechaLimite: meta.fechaLimite
+  }));
 
-    const mesesData = this.resumenMeses.map(m => ({
-      Mes: m.mes,
-      Total: m.total
-    }));
+  const resumenMesesData = meses.map((mes, index) => {
+    const totalAhorradoMes = this.metas
+      .filter(meta => {
+        const fecha = new Date(meta.fechaLimite);
+        return fecha.getMonth() === index;
+      })
+      .reduce((total, meta) => {
+        const ahorrado = Number(meta.objetivo || 0) - Number(meta.actual || 0);
+        return total + Math.max(ahorrado, 0);
+      }, 0);
 
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    return {
+      Mes: mes,
+      TotalAhorrado: totalAhorradoMes
+    };
+  });
 
-    const wsMetas = XLSX.utils.json_to_sheet(metasData);
-    const wsMeses = XLSX.utils.json_to_sheet(mesesData);
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(metasData);
 
-    XLSX.utils.book_append_sheet(wb, wsMetas, 'Metas');
-    XLSX.utils.book_append_sheet(wb, wsMeses, 'Resumen Mensual');
+  XLSX.utils.sheet_add_json(ws, [{}], {
+    origin: -1,
+    skipHeader: true
+  });
 
-    const excelBuffer = XLSX.write(wb, {
-      bookType: 'xlsx',
-      type: 'array'
-    });
+  XLSX.utils.sheet_add_json(ws, resumenMesesData, {
+    origin: -1
+  });
 
-    const data: Blob = new Blob([excelBuffer], {
-      type: 'application/octet-stream'
-    });
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Metas');
 
-    saveAs(data, `resumen-ahorro-${new Date().toISOString().slice(0, 10)}.xlsx`);
-  }
+  const excelBuffer = XLSX.write(wb, {
+    bookType: 'xlsx',
+    type: 'array'
+  });
+
+  const data: Blob = new Blob([excelBuffer], {
+    type: 'application/octet-stream'
+  });
+
+  saveAs(data, `resumen-ahorro-${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
 
   cancelarFormulario(): void {
-
     this.mostrarFormulario = false;
-
     this.resetFormulario();
-
     this.errorMeta = '';
-
     this.mensajeMeta = '';
   }
 
   resetFormulario(): void {
-
     this.nuevaMetaData = {
       titulo: '',
       objetivo: 0,
@@ -186,8 +201,8 @@ export class MetasAhorroComponent implements OnInit {
       fechaLimite: ''
     };
   }
-  async editarMeta(): Promise<void> {
 
+  async editarMeta(): Promise<void> {
     if (!this.metaEditandoId) return;
 
     this.guardandoMeta = true;
@@ -195,7 +210,6 @@ export class MetasAhorroComponent implements OnInit {
     this.errorMeta = '';
 
     try {
-
       const respuesta = await this.metasAhorroService.editarMeta(
         this.metaEditandoId,
         this.nuevaMetaData
@@ -207,199 +221,143 @@ export class MetasAhorroComponent implements OnInit {
       }
 
       this.mensajeMeta = 'Meta actualizada correctamente';
-
       this.mostrarFormulario = false;
-
       this.modoEdicion = false;
-
       this.metaEditandoId = null;
-
       this.resetFormulario();
 
       await this.cargarMetas();
+      this.generarResumenMensual();
 
     } catch (err) {
-
       console.error(err);
-
       this.errorMeta = 'Error al editar la meta.';
-
     } finally {
-
       this.guardandoMeta = false;
     }
   }
 
   async guardarMeta(): Promise<void> {
-
     this.mensajeMeta = '';
-
     this.errorMeta = '';
 
     const titulo = this.nuevaMetaData.titulo.trim();
-
     const objetivo = Number(this.nuevaMetaData.objetivo);
-
     const actual = Number(this.nuevaMetaData.actual || 0);
-
     const fechaLimite = this.nuevaMetaData.fechaLimite;
 
     if (!titulo || objetivo <= 0 || !fechaLimite) {
-
-      this.errorMeta =
-        'Completa titulo, objetivo y fecha limite.';
-
+      this.errorMeta = 'Completa titulo, objetivo y fecha limite.';
       return;
     }
 
     if (actual < 0) {
-
-      this.errorMeta =
-        'El ahorro actual no puede ser negativo.';
-
+      this.errorMeta = 'El ahorro actual no puede ser negativo.';
       return;
     }
 
     if (actual > objetivo) {
-
-      this.errorMeta =
-        'El ahorro actual no puede superar el objetivo.';
-
+      this.errorMeta = 'El ahorro actual no puede superar el objetivo.';
       return;
-    } if (this.modoEdicion) {
+    }
+
+    if (this.modoEdicion) {
       return this.editarMeta();
     }
 
     this.guardandoMeta = true;
 
     try {
-
-      const respuesta =
-        await this.metasAhorroService.crearMeta({
-          titulo,
-          objetivo,
-          actual,
-          fechaLimite
-        });
+      const respuesta = await this.metasAhorroService.crearMeta({
+        titulo,
+        objetivo,
+        actual,
+        fechaLimite
+      });
 
       if (!respuesta.ok) {
-
-        this.errorMeta =
-          respuesta.mensaje ||
-          'No se pudo guardar la meta.';
-
+        this.errorMeta = respuesta.mensaje || 'No se pudo guardar la meta.';
         return;
       }
 
-      this.mensajeMeta =
-        respuesta.mensaje ||
-        'Meta creada correctamente.';
-
+      this.mensajeMeta = respuesta.mensaje || 'Meta creada correctamente.';
       this.mostrarFormulario = false;
-
       this.resetFormulario();
 
       await this.cargarMetas();
-
       this.generarResumenMensual();
 
     } catch (error) {
-
       console.error('Error guardando meta:', error);
-
-      this.errorMeta =
-        'Hubo un error al guardar la meta.';
-
+      this.errorMeta = 'Hubo un error al guardar la meta.';
     } finally {
-
       this.guardandoMeta = false;
-
       this.cdr.detectChanges();
     }
   }
 
-
   async eliminarMeta(meta: MetaAhorro): Promise<void> {
-
     if (!meta.id) {
-
-      this.errorMeta =
-        'La meta no tiene un id valido.';
-
+      this.errorMeta = 'La meta no tiene un id valido.';
       return;
     }
 
     this.mensajeMeta = '';
-
     this.errorMeta = '';
-
     this.eliminandoMetaId = meta.id;
 
     try {
-
-      const respuesta =
-        await this.metasAhorroService.eliminarMeta(meta.id);
+      const respuesta = await this.metasAhorroService.eliminarMeta(meta.id);
 
       if (!respuesta.ok) {
-
-        this.errorMeta =
-          respuesta.mensaje ||
-          'No se pudo eliminar la meta.';
-
+        this.errorMeta = respuesta.mensaje || 'No se pudo eliminar la meta.';
         return;
       }
 
-      this.metas = this.metas.filter(
-        item => item.id !== meta.id
-      );
-
+      this.metas = this.metas.filter(item => item.id !== meta.id);
       this.generarResumenMensual();
 
-      this.mensajeMeta =
-        respuesta.mensaje ||
-        'Meta eliminada correctamente.';
+      this.mensajeMeta = respuesta.mensaje || 'Meta eliminada correctamente.';
 
     } catch (error) {
-
       console.error('Error eliminando meta:', error);
-
-      this.errorMeta =
-        'Hubo un error al eliminar la meta.';
-
+      this.errorMeta = 'Hubo un error al eliminar la meta.';
     } finally {
-
       this.eliminandoMetaId = '';
-
       this.cdr.detectChanges();
     }
   }
 
   async enviarResumenCorreo(): Promise<void> {
+  try {
+    const payload = {
+      resumenMeses: this.resumenMeses,
+      metas: this.metas,
+      correoDestino: this.usuario.correo,
+      usuarioId: this.usuario.id
+    };
 
-    try {
+    console.log('payload que se envia:', payload);
 
-      const payload = {
-        resumenMeses: this.resumenMeses,
-        metas: this.metas,
-        correoDestino: this.usuario.correo
-      };
+    const respuesta = await this.resumenService.enviarResumenCorreo(payload);
 
-      await this.resumenService.enviarResumenCorreo(payload);
-
-      this.mensajeMeta = 'Resumen enviado correctamente por correo';
-
-    } catch (error) {
-
-      this.errorMeta = 'No se pudo enviar el resumen por correo';
-
+    if (!respuesta?.ok) {
+      this.errorMeta = respuesta?.mensaje || 'No se pudo enviar el resumen por correo';
+      return;
     }
+
+    this.mensajeMeta = respuesta?.mensaje || 'Resumen enviado correctamente por correo';
+
+  } catch (error) {
+    console.error(error);
+    this.errorMeta = 'No se pudo enviar el resumen por correo';
   }
+}
+
 
 
   async enviarResumenMovil(): Promise<void> {
-
     try {
-
       const payload = {
         resumenMeses: this.resumenMeses,
         metas: this.metas,
@@ -408,67 +366,43 @@ export class MetasAhorroComponent implements OnInit {
         prefijoTelefono: this.usuario.prefijoTelefono
       };
 
-      console.log("📨 Payload enviado al backend:", payload);
+      console.log('📨 Payload enviado al backend:', payload);
 
       await this.resumenService.enviarResumenMovil(payload);
 
       this.mensajeMeta = 'Resumen enviado al móvil correctamente';
 
     } catch (error) {
-
       this.errorMeta = 'No se pudo enviar el resumen al móvil';
-
     }
   }
 
-
-
-
-
   async cargarMetas(): Promise<void> {
-
     this.cargandoMetas = true;
-
     this.errorMeta = '';
 
     try {
-
-      const respuesta =
-        await this.metasAhorroService.obtenerMetas();
+      const respuesta = await this.metasAhorroService.obtenerMetas();
 
       if (!respuesta.ok) {
-
-        this.errorMeta =
-          respuesta.mensaje ||
-          'No se pudieron cargar las metas.';
-
+        this.errorMeta = respuesta.mensaje || 'No se pudieron cargar las metas.';
         this.metas = [];
-
         return;
       }
 
       this.metas = respuesta.data?.metas || [];
 
     } catch (error) {
-
       console.error('Error cargando metas:', error);
-
-      this.errorMeta =
-        'Hubo un error al cargar las metas.';
-
+      this.errorMeta = 'Hubo un error al cargar las metas.';
       this.metas = [];
-
     } finally {
-
       this.cargandoMetas = false;
-
       this.cdr.detectChanges();
     }
   }
 
-
   generarResumenMensual(): void {
-
     const meses = [
       'Enero',
       'Febrero',
@@ -490,25 +424,31 @@ export class MetasAhorroComponent implements OnInit {
     }));
 
     this.metas.forEach(meta => {
-
       const fecha = new Date(meta.fechaLimite);
-
       const indiceMes = fecha.getMonth();
-
       const restante =
         Number(meta.objetivo || 0) -
         Number(meta.actual || 0);
 
-      this.resumenMeses[indiceMes].total +=
-        Math.max(restante, 0);
+      this.resumenMeses[indiceMes].total += Math.max(restante, 0);
     });
   }
 
 
+  get metasFiltradas(): MetaAhorro[] {
+    const texto = this.busquedaMeta.trim().toLowerCase();
+
+    if (!texto) {
+      return this.metas;
+    }
+
+    return this.metas.filter(meta =>
+      meta.titulo.toLowerCase().includes(texto)
+    );
+  }
+
   calcularProgreso(meta: MetaAhorro): number {
-
     const objetivo = Number(meta.objetivo);
-
     const actual = Number(meta.actual);
 
     if (!objetivo || objetivo <= 0) {
@@ -516,17 +456,14 @@ export class MetasAhorroComponent implements OnInit {
     }
 
     const porcentaje = (actual / objetivo) * 100;
-
     return Math.max(0, Math.min(porcentaje, 100));
   }
 
   obtenerTextoProgreso(meta: MetaAhorro): string {
-
     return `${Math.round(this.calcularProgreso(meta))}%`;
   }
 
   calcularRestante(meta: MetaAhorro): number {
-
     return Math.max(
       Number(meta.objetivo) - Number(meta.actual),
       0
@@ -534,29 +471,24 @@ export class MetasAhorroComponent implements OnInit {
   }
 
   metaCompletada(meta: MetaAhorro): boolean {
-
     return Number(meta.actual) >= Number(meta.objetivo);
   }
 
   metaVencida(meta: MetaAhorro): boolean {
-
     if (!meta.fechaLimite) {
       return false;
     }
 
     const hoy = new Date();
-
     const fecha = new Date(meta.fechaLimite);
 
     hoy.setHours(0, 0, 0, 0);
-
     fecha.setHours(0, 0, 0, 0);
 
     return fecha < hoy && !this.metaCompletada(meta);
   }
 
   obtenerEstadoMeta(meta: MetaAhorro): string {
-
     if (this.metaCompletada(meta)) {
       return 'Completada';
     }

@@ -1,5 +1,15 @@
+export interface IAjustes {
+  idioma: 'es' | 'en';
+  notificacionesEmail: boolean;
+  notificacionesApp: boolean;
+  modoOscuro: boolean;
+  recordatorios: boolean;
+  sincronizacion: boolean;
+  autoguardado: boolean;
+}
+
 export interface IUsuario {
-  _id: string;        
+  _id: string;
   nombre: string;
   apellidos: string;
   correo: string;
@@ -14,5 +24,5 @@ export interface IUsuario {
   prefijoTelefono?: string;
   genero?: string;
   fotoPerfil?: string;
+  ajustes?: IAjustes;
 }
-
