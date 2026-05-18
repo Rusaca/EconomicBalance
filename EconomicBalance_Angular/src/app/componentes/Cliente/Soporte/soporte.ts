@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 import { ChatApiService } from '../../../servicios/chat-api.service';
-
+import { TranslateService } from '../../../servicios/translate.service';
 interface SoporteAccion {
   titulo: string;
   descripcion: string;
@@ -89,6 +89,7 @@ export class SoporteComponent {
   constructor(
     private chatApi: ChatApiService,
     private router: Router,
+    public translate: TranslateService,
     private cdr: ChangeDetectorRef
   ) {}
 

@@ -10,21 +10,21 @@
       <div>
 
         <p class="metas-tag">
-          Ahorro
+          {{ translate.t('metas_ahorro_tag') }}
         </p>
 
         <h2>
-          Metas de ahorro
+          {{ translate.t('metas_titulo') }}
         </h2>
 
         <p class="metas-subtitle">
-          Define objetivos reales, sigue tu progreso y controla tus gastos y ahorros mensuales.
+          {{ translate.t('metas_subtitulo') }}
         </p>
 
       </div>
 
       <button class="btn btn-primary metas-add-btn" type="button" (click)="toggleFormulario()">
-        {{ mostrarFormulario ? 'Cerrar formulario' : '+ Nueva meta' }}
+        {{ mostrarFormulario ? translate.t('cerrar_formulario') : translate.t('nueva_meta') }}
       </button>
 
     </section>
@@ -44,28 +44,28 @@
       <div class="meta-form-card-body">
 
         <h5>
-          {{ modoEdicion ? 'Editar meta' : 'Nueva meta' }}
+          {{ modoEdicion ? translate.t('editar_meta') : translate.t('nueva_meta') }}
         </h5>
 
         <div class="meta-form-grid">
 
           <div class="meta-field">
-            <label>Título</label>
+            <label>{{ translate.t('titulo') }}</label>
             <input type="text" [(ngModel)]="nuevaMetaData.titulo" />
           </div>
 
           <div class="meta-field">
-            <label>Objetivo (€)</label>
+            <label>{{ translate.t('objetivo') }}</label>
             <input type="number" [(ngModel)]="nuevaMetaData.objetivo" />
           </div>
 
           <div class="meta-field">
-            <label>Gastado (€)</label>
+            <label>{{ translate.t('gastado') }}</label>
             <input type="number" [(ngModel)]="nuevaMetaData.actual" />
           </div>
 
           <div class="meta-field">
-            <label>Fecha límite</label>
+            <label>{{ translate.t('fecha_limite') }}</label>
             <input type="date" [(ngModel)]="nuevaMetaData.fechaLimite" />
           </div>
 
@@ -74,11 +74,11 @@
         <div class="meta-form-actions">
 
           <button class="btn btn-success" type="button" (click)="guardarMeta()" [disabled]="guardandoMeta">
-            {{ guardandoMeta ? 'Guardando...' : (modoEdicion ? 'Guardar cambios' : 'Guardar meta') }}
+            {{ guardandoMeta ? translate.t('guardando') : translate.t('guardar_meta') }}
           </button>
 
           <button class="btn btn-outline-secondary" type="button" (click)="cancelarFormulario()">
-            Cancelar
+            {{ translate.t('cancelar') }}
           </button>
 
         </div>
@@ -91,16 +91,15 @@
     <section class="metas-search-section">
       <div class="metas-search-box">
         <input
-          id="buscadorMetas"
           type="text"
           class="metas-search-input"
-          placeholder="Escribe el nombre de una meta..."
           [(ngModel)]="busquedaMeta"
+          placeholder="{{ translate.t('buscar_meta') }}"
         />
       </div>
     </section>
 
-    <!-- GRID METAS -->
+    <!-- GRID -->
     <section class="metas-grid">
 
       <article class="meta-card" *ngFor="let meta of metasFiltradas; trackBy: trackByMeta">
@@ -126,12 +125,14 @@
               </span>
 
               <button class="meta-edit-btn" (click)="toggleFormulario(meta)">
-                Editar
+                {{ translate.t('editar') }}
               </button>
 
-              <button class="meta-delete-btn" type="button" (click)="eliminarMeta(meta)"
+              <button class="meta-delete-btn" type="button"
+                (click)="eliminarMeta(meta)"
                 [disabled]="eliminandoMetaId === meta.id">
-                {{ eliminandoMetaId === meta.id ? '...' : 'Quitar' }}
+
+                {{ eliminandoMetaId === meta.id ? '...' : translate.t('quitar') }}
               </button>
 
             </div>
@@ -141,24 +142,24 @@
           <div class="meta-numbers">
 
             <div class="meta-number-box">
-              <span>Presupuesto</span>
+              <span>{{ translate.t('presupuesto') }}</span>
               <strong>{{ meta.objetivo }} €</strong>
             </div>
 
             <div class="meta-number-box">
-              <span>Gastado</span>
+              <span>{{ translate.t('gastado') }}</span>
               <strong>{{ meta.actual }} €</strong>
             </div>
 
             <div class="meta-number-box">
-              <span>Ahorrado</span>
+              <span>{{ translate.t('ahorrado') }}</span>
               <strong>{{ calcularRestante(meta) }} €</strong>
             </div>
 
           </div>
 
           <p class="meta-date">
-            Fecha límite: <strong>{{ meta.fechaLimite }}</strong>
+            {{ translate.t('fecha_limite') }}: <strong>{{ meta.fechaLimite }}</strong>
           </p>
 
           <div class="progress meta-progress-bar">
@@ -172,57 +173,10 @@
     </section>
 
     <div *ngIf="metasFiltradas.length === 0" class="meta-feedback meta-feedback-error">
-      No se encontraron metas con esa búsqueda.
+      {{ translate.t('sin_resultados') }}
     </div>
 
-    <!-- GRAFICA -->
-    <section class="grafica-section">
-
-      <div class="grafica-card">
-
-        <div class="grafica-header">
-
-          <div>
-
-            <p class="metas-tag">Resumen anual</p>
-
-            <h3>Evolución mensual</h3>
-
-            <p class="grafica-subtitle">
-              Visualiza el ahorro restante de cada mes.
-            </p>
-
-          </div>
-
-        </div>
-
-        <div class="grafica-wrapper">
-
-          <div class="grafica-item" *ngFor="let mes of resumenMeses">
-
-            <div class="grafica-bar-wrapper">
-
-              <div class="grafica-bar" [style.height.%]="mes.total > 1000 ? 100 : (mes.total / 10)"></div>
-
-            </div>
-
-            <strong class="grafica-total">
-              {{ mes.total }}€
-            </strong>
-
-            <span class="grafica-mes">
-              {{ mes.mes }}
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ACCIONES NUEVAS -->
+    <!-- EXPORTACIÓN -->
     <section class="acciones-section">
 
       <div class="acciones-card">
@@ -230,31 +184,27 @@
         <div class="acciones-header">
 
           <p class="metas-tag">
-            Exportación
+            {{ translate.t('exportacion') }}
           </p>
 
           <h3>
-            Enviar y descargar resumen
+            {{ translate.t('enviar_resumen') }}
           </h3>
-
-          <p class="grafica-subtitle">
-            Recibe tu resumen mensual por correo, móvil o descárgalo en PDF.
-          </p>
 
         </div>
 
         <div class="acciones-buttons">
 
-          <button class="accion-btn accion-email" type="button" (click)="enviarResumenCorreo()">
-            📧 Enviar por correo
+          <button (click)="enviarResumenCorreo()">
+            📧 {{ translate.t('enviar_correo') }}
           </button>
 
-          <button class="accion-btn accion-sms" type="button" (click)="enviarResumenMovil()">
-            📱 Enviar al móvil
+          <button (click)="enviarResumenMovil()">
+            📱 {{ translate.t('enviar_movil') }}
           </button>
 
-          <button class="accion-btn accion-excel" type="button" (click)="exportarExcel()">
-            📊 Descargar Excel
+          <button (click)="exportarExcel()">
+            📊 {{ translate.t('descargar_excel') }}
           </button>
 
         </div>
@@ -264,5 +214,4 @@
     </section>
 
   </div>
-
 </div>
