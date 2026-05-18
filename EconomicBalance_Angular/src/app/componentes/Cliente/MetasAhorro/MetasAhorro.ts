@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 import { ResumenService } from '../../../servicios/resumen.service';
-
+import { TranslateService } from '../../../servicios/translate.service';
 import { FormsModule } from '@angular/forms';
 
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
@@ -72,7 +72,8 @@ export class MetasAhorroComponent implements OnInit {
   constructor(
     private metasAhorroService: MetasAhorroService,
     private resumenService: ResumenService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public translate: TranslateService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -115,75 +116,75 @@ export class MetasAhorroComponent implements OnInit {
     }
   }
 
-exportarExcel(): void {
+  exportarExcel(): void {
 
-  const meses = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre'
-  ];
+    const meses = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
+    ];
 
-  const metasData = this.metas.map(meta => ({
-    Titulo: meta.titulo,
-    Objetivo: meta.objetivo,
-    Gastado: meta.actual,
-    Ahorrado: meta.objetivo - meta.actual,
-    Progreso: `${this.calcularProgreso(meta).toFixed(0)}%`,
-    Estado: this.obtenerEstadoMeta(meta),
-    FechaLimite: meta.fechaLimite
-  }));
+    const metasData = this.metas.map(meta => ({
+      Titulo: meta.titulo,
+      Objetivo: meta.objetivo,
+      Gastado: meta.actual,
+      Ahorrado: meta.objetivo - meta.actual,
+      Progreso: `${this.calcularProgreso(meta).toFixed(0)}%`,
+      Estado: this.obtenerEstadoMeta(meta),
+      FechaLimite: meta.fechaLimite
+    }));
 
-  const resumenMesesData = meses.map((mes, index) => {
-    const totalAhorradoMes = this.metas
-      .filter(meta => {
-        const fecha = new Date(meta.fechaLimite);
-        return fecha.getMonth() === index;
-      })
-      .reduce((total, meta) => {
-        const ahorrado = Number(meta.objetivo || 0) - Number(meta.actual || 0);
-        return total + Math.max(ahorrado, 0);
-      }, 0);
+    const resumenMesesData = meses.map((mes, index) => {
+      const totalAhorradoMes = this.metas
+        .filter(meta => {
+          const fecha = new Date(meta.fechaLimite);
+          return fecha.getMonth() === index;
+        })
+        .reduce((total, meta) => {
+          const ahorrado = Number(meta.objetivo || 0) - Number(meta.actual || 0);
+          return total + Math.max(ahorrado, 0);
+        }, 0);
 
-    return {
-      Mes: mes,
-      TotalAhorrado: totalAhorradoMes
-    };
-  });
+      return {
+        Mes: mes,
+        TotalAhorrado: totalAhorradoMes
+      };
+    });
 
-  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(metasData);
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(metasData);
 
-  XLSX.utils.sheet_add_json(ws, [{}], {
-    origin: -1,
-    skipHeader: true
-  });
+    XLSX.utils.sheet_add_json(ws, [{}], {
+      origin: -1,
+      skipHeader: true
+    });
 
-  XLSX.utils.sheet_add_json(ws, resumenMesesData, {
-    origin: -1
-  });
+    XLSX.utils.sheet_add_json(ws, resumenMesesData, {
+      origin: -1
+    });
 
-  const wb: XLSX.WorkBook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Metas');
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Metas');
 
-  const excelBuffer = XLSX.write(wb, {
-    bookType: 'xlsx',
-    type: 'array'
-  });
+    const excelBuffer = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
 
-  const data: Blob = new Blob([excelBuffer], {
-    type: 'application/octet-stream'
-  });
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/octet-stream'
+    });
 
-  saveAs(data, `resumen-ahorro-${new Date().toISOString().slice(0, 10)}.xlsx`);
-}
+    saveAs(data, `resumen-ahorro-${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
 
 
   cancelarFormulario(): void {
@@ -329,30 +330,30 @@ exportarExcel(): void {
   }
 
   async enviarResumenCorreo(): Promise<void> {
-  try {
-    const payload = {
-      resumenMeses: this.resumenMeses,
-      metas: this.metas,
-      correoDestino: this.usuario.correo,
-      usuarioId: this.usuario.id
-    };
+    try {
+      const payload = {
+        resumenMeses: this.resumenMeses,
+        metas: this.metas,
+        correoDestino: this.usuario.correo,
+        usuarioId: this.usuario.id
+      };
 
-    console.log('payload que se envia:', payload);
+      console.log('payload que se envia:', payload);
 
-    const respuesta = await this.resumenService.enviarResumenCorreo(payload);
+      const respuesta = await this.resumenService.enviarResumenCorreo(payload);
 
-    if (!respuesta?.ok) {
-      this.errorMeta = respuesta?.mensaje || 'No se pudo enviar el resumen por correo';
-      return;
+      if (!respuesta?.ok) {
+        this.errorMeta = respuesta?.mensaje || 'No se pudo enviar el resumen por correo';
+        return;
+      }
+
+      this.mensajeMeta = respuesta?.mensaje || 'Resumen enviado correctamente por correo';
+
+    } catch (error) {
+      console.error(error);
+      this.errorMeta = 'No se pudo enviar el resumen por correo';
     }
-
-    this.mensajeMeta = respuesta?.mensaje || 'Resumen enviado correctamente por correo';
-
-  } catch (error) {
-    console.error(error);
-    this.errorMeta = 'No se pudo enviar el resumen por correo';
   }
-}
 
 
 

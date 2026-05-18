@@ -213,8 +213,83 @@ export class TranslateService {
             calendar_mas: 'más',
             calendar_detalle_tag: 'Detalle del día',
             calendar_sin_descripcion: 'Sin descripción',
-            calendar_sin_eventos: 'No hay eventos para este día.'
+            calendar_sin_eventos: 'No hay eventos para este día.',
+            metas_ahorro_tag: 'Ahorro',
+            metas_titulo: 'Metas de ahorro',
+            metas_subtitulo: 'Define objetivos reales, sigue tu progreso y controla tus gastos y ahorros mensuales.',
 
+            nueva_meta: '+ Nueva meta',
+            cerrar_formulario: 'Cerrar formulario',
+            editar_meta: 'Editar meta',
+
+            titulo: 'Título',
+            objetivo: 'Objetivo (€)',
+            gastado: 'Gastado (€)',
+            fecha_limite: 'Fecha límite',
+
+            guardar_meta: 'Guardar meta',
+            guardando: 'Guardando...',
+            cancelar: 'Cancelar',
+
+            buscar_meta: 'Escribe el nombre de una meta...',
+
+            presupuesto: 'Presupuesto',
+            ahorrado: 'Ahorrado',
+            editar: 'Editar',
+            quitar: 'Quitar',
+
+            sin_resultados: 'No se encontraron metas con esa búsqueda.',
+
+            exportacion: 'Exportación',
+            enviar_resumen: 'Enviar y descargar resumen',
+            enviar_correo: 'Enviar por correo',
+            enviar_movil: 'Enviar al móvil',
+            descargar_excel: 'Descargar Excel',
+            support_centro: 'Centro de soporte',
+            support_titulo: 'Estamos aquí para ayudarte a resolver cualquier duda',
+            support_subtitulo: 'Encuentra respuestas rápidas, consulta preguntas frecuentes y utiliza el asistente virtual para resolver dudas sobre plantillas, calendario o acceso a la cuenta.',
+
+            support_estado: 'Estado del servicio',
+            support_disponible: 'Soporte disponible',
+            support_estado_desc: 'Nuestro centro de ayuda está operativo y preparado para ofrecer orientación rápida y clara.',
+
+            support_asistente: 'Asistente virtual',
+            support_chat_titulo: 'Habla con el chatbot',
+
+            escribiendo: 'Escribiendo...',
+            escribe_consulta: 'Escribe tu consulta...',
+            enviar: 'Enviar',
+
+            ver_ayuda: 'Ver ayuda',
+
+            faq: 'Preguntas frecuentes',
+            faq_titulo: 'Respuestas rápidas',
+            ayuda_centro: 'Centro de ayuda',
+            ayuda_titulo: 'Estamos aquí para ayudarte',
+            ayuda_subtitulo: 'Envía tu consulta al equipo de soporte de Economic Balance y recibe un token para identificar tu solicitud fácilmente.',
+
+            ayuda_estado: 'Estado del servicio',
+            ayuda_disponible: 'Soporte disponible',
+            ayuda_estado_desc: 'Tu consulta se enviará directamente al equipo de soporte.',
+
+            ayuda_formulario: 'Formulario de soporte',
+            ayuda_enviar: 'Enviar solicitud',
+
+            nombre: 'Nombre',
+            correo: 'Correo electrónico',
+            asunto: 'Asunto',
+            mensaje: 'Mensaje',
+
+            placeholder_nombre: 'Introduce tu nombre',
+            placeholder_asunto: 'Describe brevemente tu consulta',
+            placeholder_mensaje: 'Explica tu problema o consulta con detalle...',
+
+            enviar_solicitud: 'Enviar solicitud',
+            enviando: 'Enviando...',
+            volver_soporte: 'Volver al soporte',
+            token: 'Token de soporte',
+            enviado_ok: 'Enviado correctamente',
+            enviado_desc: 'Tu solicitud se ha enviado al equipo de soporte. Guarda tu token para futuras consultas.',
 
         },
 
@@ -385,10 +460,78 @@ export class TranslateService {
             calendar_mas: 'more',
             calendar_detalle_tag: 'Day details',
             calendar_sin_descripcion: 'No description',
-            calendar_sin_eventos: 'There are no events for this day.'
+            calendar_sin_eventos: 'There are no events for this day.',
+            metas_ahorro_tag: 'Savings',
+            metas_titulo: 'Savings goals',
+            metas_subtitulo: 'Define real goals, track progress and control monthly spending and savings.',
 
+            nueva_meta: '+ New goal',
+            cerrar_formulario: 'Close form',
+            editar_meta: 'Edit goal',
 
+            titulo: 'Title',
+            objetivo: 'Target (€)',
+            gastado: 'Spent (€)',
+            fecha_limite: 'Deadline',
 
+            guardar_meta: 'Save goal',
+            guardando: 'Saving...',
+            cancelar: 'Cancel',
+
+            buscar_meta: 'Search a goal...',
+
+            presupuesto: 'Budget',
+            ahorrado: 'Saved',
+            editar: 'Edit',
+            quitar: 'Remove',
+
+            sin_resultados: 'No goals found for this search.',
+
+            exportacion: 'Export',
+            enviar_resumen: 'Send and download summary',
+            enviar_correo: 'Send by email',
+            enviar_movil: 'Send to phone',
+            descargar_excel: 'Download Excel',
+            support_centro: 'Support center',
+            support_titulo: 'We are here to help you solve any doubt',
+            support_subtitulo: 'Find quick answers, check FAQs and use the virtual assistant to solve questions about templates, calendar or account access.',
+
+            support_estado: 'Service status',
+            support_disponible: 'Support available',
+            support_estado_desc: 'Our help center is active and ready to provide fast and clear guidance.',
+
+            support_asistente: 'Virtual assistant',
+            support_chat_titulo: 'Talk with the chatbot',
+
+            escribiendo: 'Typing...',
+            escribe_consulta: 'Write your question...',
+            enviar: 'Send',
+
+            ver_ayuda: 'View help',
+
+            faq: 'Frequently asked questions',
+            faq_titulo: 'Quick answers',
+            ayuda_centro: 'Help center',
+            ayuda_titulo: 'We are here to help you',
+            ayuda_subtitulo: 'Send your request to the Economic Balance support team and receive a token to identify it easily.',
+            ayuda_estado: 'Service status',
+            ayuda_disponible: 'Support available',
+            ayuda_estado_desc: 'Your request will be sent directly to the support team.',
+            ayuda_formulario: 'Support form',
+            ayuda_enviar: 'Send request',
+            nombre: 'Name',
+            correo: 'Email',
+            asunto: 'Subject',
+            mensaje: 'Message',
+            placeholder_nombre: 'Enter your name',
+            placeholder_asunto: 'Briefly describe your issue',
+            placeholder_mensaje: 'Explain your issue in detail...',
+            enviar_solicitud: 'Send request',
+            enviando: 'Sending...',
+            volver_soporte: 'Back to support',
+            token: 'Support token',
+            enviado_ok: 'Successfully sent',
+            enviado_desc: 'Your request has been sent to support. Save your token for future reference.',
         }
     };
 

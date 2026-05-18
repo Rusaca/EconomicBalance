@@ -1,161 +1,191 @@
 <app-header-autenticado></app-header-autenticado>
 
 <main class="support-page">
-    <div class="container-fluid support-shell">
+  <div class="container-fluid support-shell">
 
-        <section class="support-hero">
-            <div class="row g-4 align-items-center">
-                <div class="col-12 col-xl-7">
-                    <div class="support-hero-card">
-                        <p class="support-kicker">Centro de soporte</p>
+    <!-- HERO -->
+    <section class="support-hero">
+      <div class="row g-4 align-items-center">
 
-                        <h1 class="support-title">
-                            Estamos aqui para ayudarte a resolver cualquier duda
-                        </h1>
+        <div class="col-12 col-xl-7">
+          <div class="support-hero-card">
 
-                        <p class="support-text mb-0">
-                            Encuentra respuestas rapidas, consulta preguntas frecuentes y utiliza el asistente virtual
-                            para resolver dudas sobre plantillas, calendario o acceso a la cuenta.
-                        </p>
-                    </div>
-                </div>
+            <p class="support-kicker">
+              {{ translate.t('support_centro') }}
+            </p>
 
-                <div class="col-12 col-xl-5">
-                    <div class="support-status-card">
-                        <p class="support-mini">Estado del servicio</p>
+            <h1 class="support-title">
+              {{ translate.t('support_titulo') }}
+            </h1>
 
-                        <div class="support-status-pill">
-                            <span class="support-status-dot"></span>
-                            Soporte disponible
-                        </div>
+            <p class="support-text mb-0">
+              {{ translate.t('support_subtitulo') }}
+            </p>
 
-                        <p class="support-text mb-0">
-                            Nuestro centro de ayuda esta operativo y preparado para ofrecer orientacion rapida y clara.
-                        </p>
-                    </div>
-                </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-5">
+          <div class="support-status-card">
+
+            <p class="support-mini">
+              {{ translate.t('support_estado') }}
+            </p>
+
+            <div class="support-status-pill">
+              <span class="support-status-dot"></span>
+              {{ translate.t('support_disponible') }}
             </div>
-        </section>
 
-        <section class="support-actions">
-            <div class="row g-4">
-                <div
-                    class="col-12 col-md-6 col-xl-3"
-                    *ngFor="let accion of accionesRapidas"
-                >
-                    <article class="support-action-card h-100">
-                        <div class="support-action-icon">
-                            {{ accion.icono }}
-                        </div>
+            <p class="support-text mb-0">
+              {{ translate.t('support_estado_desc') }}
+            </p>
 
-                        <h3>{{ accion.titulo }}</h3>
+          </div>
+        </div>
 
-                        <p>{{ accion.descripcion }}</p>
+      </div>
+    </section>
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark support-btn"
-                            (click)="irAAyuda(accion.tipo)"
-                        >
-                            Ver ayuda
-                        </button>
-                    </article>
-                </div>
+    <!-- ACCIONES -->
+    <section class="support-actions">
+      <div class="row g-4">
+
+        <div class="col-12 col-md-6 col-xl-3"
+             *ngFor="let accion of accionesRapidas">
+
+          <article class="support-action-card h-100">
+
+            <div class="support-action-icon">
+              {{ accion.icono }}
             </div>
-        </section>
 
-        <section class="support-chat-preview">
-            <div class="row g-4">
+            <h3>{{ accion.titulo }}</h3>
 
-                <div class="col-12 col-xl-7">
-                    <div class="support-chat-card h-100">
+            <p>{{ accion.descripcion }}</p>
 
-                        <div class="support-chat-header">
-                            <div>
-                                <p class="support-mini mb-1">
-                                    Asistente virtual
-                                </p>
+            <button
+              type="button"
+              class="btn btn-outline-dark support-btn"
+              (click)="irAAyuda(accion.tipo)">
 
-                                <h2 class="support-section-title mb-0">
-                                    Habla con el chatbot
-                                </h2>
-                            </div>
+              {{ translate.t('ver_ayuda') }}
 
-                            <span class="support-badge">Activo</span>
-                        </div>
+            </button>
 
-                        <div class="support-chat-window">
+          </article>
 
-                            <div
-                                *ngFor="let msg of messages"
-                                class="support-message"
-                                [ngClass]="{
-                                    'support-message-user': msg.sender === 'user',
-                                    'support-message-bot': msg.sender === 'bot'
-                                }"
-                            >
-                                {{ msg.text }}
-                            </div>
+        </div>
 
-                            <div
-                                *ngIf="loading"
-                                class="support-message support-message-bot"
-                            >
-                                Escribiendo...
-                            </div>
+      </div>
+    </section>
 
-                        </div>
+    <!-- CHAT + FAQ -->
+    <section class="support-chat-preview">
+      <div class="row g-4">
 
-                        <div class="support-chat-input">
+        <!-- CHAT -->
+        <div class="col-12 col-xl-7">
+          <div class="support-chat-card h-100">
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Escribe tu consulta..."
-                                [(ngModel)]="userMessage"
-                                (keyup.enter)="sendMessage()"
-                            />
+            <div class="support-chat-header">
 
-                            <button
-                                type="button"
-                                class="btn btn-dark"
-                                (click)="sendMessage()"
-                                [disabled]="loading"
-                            >
-                                Enviar
-                            </button>
+              <div>
 
-                        </div>
-                    </div>
-                </div>
+                <p class="support-mini mb-1">
+                  {{ translate.t('support_asistente') }}
+                </p>
 
-                <div class="col-12 col-xl-5">
-                    <div class="support-faq-card h-100">
+                <h2 class="support-section-title mb-0">
+                  {{ translate.t('support_chat_titulo') }}
+                </h2>
 
-                        <p class="support-mini mb-2">
-                            Preguntas frecuentes
-                        </p>
+              </div>
 
-                        <h2 class="support-section-title">
-                            Respuestas rapidas
-                        </h2>
-
-                        <div class="support-faq-list">
-
-                            <article
-                                class="support-faq-item"
-                                *ngFor="let faq of preguntasFrecuentes"
-                            >
-                                <h3>{{ faq.pregunta }}</h3>
-                                <p>{{ faq.respuesta }}</p>
-                            </article>
-
-                        </div>
-                    </div>
-                </div>
+              <span class="support-badge">
+                {{ translate.t('activo') }}
+              </span>
 
             </div>
-        </section>
 
-    </div>
+            <div class="support-chat-window">
+
+              <div
+                *ngFor="let msg of messages"
+                class="support-message"
+                [ngClass]="{
+                  'support-message-user': msg.sender === 'user',
+                  'support-message-bot': msg.sender === 'bot'
+                }">
+
+                {{ msg.text }}
+
+              </div>
+
+              <div *ngIf="loading"
+                   class="support-message support-message-bot">
+
+                {{ translate.t('escribiendo') }}
+
+              </div>
+
+            </div>
+
+            <div class="support-chat-input">
+
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="userMessage"
+                (keyup.enter)="sendMessage()"
+                placeholder="{{ translate.t('escribe_consulta') }}"
+              />
+
+              <button
+                type="button"
+                class="btn btn-dark"
+                (click)="sendMessage()"
+                [disabled]="loading">
+
+                {{ translate.t('enviar') }}
+
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="col-12 col-xl-5">
+          <div class="support-faq-card h-100">
+
+            <p class="support-mini mb-2">
+              {{ translate.t('faq') }}
+            </p>
+
+            <h2 class="support-section-title">
+              {{ translate.t('faq_titulo') }}
+            </h2>
+
+            <div class="support-faq-list">
+
+              <article
+                class="support-faq-item"
+                *ngFor="let faq of preguntasFrecuentes">
+
+                <h3>{{ faq.pregunta }}</h3>
+                <p>{{ faq.respuesta }}</p>
+
+              </article>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
 </main>

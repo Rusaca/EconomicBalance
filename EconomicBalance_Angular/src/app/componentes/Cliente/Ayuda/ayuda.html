@@ -14,16 +14,15 @@
                     <div class="ayuda-hero-card h-100">
 
                         <p class="ayuda-kicker">
-                            Centro de ayuda
+                            {{ translate.t('ayuda_centro') }}
                         </p>
 
                         <h1 class="ayuda-title">
-                            Estamos aquí para ayudarte
+                            {{ translate.t('ayuda_titulo') }}
                         </h1>
 
                         <p class="ayuda-text mb-0">
-                            Envía tu consulta al equipo de soporte de Economic Balance
-                            y recibe un token para identificar tu solicitud fácilmente.
+                            {{ translate.t('ayuda_subtitulo') }}
                         </p>
 
                     </div>
@@ -35,22 +34,20 @@
                     <div class="ayuda-status-card h-100">
 
                         <p class="ayuda-mini">
-                            Estado del servicio
+                            {{ translate.t('ayuda_estado') }}
                         </p>
 
                         <div class="ayuda-status-pill">
 
                             <span class="ayuda-status-dot"></span>
 
-                            Soporte disponible
+                            {{ translate.t('ayuda_disponible') }}
 
                         </div>
 
                         <p class="ayuda-text mb-4">
-                            Tu consulta se enviará directamente al equipo de soporte.
+                            {{ translate.t('ayuda_estado_desc') }}
                         </p>
-
-                      
 
                     </div>
 
@@ -65,7 +62,7 @@
 
             <div class="row g-4 align-items-stretch">
 
-                <!-- FORMULARIO -->
+                <!-- FORM -->
                 <div class="col-12 col-xl-7">
 
                     <div class="ayuda-card h-100">
@@ -75,41 +72,32 @@
                             <div>
 
                                 <p class="ayuda-mini mb-1">
-                                    Formulario de soporte
+                                    {{ translate.t('ayuda_formulario') }}
                                 </p>
 
                                 <h2 class="ayuda-section-title mb-0">
-                                    Enviar solicitud
+                                    {{ translate.t('ayuda_enviar') }}
                                 </h2>
 
                             </div>
 
                             <span class="ayuda-badge">
-                                Activo
+                                {{ translate.t('activo') }}
                             </span>
 
                         </div>
 
-                        <form
-                            class="ayuda-form"
-                            (ngSubmit)="enviarSoporte()"
-                        >
+                        <form class="ayuda-form" (ngSubmit)="enviarSoporte()">
 
                             <!-- NOMBRE -->
                             <div class="mb-3">
 
                                 <label class="form-label">
-                                    Nombre
+                                    {{ translate.t('nombre') }}
                                 </label>
 
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    [(ngModel)]="formulario.nombre"
-                                    name="nombre"
-                                    placeholder="Introduce tu nombre"
-                                    required
-                                >
+                                <input type="text" class="form-control" [(ngModel)]="formulario.nombre" name="nombre"
+                                    placeholder="{{ translate.t('placeholder_nombre') }}" required>
 
                             </div>
 
@@ -117,17 +105,11 @@
                             <div class="mb-3">
 
                                 <label class="form-label">
-                                    Correo electrónico
+                                    {{ translate.t('correo') }}
                                 </label>
 
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    [(ngModel)]="formulario.correo"
-                                    name="correo"
-                                    placeholder="ejemplo@correo.com"
-                                    required
-                                >
+                                <input type="email" class="form-control" [(ngModel)]="formulario.correo" name="correo"
+                                    placeholder="ejemplo@correo.com" required>
 
                             </div>
 
@@ -135,17 +117,11 @@
                             <div class="mb-3">
 
                                 <label class="form-label">
-                                    Asunto
+                                    {{ translate.t('asunto') }}
                                 </label>
 
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    [(ngModel)]="formulario.asunto"
-                                    name="asunto"
-                                    placeholder="Describe brevemente tu consulta"
-                                    required
-                                >
+                                <input type="text" class="form-control" [(ngModel)]="formulario.asunto" name="asunto"
+                                    placeholder="{{ translate.t('placeholder_asunto') }}" required>
 
                             </div>
 
@@ -153,36 +129,25 @@
                             <div class="mb-3">
 
                                 <label class="form-label">
-                                    Mensaje
+                                    {{ translate.t('mensaje') }}
                                 </label>
 
-                                <textarea
-                                    class="form-control"
-                                    rows="6"
-                                    [(ngModel)]="formulario.mensaje"
-                                    name="mensaje"
-                                    placeholder="Explica tu problema o consulta con detalle..."
-                                    required
-                                ></textarea>
+                                <textarea class="form-control" rows="6" [(ngModel)]="formulario.mensaje" name="mensaje"
+                                    placeholder="{{ translate.t('placeholder_mensaje') }}" required></textarea>
 
                             </div>
 
                             <!-- BOTONES -->
                             <div class="ayuda-actions">
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-dark ayuda-submit"
-                                    [disabled]="enviandoSoporte"
-                                >
-                                    {{ enviandoSoporte ? 'Enviando...' : 'Enviar solicitud' }}
+                                <button type="submit" class="btn btn-dark ayuda-submit" [disabled]="enviandoSoporte">
+
+                                    {{ enviandoSoporte ? translate.t('enviando') : translate.t('enviar_solicitud') }}
+
                                 </button>
 
-                                <a
-                                    routerLink="/soporte"
-                                    class="btn ayuda-support-btn"
-                                >
-                                    Volver al soporte
+                                <a routerLink="/soporte" class="btn ayuda-support-btn">
+                                    {{ translate.t('volver_soporte') }}
                                 </a>
 
                             </div>
@@ -190,28 +155,17 @@
                         </form>
 
                         <!-- FEEDBACK -->
-                        <div
-                            *ngIf="mensajeSoporte"
-                            class="ayuda-feedback mt-4"
-                        >
+                        <div *ngIf="mensajeSoporte" class="ayuda-feedback mt-4">
 
-                            <p>
-                                {{ mensajeSoporte }}
-                            </p>
+                            <p>{{ mensajeSoporte }}</p>
 
                         </div>
 
                         <!-- TOKEN -->
-                        <div
-                            *ngIf="tokenGenerado"
-                            class="ayuda-token mt-3"
-                        >
+                        <div *ngIf="tokenGenerado" class="ayuda-token mt-3">
 
                             <p>
-                                <strong>
-                                    Token de soporte:
-                                </strong>
-
+                                <strong>{{ translate.t('token') }}:</strong>
                                 {{ tokenGenerado }}
                             </p>
 
@@ -227,27 +181,19 @@
                     <div class="ayuda-faq-card h-100">
 
                         <p class="ayuda-mini mb-2">
-                            Preguntas frecuentes
+                            {{ translate.t('faq') }}
                         </p>
 
                         <h2 class="ayuda-section-title">
-                            Antes de enviar
+                            {{ translate.t('faq_titulo') }}
                         </h2>
 
                         <div class="ayuda-faq-list">
 
-                            <article
-                                class="ayuda-faq-item"
-                                *ngFor="let faq of preguntasFrecuentes"
-                            >
+                            <article class="ayuda-faq-item" *ngFor="let faq of preguntasFrecuentes">
 
-                                <h3>
-                                    {{ faq.pregunta }}
-                                </h3>
-
-                                <p>
-                                    {{ faq.respuesta }}
-                                </p>
+                                <h3>{{ faq.pregunta }}</h3>
+                                <p>{{ faq.respuesta }}</p>
 
                             </article>
 
@@ -264,25 +210,15 @@
     </div>
 
     <!-- OVERLAY -->
-    <div
-        class="ayuda-overlay"
-        *ngIf="mostrarConfirmacion"
-    >
+    <div class="ayuda-overlay" *ngIf="mostrarConfirmacion">
 
         <div class="ayuda-overlay-card">
 
-            <div class="ayuda-check">
-                ✓
-            </div>
+            <div class="ayuda-check">✓</div>
 
-            <h2>
-                Enviado correctamente
-            </h2>
+            <h2>{{ translate.t('enviado_ok') }}</h2>
 
-            <p>
-                Tu solicitud se ha enviado al equipo de soporte.
-                Guarda tu token para futuras consultas.
-            </p>
+            <p>{{ translate.t('enviado_desc') }}</p>
 
         </div>
 

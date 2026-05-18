@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HeaderAutenticado } from '../../Portal/HeaderAutenticado/HeaderAutenticado';
 import { SoporteApiService } from '../../../servicios/soporte-api.service';
 import { RouterModule } from '@angular/router';
-
+import { TranslateService } from '../../../servicios/translate.service';
 interface PreguntaFrecuente {
   pregunta: string;
   respuesta: string;
@@ -14,11 +14,11 @@ interface PreguntaFrecuente {
   selector: 'app-ayuda',
   standalone: true,
   imports: [
-  CommonModule,
-  FormsModule,
-  HeaderAutenticado,
-  RouterModule
-],
+    CommonModule,
+    FormsModule,
+    HeaderAutenticado,
+    RouterModule
+  ],
   templateUrl: './ayuda.html',
   styleUrl: './ayuda.css'
 })
@@ -52,8 +52,9 @@ export class AyudaComponent {
 
   constructor(
     private soporteApi: SoporteApiService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    public translate: TranslateService
+  ) { }
 
   async enviarSoporte(): Promise<void> {
     if (this.enviandoSoporte) {
