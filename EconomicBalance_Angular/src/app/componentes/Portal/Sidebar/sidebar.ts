@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
+import { ThemeService } from '../../../servicios/theme.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,27 +18,21 @@ export class SidebarComponent {
 
   temaOscuro = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
-    const temaGuardado = localStorage.getItem('tema');
-    this.temaOscuro = temaGuardado === 'oscuro';
-
-    if (this.temaOscuro) {
-      document.body.classList.add('dark-mode');
-    }
+    this.temaOscuro = this.themeService.isDarkMode();
   }
 
   toggleTheme() {
-    this.temaOscuro = !this.temaOscuro;
+    this.temaOscuro = this.themeService.toggleDarkMode();
+  }
 
-    if (this.temaOscuro) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('tema', 'oscuro');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('tema', 'claro');
-    }
+  get temaOscuroActivo(): boolean {
+    return this.themeService.isDarkMode();
   }
 
   cerrar() {
@@ -51,6 +46,7 @@ export class SidebarComponent {
   }
 
   cerrarSesion() {
+    this.themeService.setDarkMode(false);
     localStorage.clear();
     this.router.navigate(['/login']);
   }

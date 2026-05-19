@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '../../../servicios/translate.service';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { AjustesService } from '../../../servicios/ajustes.service';
+import { ThemeService } from '../../../servicios/theme.service';
 
 export interface AjustesUsuario {
   idioma: 'es' | 'en';
@@ -41,7 +42,8 @@ export class AjustesComponent implements OnInit {
     private router: Router,
     public translate: TranslateService,
     private ajustesService: AjustesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private themeService: ThemeService
   ) {
     this.idioma = this.translate.lang();
   }
@@ -82,6 +84,7 @@ export class AjustesComponent implements OnInit {
       this.autoguardado = ajustes.autoguardado ?? true;
 
       this.translate.setLang(this.idioma);
+      this.themeService.setDarkMode(this.modoOscuro);
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error cargando ajustes:', error);
@@ -99,6 +102,7 @@ export class AjustesComponent implements OnInit {
       }
 
       this.translate.setLang(this.idioma);
+      this.themeService.setDarkMode(this.modoOscuro);
 
       const payload: AjustesUsuario = {
         idioma: this.idioma,
@@ -128,6 +132,10 @@ export class AjustesComponent implements OnInit {
       this.cdr.detectChanges();
       setTimeout(() => this.mensaje = '', 3000);
     }
+  }
+
+  onModoOscuroChange(): void {
+    this.themeService.setDarkMode(this.modoOscuro);
   }
 
   volver(): void {

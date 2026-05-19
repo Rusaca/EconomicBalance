@@ -401,3 +401,85 @@
     gap: 0.2rem;
   }
 }
+
+:host-context(.dark-mode) .calendar-page {
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.1), transparent 26%),
+    linear-gradient(135deg, #0b1220 0%, #0f172a 48%, #111827 100%);
+}
+
+:host-context(.dark-mode) .calendar-header,
+:host-context(.dark-mode) .calendar-card,
+:host-context(.dark-mode) .calendar-detail {
+  background: #1f2937 !important;
+  border-color: #334155 !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+}
+
+:host-context(.dark-mode) .calendar-header h1,
+:host-context(.dark-mode) .calendar-month,
+:host-context(.dark-mode) .calendar-detail-header h3,
+:host-context(.dark-mode) .calendar-detail-top strong,
+:host-context(.dark-mode) .calendar-detail-top span,
+:host-context(.dark-mode) .calendar-day-number {
+  color: #e5e7eb !important;
+}
+
+:host-context(.dark-mode) .calendar-subtitle,
+:host-context(.dark-mode) .calendar-more,
+:host-context(.dark-mode) .calendar-empty,
+:host-context(.dark-mode) .calendar-detail-item p {
+  color: #94a3b8 !important;
+}
+
+:host-context(.dark-mode) .calendar-month,
+:host-context(.dark-mode) .calendar-nav-btn {
+  background: #111827 !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+:host-context(.dark-mode) .calendar-weekdays {
+  background: linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
+  border-bottom-color: #334155 !important;
+}
+
+:host-context(.dark-mode) .calendar-weekday {
+  color: #cbd5e1 !important;
+}
+
+:host-context(.dark-mode) .calendar-day {
+  background: #1f2937 !important;
+  border-right-color: #334155 !important;
+  border-bottom-color: #334155 !important;
+}
+
+:host-context(.dark-mode) .calendar-day:hover {
+  background: #263245 !important;
+  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.28);
+}
+
+:host-context(.dark-mode) .calendar-day.other-month {
+  background: #182334 !important;
+  color: #64748b !important;
+}
+
+:host-context(.dark-mode) .calendar-day.today {
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.14), rgba(31, 41, 55, 1)) !important;
+}
+
+:host-context(.dark-mode) .calendar-day.selected {
+  background: #2d3748 !important;
+  box-shadow: inset 0 0 0 2px #60a5fa;
+}
+
+:host-context(.dark-mode) .calendar-event {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+:host-context(.dark-mode) .calendar-detail-item {
+  background: #111827 !important;
+  border-left-color: #64748b !important;
+}

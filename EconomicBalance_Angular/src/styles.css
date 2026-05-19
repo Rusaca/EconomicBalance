@@ -1,4 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --bg: #f8fafc;
+  --bg-soft: #eef2f7;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode {
+  --bg: #0b1220;
+  --bg-soft: #111827;
+  --surface: #1f2937;
+  --surface-2: #273449;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --border: #334155;
+  --shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
 #bg-video {
   position: fixed;
   top: 0;
@@ -7,53 +36,140 @@
   height: 100vh;
   object-fit: cover;
   z-index: -1;
-  display: none; /* oculto por defecto */
+  display: none;
 }
 
-/* MODO OSCURO GLOBAL */
-.dark-mode {
-  background-color: #111 !important;
-  color: #f1f1f1 !important;
+/* Base global para mantener todas las pantallas compatibles con ambos temas */
+body.dark-mode .ajustes-page,
+body.dark-mode .dashboard-page,
+body.dark-mode .lienzo,
+body.dark-mode .app-content,
+body.dark-mode .main-content {
+  background: var(--bg) !important;
+  color: var(--text) !important;
 }
 
-/* Sidebar en modo oscuro */
-.dark-mode .sidebar {
+body.dark-mode .card,
+body.dark-mode .popup,
+body.dark-mode .menu,
+body.dark-mode .bloque,
+body.dark-mode .grafica-lienzo,
+body.dark-mode .estado-carga,
+body.dark-mode .empty-state-dashboard,
+body.dark-mode .hero-dashboard,
+body.dark-mode .plantilla-card,
+body.dark-mode .plantilla-fila-card,
+body.dark-mode .resumen-card,
+body.dark-mode .resumen-block {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+body.dark-mode .lienzo {
+  background: var(--bg-soft) !important;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px) !important;
+}
+
+body.dark-mode .barra-superior,
+body.dark-mode .dashboard-header,
+body.dark-mode .navbar,
+body.dark-mode .footer-dark,
+body.dark-mode .footer-auth {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+body.dark-mode .campo,
+body.dark-mode .stat-item,
+body.dark-mode .item-maestro-system,
+body.dark-mode .lista-campos-importacion,
+body.dark-mode .campos-resumen-lista {
+  background: var(--surface-2) !important;
+  border-color: var(--border) !important;
+}
+
+body.dark-mode .text-dark,
+body.dark-mode .titulo-dashboard,
+body.dark-mode .fila-titulo,
+body.dark-mode .opcion-menu,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode span {
+  color: var(--text) !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .stat-label,
+body.dark-mode .fila-meta,
+body.dark-mode .grafica-vacia,
+body.dark-mode small {
+  color: var(--muted) !important;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+body.dark-mode .modal-content,
+body.dark-mode .dropdown-menu,
+body.dark-mode .list-group-item,
+body.dark-mode .table,
+body.dark-mode .accordion-item {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+body.dark-mode .table th,
+body.dark-mode .table td {
+  border-color: var(--border) !important;
+}
+
+/* Sidebar */
+body.dark-mode .sidebar {
   background: #1a1a1a !important;
   border-right: 1px solid #333 !important;
 }
 
-.dark-mode .sidebar-item {
+body.dark-mode .sidebar-item {
   background: #1a1a1a !important;
   color: #f1f1f1 !important;
 }
 
-.dark-mode .sidebar-item:hover {
+body.dark-mode .sidebar-item:hover {
   background: #222 !important;
 }
 
-/* Botón modo oscuro */
-.dark-mode .btn-outline-dark {
+body.dark-mode .btn-outline-dark {
   border-color: #f1f1f1 !important;
   color: #f1f1f1 !important;
 }
 
-.dark-mode .btn-outline-dark:hover {
+body.dark-mode .btn-outline-dark:hover {
   background: #f1f1f1 !important;
   color: #111 !important;
 }
 
-/* Header en modo oscuro */
-.dark-mode .dashboard-header {
-  background: #1a1a1a !important;
-  border-bottom: 1px solid #333 !important;
-}
-
-.dark-mode .brand-logo-dashboard {
+body.dark-mode .brand-logo-dashboard {
   filter: brightness(0.8);
 }
 
-/* Avatar */
-.dark-mode .user-avatar {
+body.dark-mode .user-avatar {
   background: #333 !important;
   color: #fff !important;
 }

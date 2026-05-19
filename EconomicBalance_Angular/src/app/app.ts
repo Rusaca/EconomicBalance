@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FooterComponent } from './componentes/Portal/FooterAutenticado/footer';
+import { ThemeService } from './servicios/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,12 @@ export class App {
     '/restablecer-password'
   ];
 
-  constructor(public router: Router) {
+  constructor(
+    public router: Router,
+    private themeService: ThemeService
+  ) {
+    this.themeService.initTheme();
+
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const video = document.getElementById('bg-video') as HTMLVideoElement | null;

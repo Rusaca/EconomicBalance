@@ -81,3 +81,7 @@
 .sidebar-bottom {
   border-top: 1px solid #e3e8ef;
 }
+
+:host-context(.dark-mode) .sidebar-close-btn span {
+  background: #ffffff !important;
+}

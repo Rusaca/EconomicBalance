@@ -43,6 +43,10 @@
   transition: 0.3s ease;
 }
 
+:host-context(.dark-mode) .menu-btn span {
+  background: #ffffff !important;
+}
+
 /* =========================
    CONTENEDOR IZQUIERDO
 ========================= */
@@ -89,6 +93,14 @@
   filter: brightness(0);
 }
 
+:host-context(.dark-mode) .notif-icon {
+  filter: brightness(0) invert(1);
+}
+
+:host-context(.dark-mode) .notif-btn:hover .notif-icon {
+  filter: brightness(0) invert(1);
+}
+
 /* =========================
    BLOQUE USUARIO
 ========================= */
@@ -103,6 +115,10 @@
   margin: 0;
   padding: 0;
   color: #111 !important;
+}
+
+:host-context(.dark-mode) .user-block span {
+  color: #ffffff !important;
 }
 
 /* =========================

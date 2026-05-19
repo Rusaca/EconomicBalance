@@ -2,7 +2,7 @@
 
     <!-- TOP -->
     <div class="sidebar-top d-flex align-items-center justify-content-between px-3 py-2">
-        <img src="assets/logosinfondo.png" class="sidebar-logo" alt="Economic Balance">
+        <img [src]="temaOscuroActivo ? 'assets/LogoSinFondoBlnc.png' : 'assets/logosinfondo.png'" class="sidebar-logo" alt="Economic Balance">
 
         <button class="sidebar-close-btn" (click)="cerrar()">
             <span></span>
@@ -42,7 +42,7 @@
     <!-- BOTÓN ABAJO DEL TODO -->
     <div class="sidebar-bottom px-3 py-3">
         <button class="btn btn-outline-dark w-100 fw-semibold" (click)="toggleTheme()">
-            {{ temaOscuro ? ('sidebar_modo_claro' | translate) : ('sidebar_modo_oscuro' | translate) }}
+            {{ temaOscuroActivo ? ('sidebar_modo_claro' | translate) : ('sidebar_modo_oscuro' | translate) }}
         </button>
     </div>
 

@@ -707,3 +707,77 @@
   }
 
 }
+
+:host-context(.dark-mode) .metas-page {
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.1), transparent 22%),
+    linear-gradient(135deg, #0b1220 0%, #0f172a 48%, #111827 100%);
+}
+
+:host-context(.dark-mode) .metas-header,
+:host-context(.dark-mode) .meta-form-card,
+:host-context(.dark-mode) .meta-card,
+:host-context(.dark-mode) .grafica-card,
+:host-context(.dark-mode) .acciones-card,
+:host-context(.dark-mode) .metas-search-box {
+  background: #1f2937 !important;
+  border-color: #334155 !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+:host-context(.dark-mode) .metas-header h2,
+:host-context(.dark-mode) .meta-form-card-body h5,
+:host-context(.dark-mode) .meta-card-top h5,
+:host-context(.dark-mode) .meta-number-box strong,
+:host-context(.dark-mode) .meta-date strong,
+:host-context(.dark-mode) .grafica-header h3,
+:host-context(.dark-mode) .acciones-header h3,
+:host-context(.dark-mode) .grafica-total {
+  color: #e5e7eb !important;
+}
+
+:host-context(.dark-mode) .metas-subtitle,
+:host-context(.dark-mode) .meta-field label,
+:host-context(.dark-mode) .meta-number-box span,
+:host-context(.dark-mode) .meta-date,
+:host-context(.dark-mode) .grafica-subtitle,
+:host-context(.dark-mode) .grafica-mes,
+:host-context(.dark-mode) .metas-search-label {
+  color: #94a3b8 !important;
+}
+
+:host-context(.dark-mode) .meta-field input,
+:host-context(.dark-mode) .metas-search-input {
+  background: #111827 !important;
+  color: #e5e7eb !important;
+  border-color: #334155 !important;
+}
+
+:host-context(.dark-mode) .metas-search-input::placeholder {
+  color: #64748b !important;
+}
+
+:host-context(.dark-mode) .meta-number-box {
+  background: #111827 !important;
+  border-color: #334155 !important;
+}
+
+:host-context(.dark-mode) .meta-progress-bar {
+  background: #334155 !important;
+}
+
+:host-context(.dark-mode) .accion-email {
+  background: rgba(96, 165, 250, 0.18);
+  color: #bfdbfe;
+}
+
+:host-context(.dark-mode) .accion-sms {
+  background: rgba(16, 185, 129, 0.2);
+  color: #a7f3d0;
+}
+
+:host-context(.dark-mode) .accion-pdf {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
+}

@@ -325,3 +325,26 @@
 		flex: 1;
 	}
 }
+
+:host-context(.dark-mode) .crear-plantilla-card,
+:host-context(.dark-mode) .crear-plantilla-row {
+	border-color: #3b82f6 !important;
+	background: linear-gradient(90deg, rgba(30, 58, 138, 0.22) 0%, rgba(17, 24, 39, 0.92) 100%) !important;
+}
+
+:host-context(.dark-mode) .crear-plantilla-row:hover,
+:host-context(.dark-mode) .crear-plantilla-card:hover {
+	border-color: #60a5fa !important;
+	box-shadow: 0 1rem 2rem rgba(59, 130, 246, 0.24) !important;
+}
+
+:host-context(.dark-mode) .crear-plantilla-row h4,
+:host-context(.dark-mode) .crear-plantilla-row p,
+:host-context(.dark-mode) .btn-crear-plantilla {
+	color: #e5e7eb !important;
+}
+
+:host-context(.dark-mode) .icono-crear-plantilla {
+	background: #2563eb;
+	color: #eff6ff;
+}
